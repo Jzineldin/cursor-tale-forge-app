@@ -1,0 +1,359 @@
+# Code Audit Instructions for LLM Agents
+
+## Overview
+
+This document provides comprehensive instructions for conducting systematic code audits to identify and resolve issues related to **stability**, **performance**, **security**, **consistency**, and **maintainability**. The goal is to ensure structural soundness across dependencies and components for a stable, production-ready platform.
+
+## Project Context
+
+### Technology Stack
+- **Primary Language**: TypeScript (93.9%)
+- **Styling**: CSS (3.4%)
+- **Database**: PLpgSQL (2.5% - Supabase functions)
+- **Build Tool**: Vite
+- **Framework**: React
+- **Deployment**: lovable.dev
+
+### Compatibility Requirements
+**CRITICAL**: All recommendations and changes must be compatible with **lovable.dev** (AI-assisted vibe coding platform):
+- Use declarative patterns that AI can easily understand and modify
+- Maintain clear, readable code structure for AI interpretation
+- Avoid overly complex abstractions that hinder AI comprehension
+- Prefer explicit over implicit code patterns
+- Use standard React/TypeScript patterns that AI coding assistants excel at
+- Ensure changes support rapid prototyping and iterative development
+- Maintain compatibility with AI-powered code generation workflows
+
+---
+
+## Audit Objectives
+
+### Primary Goals
+1. **Stability**: Identify potential runtime errors, race conditions, and fragile dependencies
+2. **Type Safety**: Eliminate `any` types and improve TypeScript coverage
+3. **Security**: Find and fix potential vulnerabilities (XSS, injection, etc.)
+4. **Performance**: Optimize rendering, memory usage, and loading times
+5. **Consistency**: Standardize patterns, styling, and component structures
+6. **Maintainability**: Improve code readability and future-proofing
+
+---
+
+## Audit Categories & Approach
+
+### 1. Critical Issues (High Priority)
+**Focus**: Type safety, core functionality, breaking changes
+
+**Exploratory Approach**:
+- Look for weak typing throughout the codebase - not just obvious `any` types but also implicit any, missing generics, or overly broad types
+- Examine React patterns - hooks usage, component lifecycle, state management, and data flow
+- Investigate error handling - how does the application handle failures, edge cases, and unexpected states?
+- Analyze architectural decisions - are there coupling issues, circular dependencies, or fragile assumptions?
+- **lovable.dev Compatibility**: Ensure TypeScript patterns are clear and declarative for AI understanding
+
+**Discovery Methods** (Examples - not exhaustive):
+- Search for type-related keywords but also manually review critical files
+- Examine state management patterns across components
+- Look at import/export relationships and dependency graphs
+- Review error boundaries and exception handling
+- Verify AI-friendly code patterns and explicit type declarations
+
+### 2. Security Issues (High Priority)
+**Focus**: Data protection, input validation, access control
+
+**Exploratory Approach**:
+- Think like an attacker - where could malicious input enter the system?
+- Examine all data flows - from user input to storage to display
+- Look for authentication/authorization patterns and potential bypasses
+- Consider client-side data exposure and storage practices
+- Investigate third-party integrations and their security implications
+- **lovable.dev Compatibility**: Ensure security patterns are explicit and maintainable by AI
+
+**Discovery Methods** (Examples - not exhaustive):
+- Review forms, user inputs, and data processing
+- Examine how external data is handled and validated
+- Look at authentication flows and session management
+- Check for sensitive data in client-side code or logs
+- Verify Supabase Row Level Security (RLS) policies
+
+### 3. Performance Issues (Medium Priority)
+**Focus**: User experience, resource efficiency, scalability
+
+**Exploratory Approach**:
+- Consider the user journey - where might performance bottlenecks occur?
+- Think about different scales - how would this perform with 10x more data/users?
+- Look at rendering patterns - what causes expensive re-renders or layout thrashing?
+- Examine resource loading - images, fonts, code splitting, lazy loading
+- Consider memory usage patterns and potential leaks
+- **lovable.dev Compatibility**: Prefer standard optimization patterns over complex custom solutions
+
+**Discovery Methods** (Examples - not exhaustive):
+- Profile rendering behavior and identify expensive operations
+- Review bundle size and loading strategies
+- Look at state update patterns and their propagation
+- Examine third-party library usage and alternatives
+- Check React DevTools for performance insights
+
+### 4. Consistency Issues (Medium Priority)
+**Focus**: User experience, maintainability, team productivity
+
+**Exploratory Approach**:
+- Look for patterns that should be similar but aren't - components, styling, interactions
+- Consider the developer experience - how easy is it to find and modify things?
+- Think about design system adherence and visual consistency
+- Examine code organization and naming conventions
+- Look for opportunities to reduce duplication and increase reusability
+- **lovable.dev Compatibility**: Ensure consistent patterns that AI can understand and replicate
+
+**Discovery Methods** (Examples - not exhaustive):
+- Compare similar components and their implementations
+- Review design patterns and their consistent application
+- Look at file organization and naming conventions
+- Examine styling approaches and theme usage
+- Check for consistent TypeScript and React patterns
+
+### 5. Code Quality Issues (Low Priority)
+**Focus**: Long-term maintainability, developer experience
+
+**Exploratory Approach**:
+- Think about future developers - what would confuse or slow them down?
+- Look for code smells - complexity, duplication, unclear intent
+- Consider testing coverage and quality
+- Examine documentation and self-documenting code practices
+- Look for technical debt and areas that need refactoring
+- **lovable.dev Compatibility**: Prioritize readable, self-documenting code over complex abstractions
+
+**Discovery Methods** (Examples - not exhaustive):
+- Review function and component complexity
+- Look at comment quality and code self-documentation
+- Examine testing patterns and coverage
+- Look for outdated patterns or deprecated usage
+- Check for AI-friendly code structure and naming
+
+---
+
+## Audit Methodology
+
+### Phase 1: Discovery & Understanding
+1. **Codebase Familiarization**: Understand the project structure, tech stack, and architecture
+2. **Broad Pattern Recognition**: Look for recurring themes, architectural decisions, and design patterns
+3. **Targeted Investigation**: Use search tools strategically but don't limit yourself to predetermined patterns
+4. **Contextual Analysis**: Consider the project's goals, constraints, and intended use cases
+
+### Phase 2: Deep Analysis
+1. **Component Architecture**: Examine data flow, state management, and component relationships
+2. **User Experience Flow**: Trace critical user journeys and identify potential pain points
+3. **Error Scenarios**: Consider what could go wrong and how the system handles it
+4. **Performance Characteristics**: Identify potential bottlenecks without premature optimization
+
+### Phase 3: Critical Evaluation
+1. **Impact Assessment**: Prioritize findings based on actual risk and business impact
+2. **Solution Feasibility**: Ensure proposed solutions are practical and maintainable
+3. **Trade-off Analysis**: Consider the costs and benefits of each recommendation
+4. **Future-proofing**: Think about how changes will affect long-term maintainability
+
+---
+
+## Important Guidelines
+
+### Avoid Audit Bias
+- **Don't just look for specific patterns** - explore the codebase with fresh eyes
+- **Question assumptions** - what works well? What seems unusual but might be intentional?
+- **Consider context** - a pattern that's wrong in one place might be right in another
+- **Think holistically** - how do all the pieces fit together?
+
+### lovable.dev Compatibility
+- **Prioritize AI-friendly patterns** over complex abstractions
+- **Maintain explicit, readable code** that AI can understand and modify
+- **Use standard React/TypeScript patterns** that AI assistants excel at
+- **Ensure changes support rapid prototyping** and iterative development
+- **Avoid overly complex architectures** that hinder AI comprehension
+
+### Technology Stack Considerations
+- **TypeScript Focus**: Primary language (93.9%) - ensure strong typing and clear interfaces
+- **React Best Practices**: Follow modern hooks patterns and component architecture
+- **Supabase Integration**: Ensure proper handling of PLpgSQL functions and database operations
+- **Vite Build Tool**: Consider build optimization and development experience
+- **CSS Styling**: Maintain consistent styling approaches and responsive design
+
+### Discovery Tools & Techniques
+Use these tools flexibly, not as a checklist:
+- `grep_search` for pattern discovery (but explore beyond obvious keywords)
+- `semantic_search` for conceptual understanding
+- `file_search` for structural analysis
+- `read_file` for deep code comprehension
+- `list_dir` for architectural understanding
+
+### Quality Over Quantity
+- **Meaningful findings** over exhaustive lists
+- **Actionable recommendations** over theoretical improvements
+- **Clear impact assessment** for each finding
+- **Practical implementation plans** that consider real-world constraints
+- **lovable.dev compatible solutions** that maintain AI-friendly code patterns
+
+---
+
+## Finding Documentation Format
+
+Each finding must follow this exact structure:
+
+```markdown
+### Finding [NUMBER]: [DESCRIPTIVE_TITLE]
+
+-   **Files**: `path/to/file1.tsx`, `path/to/file2.tsx`
+-   **Description**: Clear explanation of the issue, why it's problematic, and potential impact.
+-   **Proposed Solution**: Specific, actionable solution with code examples where helpful.
+-   **Implementation Plan**:
+    1.  Step-by-step instructions for fixing the issue
+    2.  Include file reading, code changes, and verification steps
+    3.  Mention any dependencies or tools needed
+    4.  Request user permission before applying changes
+    5.  After approval, update status to **Implemented**
+-   **Status**: **Pending** ⏳ | **Implemented** ✅ | **Partially Implemented** ⚠️
+-   **Resolution Notes**: (Optional) Additional context about the implementation
+```
+
+---
+
+## Output Document Structure
+
+Create a CODE_AUDIT_[YYMMDD].md file with this structure:
+
+```markdown
+# Code Audit & Implementation Plan
+
+-   **Date**: [Current Date]
+-   **Objective**: To identify and resolve issues related to stability, performance, and consistency, and to provide a clear, actionable plan for implementation.
+
+---
+
+## Instructions for AI Implementation Agent
+
+*This document outlines a series of recommended changes to improve the codebase. As the implementing agent, you are instructed to follow these guidelines:*
+
+1. **Verify and Validate**: Before implementing any change, read the affected file(s) to confirm the context.
+2. **Implement One Finding at a Time**: Address each finding as a distinct, atomic step.
+3. **Prioritize Stability**: The primary goal is to improve the stability and structural soundness of the code.
+4. **Adhere to Best Practices**: Follow standard React and TypeScript best practices.
+5. **Propose Alternatives**: If you identify a more effective solution, propose it for review.
+6. **Maintain lovable.dev Compatibility**: Ensure all changes support AI-assisted development and rapid prototyping.
+7. **Use Clear, Declarative Patterns**: Prefer explicit code that AI can easily understand and modify.
+8. **Consider the Technology Stack**: 
+   - TypeScript (93.9%) - Strong typing and clear interfaces
+   - React - Modern hooks patterns and component architecture
+   - Supabase - Proper database operations and RLS policies
+   - Vite - Build optimization considerations
+
+---
+
+## Critical Issues (High Priority)
+[Findings 1-N]
+
+## Security Issues (High Priority)
+[Findings N+1-M]
+
+## Performance Issues (Medium Priority)
+[Findings M+1-P]
+
+## Consistency Issues (Medium Priority)
+[Findings P+1-Q]
+
+## Code Quality Issues (Low Priority)
+[Findings Q+1-R]
+
+---
+
+## Summary
+
+**Total Findings**: [N]
+- **Critical Issues**: [N] ([Status])
+- **Security Issues**: [N] ([Status])
+- **Performance Issues**: [N] ([Status])
+- **Consistency Issues**: [N] ([Status])
+- **Code Quality Issues**: [N] ([Status])
+
+**Implementation Status**: **[PENDING/IN PROGRESS/COMPLETE]**
+[Summary of overall progress and key achievements]
+
+**Key Achievements**:
+- ✅ [Achievement 1]
+- ✅ [Achievement 2]
+- ⏳ [Pending item]
+
+**Lessons Learned**:
+- [Key insight 1]
+- [Key insight 2]
+
+---
+
+*This audit was conducted on [Date]. All findings should be verified before implementation as the codebase may have changed.*
+```
+
+---
+
+## Execution Instructions
+
+### Step 1: Initialize Audit
+```markdown
+I need to conduct a comprehensive code audit of this codebase. I will:
+
+1. Analyze the project structure and identify key areas for review
+2. Run systematic searches for common issues
+3. Prioritize findings by impact and risk
+4. Create a detailed implementation plan
+5. Generate a CODE_AUDIT_[YYMMDD].md file with my findings
+
+Let me begin by understanding the codebase structure and technology stack.
+```
+
+### Step 2: Discovery Phase
+- **Explore organically** - start with key files and follow interesting patterns
+- **Use tools strategically** - search for concepts, not just syntax
+- **Question everything** - why was this approach chosen? What are the trade-offs?
+- **Document surprises** - things that seem unusual might be the most important findings
+
+### Step 3: Analysis Phase
+- **Think from multiple perspectives** - user, developer, maintainer, security auditor
+- **Consider different scenarios** - high load, edge cases, different data sizes
+- **Evaluate architectural decisions** - are they still serving the project well?
+- **Look for emerging patterns** - both good practices to reinforce and anti-patterns to address
+
+### Step 4: Documentation Phase
+- Create the CODE_AUDIT_[YYMMDD].md file using the exact format above
+- Ensure each finding has a clear implementation plan
+- Include summary statistics and next steps
+- Save file to `docs/audits/` directory
+
+### Step 5: Validation
+- Double-check all file references are accurate
+- Verify search results with actual code content
+- Ensure findings are actionable and specific
+- Confirm the document follows the required format exactly
+
+---
+
+## Quality Checklist
+
+Before completing the audit, verify:
+
+- ✅ All findings have specific file references
+- ✅ Each finding includes an actionable implementation plan
+- ✅ Findings are properly categorized by priority
+- ✅ Code examples are accurate and helpful
+- ✅ The document follows the exact format specified
+- ✅ Summary statistics are accurate
+- ✅ File is saved with correct date format (YYMMDD)
+
+---
+
+## Example Usage
+
+When asked to run an audit, respond with:
+
+"I'll conduct a comprehensive code audit following the established methodology. I'll explore the codebase holistically to identify issues related to stability, type safety, security, performance, consistency, and maintainability. Rather than just looking for predetermined patterns, I'll analyze the architecture, user flows, and code quality with fresh eyes to provide meaningful, actionable insights. I'll generate a detailed CODE_AUDIT_[YYMMDD].md file with my findings and implementation plans."
+
+**Remember**: 
+- Start with understanding, not searching
+- Focus on the technology stack: TypeScript (93.9%), React, Supabase, Vite
+- Maintain lovable.dev compatibility throughout
+- Prioritize AI-friendly, declarative patterns
+- Consider rapid prototyping and iterative development needs

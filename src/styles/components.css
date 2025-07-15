@@ -1,0 +1,158 @@
+
+/* Component Styles */
+.redesign-section {
+  padding: var(--space-xl) 0;
+  position: relative;
+}
+
+.redesign-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 var(--space-md);
+}
+
+.redesign-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-lg);
+  padding: var(--space-lg);
+  backdrop-filter: blur(12px);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.redesign-card:hover {
+  background: var(--bg-card-hover);
+  border-color: var(--border-gold);
+  box-shadow: var(--shadow-gold);
+  transform: translateY(-2px);
+}
+
+.redesign-btn-primary {
+  background: linear-gradient(135deg, var(--brand-gold), var(--brand-gold-dark));
+  color: white;
+  padding: var(--space-md) var(--space-xl);
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  transition: all 0.3s ease;
+  border: none;
+  cursor: pointer;
+  box-shadow: var(--shadow-soft);
+}
+
+.redesign-btn-primary:hover {
+  background: linear-gradient(135deg, var(--brand-gold-light), var(--brand-gold));
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-strong);
+}
+
+.redesign-btn-secondary {
+  background: transparent;
+  color: var(--text-light);
+  padding: var(--space-md) var(--space-xl);
+  border: 2px solid var(--border-light);
+  border-radius: var(--radius-md);
+  font-weight: 500;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.redesign-btn-secondary:hover {
+  border-color: var(--brand-gold);
+  color: var(--brand-gold);
+  background: rgba(212, 175, 55, 0.1);
+}
+
+.redesign-grid {
+  display: grid;
+  gap: var(--space-lg);
+}
+
+.redesign-grid-2 {
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+}
+
+.redesign-grid-3 {
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+}
+
+.redesign-grid-4 {
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+}
+
+.redesign-stepper {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+.redesign-step {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-lg);
+  padding: var(--space-lg);
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-light);
+  transition: all 0.3s ease;
+}
+
+.redesign-step:hover {
+  background: var(--bg-card-hover);
+  border-color: var(--border-gold);
+}
+
+.redesign-step-number {
+  background: linear-gradient(135deg, var(--brand-gold), var(--brand-gold-dark));
+  color: white;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1.25rem;
+  flex-shrink: 0;
+}
+
+/* Remove any genre card specific styling that might cause blue overlays */
+.redesign-genre-card {
+  /* Use only the base card styles */
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .redesign-section {
+    padding: var(--space-lg) 0;
+  }
+  
+  .redesign-container {
+    padding: 0 var(--space-sm);
+  }
+  
+  .redesign-stepper {
+    gap: var(--space-md);
+  }
+  
+  .redesign-step {
+    flex-direction: column;
+    text-align: center;
+    gap: var(--space-md);
+  }
+  
+  .redesign-grid-2,
+  .redesign-grid-3,
+  .redesign-grid-4 {
+    grid-template-columns: 1fr;
+  }
+}

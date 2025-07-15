@@ -1,0 +1,607 @@
+/* Comprehensive Mobile & Desktop Responsive Styles */
+
+/* ===== TEXT OVERFLOW PREVENTION ===== */
+/* Global text overflow prevention */
+* {
+  overflow-wrap: break-word !important;
+  word-wrap: break-word !important;
+  hyphens: auto !important;
+}
+
+/* Prevent text from jumping out of containers */
+.text-container,
+.content,
+.card-content,
+.modal-content,
+.dialog-content {
+  overflow: hidden !important;
+  word-break: break-word !important;
+  overflow-wrap: anywhere !important;
+}
+
+/* Ensure headings don't overflow */
+h1, h2, h3, h4, h5, h6 {
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+/* Allow multi-line headings when needed */
+h1.multi-line,
+h2.multi-line,
+h3.multi-line {
+  white-space: normal !important;
+  line-height: 1.2 !important;
+  overflow: visible !important;
+}
+
+/* Prevent paragraph text overflow */
+p {
+  overflow-wrap: break-word !important;
+  word-break: break-word !important;
+  hyphens: auto !important;
+  max-width: 100% !important;
+}
+
+/* Button text overflow prevention */
+button, .btn {
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+  max-width: 100% !important;
+}
+
+/* Link text overflow prevention */
+a {
+  overflow-wrap: break-word !important;
+  word-break: break-word !important;
+}
+
+/* Navigation text overflow prevention */
+nav a,
+.nav-link {
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+  max-width: 100% !important;
+}
+
+/* Form input text overflow prevention */
+input, textarea, select {
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+  max-width: 100% !important;
+}
+
+/* Card title overflow prevention */
+.card-title,
+.story-title {
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+  max-width: 100% !important;
+}
+
+/* Modal and dialog text overflow prevention */
+.modal-title,
+.dialog-title {
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+  max-width: 100% !important;
+}
+
+/* ===== BASE MOBILE OPTIMIZATIONS ===== */
+@media (max-width: 768px) {
+  /* Prevent horizontal scrolling */
+  body, html {
+    overflow-x: hidden !important;
+    -webkit-text-size-adjust: 100% !important;
+    -ms-text-size-adjust: 100% !important;
+  }
+  
+  * {
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Container optimizations */
+  .container {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+  }
+
+  /* Typography optimizations */
+  h1 {
+    font-size: 1.75rem !important;
+    line-height: 1.2 !important;
+  }
+
+  h2 {
+    font-size: 1.5rem !important;
+    line-height: 1.3 !important;
+  }
+
+  h3 {
+    font-size: 1.25rem !important;
+    line-height: 1.4 !important;
+  }
+
+  p {
+    font-size: 0.95rem !important;
+    line-height: 1.6 !important;
+  }
+
+  /* Touch-friendly buttons */
+  button, .btn, a[role="button"] {
+    min-height: 44px !important;
+    min-width: 44px !important;
+    padding: 0.75rem 1rem !important;
+    font-size: 1rem !important;
+    touch-action: manipulation !important;
+  }
+
+  /* Form elements */
+  input, textarea, select {
+    font-size: 16px !important; /* Prevents zoom on iOS */
+    padding: 0.75rem !important;
+    min-height: 44px !important;
+    border-radius: 0.5rem !important;
+  }
+
+  /* Card optimizations */
+  .card {
+    margin: 0.5rem !important;
+    padding: 1rem !important;
+    border-radius: 0.75rem !important;
+  }
+
+  /* Grid adjustments */
+  .grid {
+    gap: 1rem !important;
+  }
+
+  /* Spacing adjustments */
+  .space-y-8 > * + * {
+    margin-top: 1.5rem !important;
+  }
+
+  .space-y-6 > * + * {
+    margin-top: 1rem !important;
+  }
+
+  .space-y-4 > * + * {
+    margin-top: 0.75rem !important;
+  }
+
+  /* Modal and dialog improvements */
+  .dialog-content, [role="dialog"] {
+    margin: 1rem !important;
+    max-width: calc(100vw - 2rem) !important;
+    max-height: calc(100vh - 2rem) !important;
+  }
+
+  /* Image optimizations */
+  img {
+    max-width: 100% !important;
+    height: auto !important;
+    border-radius: 0.5rem !important;
+  }
+
+  /* Video background adjustments */
+  video {
+    object-fit: cover !important;
+    width: 100% !important;
+    height: 100% !important;
+  }
+
+  /* Navigation improvements */
+  nav {
+    padding: 0.5rem 1rem !important;
+  }
+
+  /* Header mobile optimization */
+  header {
+    padding: 0.5rem 1rem !important;
+  }
+
+  /* Story creation containers */
+  .story-creation-container {
+    padding: 1rem !important;
+    margin: 0 !important;
+  }
+
+  /* Text overflow prevention */
+  .story-text-section,
+  .story-text-section * {
+    word-break: break-word !important;
+    overflow-wrap: anywhere !important;
+    hyphens: auto !important;
+  }
+}
+
+/* ===== EXTRA SMALL SCREENS ===== */
+@media (max-width: 480px) {
+  /* Typography for very small screens */
+  h1 {
+    font-size: 1.5rem !important;
+  }
+
+  h2 {
+    font-size: 1.25rem !important;
+  }
+
+  h3 {
+    font-size: 1.125rem !important;
+  }
+
+  p {
+    font-size: 0.875rem !important;
+  }
+
+  /* Container padding */
+  .container {
+    padding-left: 0.75rem !important;
+    padding-right: 0.75rem !important;
+  }
+
+  /* Button adjustments */
+  button, .btn {
+    width: 100% !important;
+    padding: 1rem !important;
+    font-size: 1rem !important;
+  }
+
+  /* Card padding */
+  .card {
+    padding: 0.75rem !important;
+    margin: 0.25rem !important;
+  }
+
+  /* Navigation mobile stack */
+  .nav-links {
+    flex-direction: column !important;
+    gap: 0.5rem !important;
+  }
+
+  /* Ensure containers don't overflow */
+  .story-container {
+    max-width: 100vw !important;
+    overflow-x: hidden !important;
+  }
+}
+
+/* ===== SMALL TABLETS ===== */
+@media (min-width: 481px) and (max-width: 768px) {
+  .container {
+    padding-left: 1.5rem !important;
+    padding-right: 1.5rem !important;
+  }
+
+  h1 {
+    font-size: 2rem !important;
+  }
+
+  h2 {
+    font-size: 1.75rem !important;
+  }
+
+  .card {
+    padding: 1.25rem !important;
+  }
+}
+
+/* ===== LARGE TABLETS ===== */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .container {
+    padding-left: 2rem !important;
+    padding-right: 2rem !important;
+  }
+
+  h1 {
+    font-size: 2.25rem !important;
+  }
+
+  h2 {
+    font-size: 1.875rem !important;
+  }
+
+  .card {
+    padding: 1.5rem !important;
+  }
+}
+
+/* ===== DESKTOP OPTIMIZATIONS ===== */
+@media (min-width: 1025px) {
+  .container {
+    max-width: 1200px !important;
+    margin: 0 auto !important;
+    padding-left: 2rem !important;
+    padding-right: 2rem !important;
+  }
+
+  h1 {
+    font-size: 2.5rem !important;
+  }
+
+  h2 {
+    font-size: 2rem !important;
+  }
+
+  h3 {
+    font-size: 1.5rem !important;
+  }
+
+  /* Desktop hover effects */
+  .hover\\:scale-105:hover {
+    transform: scale(1.05) !important;
+  }
+
+  .hover\\:shadow-lg:hover {
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05) !important;
+  }
+}
+
+/* ===== LARGE DESKTOP ===== */
+@media (min-width: 1440px) {
+  .container {
+    max-width: 1400px !important;
+  }
+
+  h1 {
+    font-size: 3rem !important;
+  }
+
+  h2 {
+    font-size: 2.5rem !important;
+  }
+}
+
+/* ===== LANDSCAPE MOBILE PHONES ===== */
+@media (max-width: 768px) and (orientation: landscape) {
+  /* Adjust video hero for landscape */
+  .cinematic-hero {
+    min-height: 100vh !important;
+  }
+
+  /* Reduce vertical padding in landscape */
+  .py-16 {
+    padding-top: 2rem !important;
+    padding-bottom: 2rem !important;
+  }
+
+  /* Optimize header for landscape */
+  header {
+    padding: 0.25rem 1rem !important;
+  }
+}
+
+/* ===== TOUCH DEVICE OPTIMIZATIONS ===== */
+@media (hover: none) and (pointer: coarse) {
+  /* Remove hover effects on touch devices */
+  .hover\\:scale-105:hover {
+    transform: none !important;
+  }
+
+  .hover\\:shadow-lg:hover {
+    box-shadow: none !important;
+  }
+
+  /* Increase tap targets */
+  a, button, input, select, textarea {
+    min-height: 44px !important;
+    min-width: 44px !important;
+  }
+
+  /* Improve touch feedback */
+  button:active {
+    transform: scale(0.98) !important;
+    transition: transform 0.1s !important;
+  }
+
+  /* Touch-friendly scrolling */
+  .overflow-y-auto {
+    -webkit-overflow-scrolling: touch !important;
+  }
+}
+
+/* ===== HIGH DPI DISPLAYS (RETINA) ===== */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  /* Optimize images for high DPI */
+  img {
+    image-rendering: -webkit-optimize-contrast !important;
+  }
+}
+
+/* ===== ACCESSIBILITY IMPROVEMENTS ===== */
+@media (max-width: 768px) {
+  /* Improve focus visibility */
+  *:focus {
+    outline: 2px solid #3b82f6 !important;
+    outline-offset: 2px !important;
+  }
+
+  /* Ensure text remains readable */
+  .text-sm {
+    font-size: 0.875rem !important;
+    line-height: 1.5 !important;
+  }
+
+  /* Improve contrast for mobile */
+  .text-slate-400 {
+    color: #94a3b8 !important;
+  }
+
+  .text-slate-500 {
+    color: #64748b !important;
+  }
+}
+
+/* ===== SLIDESHOW MOBILE OPTIMIZATIONS ===== */
+@media (max-width: 768px) {
+  .story-slideshow-mobile {
+    padding: 0.5rem !important;
+  }
+
+  .story-slideshow-mobile .card-content {
+    padding: 1rem !important;
+  }
+
+  /* Slideshow container mobile */
+  .slideshow-container {
+    margin: 0.5rem !important;
+    max-height: calc(100vh - 2rem) !important;
+  }
+
+  /* Slideshow controls mobile */
+  .slideshow-controls {
+    padding: 0.75rem !important;
+    gap: 0.5rem !important;
+  }
+
+  /* Slideshow progress bar mobile */
+  .slideshow-progress {
+    width: 100% !important;
+    max-width: 200px !important;
+  }
+
+  /* Slideshow text mobile */
+  .slideshow-text {
+    font-size: 0.9rem !important;
+    line-height: 1.5 !important;
+    padding: 0.75rem !important;
+  }
+}
+
+/* ===== STORY CREATION MOBILE OPTIMIZATIONS ===== */
+@media (max-width: 768px) {
+  .story-creation-text {
+    font-size: 0.9rem !important;
+    line-height: 1.5 !important;
+    padding: 0.75rem !important;
+  }
+
+  .story-creation-form {
+    padding: 1rem !important;
+  }
+
+  .story-creation-input {
+    font-size: 16px !important;
+    padding: 0.75rem !important;
+  }
+
+  /* Story creation cards mobile optimization */
+  .story-card-landscape,
+  .genre-card {
+    overflow: hidden !important;
+    word-break: break-word !important;
+    overflow-wrap: anywhere !important;
+  }
+
+  .story-card-landscape h3,
+  .genre-card h3,
+  .story-card-landscape .card-title,
+  .genre-card .card-title {
+    font-size: 0.875rem !important;
+    line-height: 1.3 !important;
+    overflow: hidden !important;
+    display: -webkit-box !important;
+    -webkit-line-clamp: 3 !important;
+    -webkit-box-orient: vertical !important;
+    white-space: normal !important;
+    word-break: break-word !important;
+    overflow-wrap: anywhere !important;
+  }
+
+  .story-card-landscape p,
+  .genre-card p,
+  .story-card-landscape .card-description,
+  .genre-card .card-description {
+    font-size: 0.75rem !important;
+    line-height: 1.4 !important;
+    overflow: hidden !important;
+    word-break: break-word !important;
+    overflow-wrap: anywhere !important;
+    hyphens: auto !important;
+  }
+
+  /* Story suggestion cards mobile optimization */
+  .story-suggestion-card {
+    overflow: hidden !important;
+    word-break: break-word !important;
+    overflow-wrap: anywhere !important;
+  }
+
+  .story-suggestion-card p {
+    font-size: 0.875rem !important;
+    line-height: 1.5 !important;
+    overflow: hidden !important;
+    word-break: break-word !important;
+    overflow-wrap: anywhere !important;
+    hyphens: auto !important;
+  }
+}
+
+/* ===== HEADER MOBILE OPTIMIZATIONS ===== */
+@media (max-width: 768px) {
+  /* Mobile header layout */
+  .header-mobile {
+    padding: 0.5rem 1rem !important;
+  }
+
+  /* Mobile navigation */
+  .nav-mobile {
+    flex-direction: column !important;
+    gap: 0.5rem !important;
+  }
+
+  /* Mobile logo */
+  .logo-mobile {
+    font-size: 1.5rem !important;
+  }
+
+  /* Mobile menu button */
+  .menu-button {
+    padding: 0.5rem !important;
+    min-width: 44px !important;
+    min-height: 44px !important;
+  }
+}
+
+/* ===== PERFORMANCE OPTIMIZATIONS ===== */
+@media (max-width: 768px) {
+  /* Reduce animations on mobile for better performance */
+  .animate-pulse {
+    animation: none !important;
+  }
+
+  /* Optimize transitions */
+  * {
+    transition-duration: 0.2s !important;
+  }
+
+  /* Reduce shadow complexity on mobile */
+  .shadow-lg {
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important;
+  }
+}
+
+/* ===== PRINT STYLES ===== */
+@media print {
+  /* Hide non-essential elements when printing */
+  header, nav, .no-print {
+    display: none !important;
+  }
+
+  /* Optimize text for printing */
+  body {
+    font-size: 12pt !important;
+    line-height: 1.4 !important;
+  }
+
+  /* Ensure good contrast for printing */
+  .text-slate-400 {
+    color: #000 !important;
+  }
+}

@@ -1,0 +1,112 @@
+/* LANDSCAPE STORY CARD STYLES */
+.story-card-landscape {
+  aspect-ratio: 4/3;
+  border-radius: 16px;
+  overflow: hidden;
+  position: relative;
+  transform: perspective(900px) rotateX(5deg);
+  transition: transform .28s cubic-bezier(.25,.8,.27,1),
+             box-shadow .28s cubic-bezier(.25,.8,.27,1);
+  cursor: pointer;
+}
+
+.story-card-landscape:hover {
+  transform: perspective(900px) rotateX(0deg) translateY(-4px);
+  box-shadow: 0 16px 40px rgba(0,0,0,.4);
+}
+
+/* Fixed image sizing to cover entire card */
+.story-card-landscape img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  opacity: 0;
+  transition: opacity .6s ease, transform .3s ease;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.story-card-landscape img.loaded {
+  opacity: 1;
+}
+
+.story-card-landscape:hover img {
+  transform: scale(1.05);
+}
+
+/* Enhanced content positioning with stronger overlay for better text readability */
+.story-card-landscape .content {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  z-index: 3;
+  background: linear-gradient(to top, 
+    rgba(0,0,0,0.98) 0%, 
+    rgba(0,0,0,0.92) 30%, 
+    rgba(0,0,0,0.80) 60%, 
+    rgba(0,0,0,0.60) 80%, 
+    transparent 100%);
+  backdrop-filter: blur(4px) brightness(0.8);
+  border-radius: 0 0 16px 16px;
+  min-height: 110px;
+}
+
+/* Improved typography with better contrast and readability */
+.story-card-landscape h3 {
+  font-family: "Cormorant Garamond", serif;
+  font-size: 18px;
+  line-height: 22px;
+  font-weight: 700;
+  color: #FFFFFF;
+  text-shadow: 
+    0 2px 4px rgba(0,0,0,0.95),
+    0 4px 8px rgba(0,0,0,0.8),
+    0 6px 12px rgba(0,0,0,0.6);
+  margin-bottom: 6px;
+  letter-spacing: 0.3px;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  max-height: 66px;
+}
+
+.story-card-landscape p {
+  font-family: "Inter", sans-serif;
+  font-size: 16px;
+  line-height: 22px;
+  font-weight: 500;
+  color: rgba(255,255,255,0.95);
+  text-shadow: 
+    0 2px 4px rgba(0,0,0,0.95),
+    0 4px 8px rgba(0,0,0,0.8);
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  letter-spacing: 0.3px;
+}
+
+/* Badge with enhanced styling and better positioning */
+.story-card-landscape .badge {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 40px;
+  height: 40px;
+  backdrop-filter: blur(12px) brightness(1.4);
+  border: 2px solid rgba(255,255,255,.4);
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  z-index: 4;
+  background: rgba(0,0,0,0.5);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+}

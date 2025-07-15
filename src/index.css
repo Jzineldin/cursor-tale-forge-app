@@ -1,0 +1,121 @@
+
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800&display=swap");
+
+/* Import modular design system files */
+@import "./styles/design-tokens.css";
+@import "./styles/global.css";
+@import "./styles/components.css";
+@import "./styles/utilities.css";
+@import "./styles/animations.css";
+
+/* Import existing specialized stylesheets */
+@import "./styles/hero.css";
+@import "./styles/magical-library.css";
+
+/* Import modular story card styles */
+@import "./styles/story-card-landscape.css";
+@import "./styles/story-card-portrait.css";
+@import "./styles/story-card-animations.css";
+@import "./styles/story-card-shared.css";
+
+/* Import new responsive genre styles */
+@import "./styles/genre-responsive.css";
+
+/* Import mobile responsive styles */
+@import "./styles/mobile-responsive.css";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom gradient utilities */
+@layer utilities {
+  .bg-gradient-radial {
+    background-image: radial-gradient(var(--tw-gradient-stops));
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  
+  html {
+    color-scheme: light dark;
+  }
+  
+  html,
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+  
+  #root {
+    min-height: 100vh;
+    background: transparent !important;
+  }
+  
+  /* Typography standardization */
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Playfair Display', serif !important;
+    font-weight: 600;
+    color: hsl(var(--foreground)) !important;
+    line-height: 1.2;
+  }
+  
+  /* Special case for Tale Forge title */
+  h1.tale-forge-title {
+    /* Keep existing styling for main brand title */
+  }
+  
+  p {
+    color: hsl(var(--foreground)) !important;
+    margin-bottom: 1rem;
+    font-family: 'Inter', sans-serif !important;
+  }
+  
+  button {
+    font-family: 'Inter', sans-serif !important;
+  }
+  
+  label {
+    font-family: 'Inter', sans-serif !important;
+  }
+  
+  /* Remove any purple color overrides */
+  .text-purple-500,
+  .text-purple-600,
+  .text-purple-700,
+  .text-purple-800,
+  .text-purple-900 {
+    color: hsl(var(--primary)) !important;
+  }
+  
+  /* Remove any purple background overrides */
+  .bg-purple-50,
+  .bg-purple-100,
+  .bg-purple-200,
+  .bg-purple-300,
+  .bg-purple-400,
+  .bg-purple-500,
+  .bg-purple-600,
+  .bg-purple-700,
+  .bg-purple-800,
+  .bg-purple-900 {
+    background-color: hsl(var(--primary)) !important;
+  }
+  
+  /* Allow blue colors to display properly for UI elements */
+}
+
+/* Override any potential inconsistent backgrounds */
+@layer utilities {
+  .bg-background {
+    background-color: hsl(var(--background)) !important;
+  }
+  
+  .text-foreground {
+    color: hsl(var(--foreground)) !important;
+  }
+}

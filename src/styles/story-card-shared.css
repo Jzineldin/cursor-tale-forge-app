@@ -1,0 +1,23 @@
+/* SHARED STORY CARD UTILITIES AND RESPONSIVE STYLES */
+
+.title-row {
+  display: flex;
+  align-items: flex-start;
+  width: 100%;
+}
+
+.story-title, .story-card-landscape h3 {
+  width: 100%;
+  min-width: 0;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  overflow: hidden;
+  font-size: 1.1rem;
+}
+
+@media (max-width: 600px) {
+  .story-title, .story-card-landscape h3 {
+    font-size: 0.95rem;
+  }
+}

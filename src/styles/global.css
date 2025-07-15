@@ -1,0 +1,156 @@
+
+/* GLOBAL BACKDROP */
+.scene-bg {
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  background:
+    url("https://cdn.midjourney.com/11bac597-89f4-4f16-99f0-4b114af4473f/0_2.png")
+      center bottom / cover no-repeat;
+  pointer-events: none;
+}
+
+/* CSS Variables for brand colors */
+:root {
+  --brand-gold-light: #FFD700;
+  --brand-gold-primary: #D4AF37;
+  --brand-gold-dark: #B8860B;
+}
+
+/* Ensure consistent background transparency */
+* {
+  color-scheme: light dark;
+}
+
+body, #root {
+  background: transparent !important;
+}
+
+/* Import fonts */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800&display=swap');
+
+/* Font utility classes - STRICTLY ENFORCE APPROVED FONTS */
+.font-heading, .font-serif {
+  font-family: 'Playfair Display', serif !important;
+}
+
+.font-body, .font-sans {
+  font-family: 'Inter', sans-serif !important;
+}
+
+/* Remove all other font families */
+* {
+  font-family: 'Inter', sans-serif !important;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Playfair Display', serif !important;
+}
+
+/* Magical text utility class */
+.magical-text {
+  color: var(--brand-gold-light) !important;
+  text-shadow: 0 0 8px rgba(212, 175, 55, 0.3), 0 0 16px rgba(212, 175, 55, 0.2) !important;
+}
+
+/* Magical effects - using amber instead of purple */
+.magical-glow {
+  box-shadow: 0 0 20px rgba(245, 158, 11, 0.15);
+}
+
+/* Enhanced spacing and typography */
+.section-spacing {
+  padding: 3rem 1rem;
+}
+
+@media (min-width: 768px) {
+  .section-spacing {
+    padding: 3rem 1rem;
+  }
+}
+
+/* Improved readability for cards and overlays */
+.text-shadow-strong {
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
+}
+
+.backdrop-blur-strong {
+  backdrop-filter: blur(12px) brightness(0.8);
+}
+
+/* Enhanced text readability */
+.text-enhanced-shadow {
+  text-shadow: 
+    0 1px 3px rgba(0, 0, 0, 0.8),
+    0 2px 6px rgba(0, 0, 0, 0.6);
+}
+
+/* Better gradient overlays for improved contrast */
+.gradient-overlay-strong {
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    rgba(0, 0, 0, 0.3) 40%,
+    rgba(0, 0, 0, 0.8) 80%,
+    rgba(0, 0, 0, 0.95) 100%
+  );
+}
+
+/* Footer Styling */
+.redesign-footer {
+  background: linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(30, 41, 59, 0.95) 100%);
+  backdrop-filter: blur(10px);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 3rem 0 2rem 0;
+  margin-top: 4rem;
+}
+
+.redesign-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+@media (min-width: 768px) {
+  .redesign-container {
+    padding: 0 2rem;
+  }
+}
+
+/* Ensure text is always visible with proper contrast */
+.text-white {
+  color: white !important;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7);
+}
+
+.text-gray-400 {
+  color: rgb(156, 163, 175) !important;
+}
+
+.text-gray-300 {
+  color: rgb(209, 213, 219) !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.text-amber-400 {
+  color: rgb(251, 191, 36) !important;
+}
+
+.text-amber-300 {
+  color: rgb(252, 211, 77) !important;
+}
+
+/* Remove any conflicting dark overlays that cause readability issues */
+section {
+  position: relative;
+}
+
+/* Ensure proper spacing and typography hierarchy */
+p {
+  line-height: 1.6;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  line-height: 1.2;
+}
