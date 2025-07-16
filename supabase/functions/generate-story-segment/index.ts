@@ -22,8 +22,6 @@ serve(async (req) => {
   }
 
   try {
-    console.log('=== STORY GENERATION START ===');
-    
     const requestBody = await req.json();
     const { prompt, genre, storyId, parentSegmentId, choiceText, skipImage, skipAudio, storyMode, voice } = validateRequest(requestBody);
 
@@ -107,7 +105,14 @@ serve(async (req) => {
 
     // Start image generation as background task if not skipped
     if (!skipImage && storyResult.imagePrompt) {
-      console.log('🎨 Starting background image generation task...');
+      console.log('🎨 STARTING BACKGROUND IMAGE GENERATION');
+      console.log('🎨 Image generation details:', {
+        segmentId: segment.id,
+        storyId: finalStoryId,
+        imagePrompt: storyResult.imagePrompt,
+        skipImage: skipImage,
+        hasImagePrompt: !!storyResult.imagePrompt
+      });
       
       const imageVisualContext = {
         genre: genre || storyMode || 'fantasy',
@@ -131,6 +136,12 @@ serve(async (req) => {
           imageVisualContext
         )
       );
+    } else {
+      console.log('🎨 SKIPPING IMAGE GENERATION', {
+        skipImage: skipImage,
+        hasImagePrompt: !!storyResult.imagePrompt,
+        reason: skipImage ? 'skipImage is true' : 'no image prompt'
+      });
     }
 
     return new Response(

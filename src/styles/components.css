@@ -130,6 +130,365 @@
   /* Use only the base card styles */
 }
 
+/* Genre Page Layout Fix - Critical Bug Resolution */
+.genre-page-container {
+  background: linear-gradient(rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.25)), url('/images/astronaut-background-genre.jpg') !important;
+  min-height: 100vh !important;
+  min-height: 100dvh !important; /* Modern viewport units */
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  height: 100dvh !important;
+  z-index: 40 !important; /* Below header (50) but above other content */
+  overflow-y: auto !important;
+  
+  /* Enhanced background handling */
+  background-size: auto, cover !important;
+  background-position: center, center !important;
+  background-repeat: no-repeat, no-repeat !important;
+  background-attachment: fixed, fixed !important;
+  
+  /* Smooth fade-in animation */
+  animation: backgroundFadeIn 0.8s ease-out !important;
+}
+
+/* Background fade-in animation */
+@keyframes backgroundFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.genre-content {
+  padding: 0 !important;
+  position: relative !important;
+  z-index: 41 !important; /* Slightly above genre container */
+  min-height: 100% !important;
+  
+  /* Subtle backdrop blur for better card readability */
+  backdrop-filter: blur(1px) !important;
+  -webkit-backdrop-filter: blur(1px) !important;
+}
+
+/* Ensure header stays on top */
+body[data-route="/create/genre"] .fixed.top-0.left-0.right-0 {
+  z-index: 50 !important;
+}
+
+/* Route isolation - hide bleeding content */
+body[data-route="/create/genre"] .landing-page,
+body[data-route="/create/genre"] .home-page {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+}
+
+/* Ensure no gaps or transparency issues */
+body[data-route="/create/genre"] {
+  overflow-x: hidden !important;
+}
+
+/* Fix for mobile viewport units */
+@supports (height: 100dvh) {
+  .genre-page-container {
+    height: 100dvh !important;
+    min-height: 100dvh !important;
+  }
+}
+
+/* Responsive background handling */
+@media (max-width: 768px) {
+  .genre-page-container {
+    background-attachment: scroll !important; /* Better mobile performance */
+  }
+}
+
+/* Loading state for background image */
+.genre-page-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #1a1f3a 0%, #2d3561 50%, #1a1f3a 100%);
+  z-index: -1;
+  opacity: 1;
+  transition: opacity 0.3s ease;
+}
+
+.genre-page-container.loaded::before {
+  opacity: 0;
+}
+
+/* Debugging - remove in production */
+.genre-page-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #1a1f3a;
+  z-index: -1;
+}
+
+/* Genre Card - Icon First Design with Responsive Sizing */
+.genre-card {
+  padding: 0 !important;
+  text-align: center;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.27, 1);
+  transform-origin: center;
+  
+  /* Base mobile size - wider to prevent text cutoff */
+  width: 180px !important;
+  min-width: 180px !important;
+}
+
+/* Responsive card sizing for text cutoff prevention - much wider */
+@media (min-width: 640px) {
+  .genre-card {
+    width: 200px !important;
+    min-width: 200px !important;
+  }
+}
+
+@media (min-width: 1024px) {
+  .genre-card {
+    width: 240px !important;
+    min-width: 240px !important;
+  }
+}
+
+@media (min-width: 1280px) {
+  .genre-card {
+    width: 280px !important;
+    min-width: 280px !important;
+  }
+}
+
+/* Genre Grid Container Optimizations */
+.genre-grid-container {
+  display: grid;
+  justify-content: center;
+  grid-gap: 1rem;
+  padding: 2rem 1rem;
+  
+  /* Responsive columns that accommodate wider cards */
+  grid-template-columns: repeat(2, 180px);
+}
+
+@media (min-width: 640px) {
+  .genre-grid-container {
+    grid-template-columns: repeat(2, 200px);
+    grid-gap: 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .genre-grid-container {
+    grid-template-columns: repeat(3, 240px);
+    grid-gap: 2rem;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+}
+
+@media (min-width: 1280px) {
+  .genre-grid-container {
+    grid-template-columns: repeat(3, 280px);
+    max-width: 900px;
+  }
+}
+
+.genre-card:hover {
+  transform: scale(1.05) translateY(-4px);
+  box-shadow: 0 16px 40px rgba(245, 158, 11, 0.2);
+}
+
+.card-icon {
+  font-size: 3.5rem;
+  margin-bottom: 0.75rem;
+  filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.5));
+  transition: all 0.3s ease;
+  display: none; /* Clean removal - let the beautiful AI art shine */
+}
+
+.genre-card:hover .card-icon {
+  transform: scale(1.1);
+  filter: drop-shadow(0 12px 24px rgba(245, 158, 11, 0.3));
+}
+
+.card-title {
+  /* Force override all Tailwind classes */
+  font-size: 0.9rem !important;
+  font-weight: 700 !important;
+  color: white !important;
+  margin-bottom: 0.5rem !important;
+  
+  /* Smart text wrapping for cutoff fix */
+  line-height: 1.2 !important;
+  max-height: 2.4em !important;
+  overflow: hidden !important;
+  display: -webkit-box !important;
+  -webkit-line-clamp: 2 !important;
+  -webkit-box-orient: vertical !important;
+  text-align: center !important;
+  
+  /* Better text handling */
+  word-break: break-word !important;
+  overflow-wrap: anywhere !important;
+  white-space: normal !important;
+  padding: 0 0.25rem !important;
+  
+  /* Responsive font sizing for desktop */
+}
+
+@media (min-width: 640px) {
+  .card-title {
+    font-size: 1rem !important;
+    padding: 0 0.5rem !important;
+  }
+}
+
+@media (min-width: 1024px) {
+  .card-title {
+    font-size: 1.1rem !important;
+    padding: 0 0.75rem !important;
+  }
+}
+
+@media (min-width: 1280px) {
+  .card-title {
+    font-size: 1.125rem !important;
+    padding: 0 1rem !important;
+  }
+}
+
+.card-mood {
+  font-size: 0.875rem;
+  margin-bottom: 1rem;
+  opacity: 0.9;
+}
+
+.card-details {
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.27, 1);
+  overflow: hidden;
+}
+
+.tag {
+  font-size: 0.75rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 9999px;
+  white-space: nowrap;
+  backdrop-filter: blur(4px);
+  transition: all 0.2s ease;
+}
+
+.tag:hover {
+  background: rgba(245, 158, 11, 0.3);
+  transform: scale(1.05);
+}
+
+/* Mobile Optimizations */
+@media (max-width: 768px) {
+  .genre-card {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+  
+  /* Tap to expand on mobile */
+  .genre-card.expanded .card-details {
+    opacity: 1 !important;
+    max-height: 5rem !important;
+    margin-top: 0.5rem;
+  }
+  
+  .card-icon {
+    font-size: 3rem;
+    display: none !important; /* Hide emojis on mobile */
+  }
+  
+  .card-title {
+    font-size: 1rem;
+  }
+  
+  .card-mood {
+    font-size: 0.8rem;
+  }
+  
+  .tag {
+    font-size: 0.7rem;
+    padding: 0.2rem 0.4rem;
+  }
+}
+
+/* Tablet adjustments */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .card-icon {
+    font-size: 3.25rem;
+    display: none !important; /* Hide emojis on tablet */
+  }
+}
+
+/* Desktop enhancements */
+@media (min-width: 1025px) {
+  .genre-card:hover {
+    transform: scale(1.08) translateY(-6px);
+  }
+  
+  .card-icon {
+    font-size: 4rem;
+    display: none !important; /* Hide emojis on desktop */
+  }
+  
+  .card-title {
+    font-size: 1.25rem;
+    line-height: 1.25;
+    padding: 0 0.75rem; /* More padding on desktop */
+  }
+}
+
+/* Accessibility improvements */
+.genre-card:focus-visible {
+  outline: 2px solid #F59E0B;
+  outline-offset: 2px;
+}
+
+.genre-card:focus-visible .card-details {
+  opacity: 1;
+  max-height: 5rem;
+}
+
+/* Animation for smooth tag appearance */
+.tag {
+  animation: tagFadeIn 0.3s ease-out forwards;
+}
+
+.tag:nth-child(2) {
+  animation-delay: 0.1s;
+}
+
+.tag:nth-child(3) {
+  animation-delay: 0.2s;
+}
+
+@keyframes tagFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
   .redesign-section {
@@ -155,4 +514,44 @@
   .redesign-grid-4 {
     grid-template-columns: 1fr;
   }
+}
+
+/* Prompt Page Layout Fix - Critical Bug Resolution */
+.prompt-page-container {
+  background: #1a1f3a !important; /* fallback */
+  min-height: 100vh !important;
+  min-height: 100dvh !important;
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  height: 100dvh !important;
+  z-index: 40 !important;
+  overflow-y: auto !important;
+  background-size: cover !important;
+  background-position: center !important;
+  background-repeat: no-repeat !important;
+  background-attachment: fixed !important;
+  animation: backgroundFadeIn 0.8s ease-out !important;
+}
+
+.prompt-content {
+  padding: 0 !important;
+  position: relative !important;
+  z-index: 41 !important;
+  min-height: 100% !important;
+  backdrop-filter: blur(1px) !important;
+  -webkit-backdrop-filter: blur(1px) !important;
+}
+
+/* Hide landing/home page when on prompt page */
+body[data-route^='/create/prompt'] .landing-page,
+body[data-route^='/create/prompt'] .home-page {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+}
+body[data-route^='/create/prompt'] {
+  overflow-x: hidden !important;
 }

@@ -13,13 +13,7 @@ export const useImageState = (
     
     const validSegmentId = segmentId && segmentId !== 'fallback' ? segmentId : `temp-${Date.now()}`;
     
-    console.log(`[useImageState ${validSegmentId}] State:`, {
-        imageUrl: imageUrl || 'Missing',
-        imageGenerationStatus,
-        imageLoaded,
-        imageError,
-        forceRefresh
-    });
+    // State logging available in development mode
     
     // Reset when URL changes or status becomes completed
     useEffect(() => {
@@ -31,7 +25,6 @@ export const useImageState = (
                            (imageUrl && imageUrl !== '/placeholder.svg' && imageUrl.includes('supabase.co'));
         
         if (shouldReset) {
-            console.log(`[useImageState ${validSegmentId}] RESETTING - URL or status changed`);
             setImageLoaded(false);
             setImageError(false);
             setLastImageUrl(imageUrl || '');

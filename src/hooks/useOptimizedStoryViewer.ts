@@ -2,12 +2,13 @@
 import { useStoryData } from '@/hooks/useStoryData';
 import { useStoryRealtimeWithPolling } from '@/hooks/useStoryRealtimeWithPolling';
 import { useStoryActions } from '@/hooks/useStoryActions';
+import { secureConsole } from '@/utils/secureLogger';
 
 export const useOptimizedStoryViewer = () => {
     const { story, isLoading, error, refetch, storyId } = useStoryData();
     const segments = story?.story_segments || [];
     
-    console.log('[OptimizedStoryViewer] Current story data:', {
+    secureConsole.debug('[OptimizedStoryViewer] Current story data:', {
         hasStory: !!story,
         segmentsCount: segments.length,
         segments: segments.map(s => ({
@@ -22,7 +23,7 @@ export const useOptimizedStoryViewer = () => {
     // Validate segment data integrity
     segments.forEach((segment, index) => {
         if (!segment.image_url || segment.image_url === '/placeholder.svg') {
-            console.warn(`[OptimizedStoryViewer] Segment ${index} (${segment.id}) has no valid image:`, {
+            secureConsole.warn(`[OptimizedStoryViewer] Segment ${index} (${segment.id}) has no valid image:`, {
                 image_url: segment.image_url,
                 image_generation_status: segment.image_generation_status
             });
@@ -46,7 +47,7 @@ export const useOptimizedStoryViewer = () => {
         goBackMutation,
     } = useStoryActions(story, storyId);
 
-    console.log('[OptimizedStoryViewer] Story state analysis:', {
+    secureConsole.debug('[OptimizedStoryViewer] Story state analysis:', {
         hasStory: !!story,
         segmentsCount: segments.length,
         isCompleted: story?.is_completed,

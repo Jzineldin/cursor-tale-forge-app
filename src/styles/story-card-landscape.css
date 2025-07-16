@@ -42,10 +42,10 @@
   bottom: 0;
   left: 0;
   right: 0;
-  padding: 20px;
+  padding: 16px;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 4px;
   z-index: 3;
   background: linear-gradient(to top, 
     rgba(0,0,0,0.98) 0%, 
@@ -55,42 +55,18 @@
     transparent 100%);
   backdrop-filter: blur(4px) brightness(0.8);
   border-radius: 0 0 16px 16px;
-  min-height: 110px;
+  min-height: 100px; /* Base minimum height */
 }
 
-/* Improved typography with better contrast and readability */
-.story-card-landscape h3 {
-  font-family: "Cormorant Garamond", serif;
-  font-size: 18px;
-  line-height: 22px;
-  font-weight: 700;
-  color: #FFFFFF;
-  text-shadow: 
-    0 2px 4px rgba(0,0,0,0.95),
-    0 4px 8px rgba(0,0,0,0.8),
-    0 6px 12px rgba(0,0,0,0.6);
-  margin-bottom: 6px;
-  letter-spacing: 0.3px;
-  overflow: hidden;
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-  max-height: 66px;
-}
+/* Typography styles moved to story-card-shared.css for consistency */
 
 .story-card-landscape p {
   font-family: "Inter", sans-serif;
-  font-size: 16px;
-  line-height: 22px;
-  font-weight: 500;
   color: rgba(255,255,255,0.95);
   text-shadow: 
     0 2px 4px rgba(0,0,0,0.95),
     0 4px 8px rgba(0,0,0,0.8);
-  overflow: hidden;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
+  overflow: visible;
   letter-spacing: 0.3px;
 }
 
@@ -109,4 +85,39 @@
   z-index: 4;
   background: rgba(0,0,0,0.5);
   box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+}
+
+/* === RESPONSIVE CONTENT AREA SCALING === */
+
+/* Mobile */
+@media (max-width: 640px) {
+  .story-card-landscape .content {
+    padding: 12px;
+    min-height: 80px;
+  }
+}
+
+/* Tablet */
+@media (min-width: 641px) and (max-width: 1024px) {
+  .story-card-landscape .content {
+    padding: 16px;
+    min-height: 110px;
+  }
+}
+
+/* Desktop */
+@media (min-width: 1025px) and (max-width: 1440px) {
+  .story-card-landscape .content {
+    padding: 20px;
+    min-height: 130px;
+  }
+}
+
+/* Large Desktop & 4K */
+@media (min-width: 1441px) {
+  .story-card-landscape .content {
+    padding: 24px;
+    min-height: 150px; /* More space for larger text */
+    gap: 8px; /* More spacing between elements */
+  }
 }

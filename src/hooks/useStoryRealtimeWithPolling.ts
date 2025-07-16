@@ -2,11 +2,14 @@
 import { useEffect, useRef, useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { StorySegmentRow } from '@/types/stories';
 
 interface UseStoryRealtimeWithPollingProps {
     storyId: string;
-    segments: StorySegmentRow[];
+    segments: Array<{
+        id: string;
+        image_url?: string;
+        image_generation_status?: string;
+    }>;
 }
 
 export const useStoryRealtimeWithPolling = ({ 
@@ -18,11 +21,11 @@ export const useStoryRealtimeWithPolling = ({
     const pollingIntervalRef = useRef<number | null>(null);
     const channelRef = useRef<any>(null);
 
-    // Check if any segments are still generating
+    // Check if any segments are still generating (more conservative check)
     const hasGeneratingSegments = segments.some(segment => {
-        const isGenerating = !segment.image_url || 
-            segment.image_generation_status === 'pending' || 
-            segment.image_generation_status === 'in_progress';
+        const isGenerating = segment.image_generation_status === 'pending' || 
+                           segment.image_generation_status === 'in_progress' ||
+                           (!segment.image_url && segment.image_generation_status !== 'failed');
         
         if (isGenerating) {
             console.log('[Realtime] Segment still generating:', {
@@ -46,13 +49,16 @@ export const useStoryRealtimeWithPolling = ({
     });
 
     const startPolling = () => {
-        if (pollingIntervalRef.current || !hasGeneratingSegments) return;
+        if (pollingIntervalRef.current || !hasGeneratingSegments) {
+            console.log('[Realtime] Skipping polling start - already polling or no generating segments');
+            return;
+        }
         
-        console.log('[Realtime] Starting polling fallback for story:', storyId);
+        console.log('[Realtime] Starting conservative polling for story:', storyId);
         pollingIntervalRef.current = window.setInterval(() => {
             console.log('[Realtime] Polling for updates...');
             queryClient.invalidateQueries({ queryKey: ['story', storyId] });
-        }, 3000);
+        }, 10000); // Increased to 10 seconds to be less aggressive
     };
 
     const stopPolling = () => {
@@ -63,63 +69,14 @@ export const useStoryRealtimeWithPolling = ({
         }
     };
 
-    const handleRealtimeUpdate = (payload: any) => {
-        console.log('[Realtime] Received update payload:', payload);
-        
-        const updatedSegment = payload.new as StorySegmentRow;
-        if (!updatedSegment || updatedSegment.story_id !== storyId) {
-            console.log('[Realtime] Ignoring update - wrong story or no segment data');
-            return;
-        }
-
-        console.log('[Realtime] Processing segment update:', {
-            segmentId: updatedSegment.id,
-            imageUrl: updatedSegment.image_url ? 'present' : 'missing',
-            status: updatedSegment.image_generation_status,
-            imageUrlPreview: updatedSegment.image_url?.substring(0, 50) + '...'
-        });
-
-        // Update React Query cache with new segment data
-        queryClient.setQueryData(['story', storyId], (oldData: any) => {
-            if (!oldData) {
-                console.log('[Realtime] No old data to update');
-                return oldData;
-            }
-            
-            const updatedData = {
-                ...oldData,
-                story_segments: oldData.story_segments?.map((segment: StorySegmentRow) =>
-                    segment.id === updatedSegment.id 
-                        ? { 
-                            ...segment, 
-                            image_url: updatedSegment.image_url,
-                            image_generation_status: updatedSegment.image_generation_status
-                          }
-                        : segment
-                ) || []
-            };
-            
-            console.log('[Realtime] Updated cache data for segment:', {
-                segmentId: updatedSegment.id,
-                newImageUrl: updatedSegment.image_url,
-                newStatus: updatedSegment.image_generation_status
-            });
-            return updatedData;
-        });
-
-        // Force invalidation to ensure all components re-render with fresh data
-        console.log('[Realtime] Forcing query invalidation for story:', storyId);
-        queryClient.invalidateQueries({ queryKey: ['story', storyId] });
-    };
-
-    // Setup realtime subscription
+    // Set up real-time subscription
     useEffect(() => {
         if (!storyId) return;
 
-        console.log('[Realtime] Setting up subscription for story:', storyId);
-
+        console.log('[Realtime] Setting up real-time subscription for story:', storyId);
+        
         const channel = supabase
-            .channel(`story-${storyId}`)
+            .channel(`story-segments-${storyId}`)
             .on(
                 'postgres_changes',
                 {
@@ -128,47 +85,76 @@ export const useStoryRealtimeWithPolling = ({
                     table: 'story_segments',
                     filter: `story_id=eq.${storyId}`
                 },
-                handleRealtimeUpdate
+                (payload) => {
+                    console.log('[Realtime] Received segment update:', {
+                        segmentId: payload.new?.id,
+                        imageStatus: payload.new?.image_generation_status,
+                        hasImageUrl: !!payload.new?.image_url
+                    });
+
+                    // Update cache immediately
+                    queryClient.setQueryData(['story', storyId], (oldData: any) => {
+                        if (!oldData?.story_segments) return oldData;
+                        
+                        return {
+                            ...oldData,
+                            story_segments: oldData.story_segments.map((segment: any) => 
+                                segment.id === payload.new?.id 
+                                    ? { ...segment, ...payload.new }
+                                    : segment
+                            )
+                        };
+                    });
+
+                    // Simple invalidation without aggressive refresh
+                    queryClient.invalidateQueries({ queryKey: ['story', storyId] });
+                    
+                    setRealtimeStatus('connected');
+                }
             )
             .subscribe((status) => {
-                console.log('[Realtime] Subscription status changed:', status);
-                setRealtimeStatus(status);
-
-                if (status === 'SUBSCRIBED') {
-                    console.log('[Realtime] Successfully connected, stopping polling');
-                    stopPolling();
-                } else if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT') {
-                    console.log('[Realtime] Connection failed, starting polling fallback');
+                console.log('[Realtime] Subscription status:', status);
+                setRealtimeStatus(status === 'SUBSCRIBED' ? 'connected' : 'disconnected');
+                
+                if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT') {
+                    console.warn('[Realtime] Subscription failed, starting polling fallback');
                     startPolling();
+                } else if (status === 'SUBSCRIBED') {
+                    console.log('[Realtime] Subscription active, stopping polling');
+                    stopPolling();
                 }
             });
 
         channelRef.current = channel;
+        
+        // Start polling if subscription fails initially
+        const pollingSafetyTimeout = setTimeout(() => {
+            if (realtimeStatus !== 'connected' && hasGeneratingSegments) {
+                console.log('[Realtime] Safety timeout - starting polling as subscription fallback');
+                startPolling();
+            }
+        }, 5000);
 
         return () => {
             console.log('[Realtime] Cleaning up subscription');
+            clearTimeout(pollingSafetyTimeout);
+            stopPolling();
             if (channelRef.current) {
                 supabase.removeChannel(channelRef.current);
             }
-            stopPolling();
         };
     }, [storyId]);
 
-    // Manage polling based on generating segments
+    // Stop polling when no segments are generating
     useEffect(() => {
-        if (hasGeneratingSegments && realtimeStatus !== 'SUBSCRIBED') {
-            console.log('[Realtime] Starting polling - has generating segments and not subscribed');
-            startPolling();
-        } else if (!hasGeneratingSegments) {
-            console.log('[Realtime] Stopping polling - no generating segments');
+        if (!hasGeneratingSegments) {
+            console.log('[Realtime] No more generating segments, stopping polling');
             stopPolling();
         }
-
-        return () => stopPolling();
-    }, [hasGeneratingSegments, realtimeStatus]);
+    }, [hasGeneratingSegments]);
 
     return {
         realtimeStatus,
-        isPolling: pollingIntervalRef.current !== null
+        isPolling: !!pollingIntervalRef.current
     };
 };

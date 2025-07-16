@@ -38,8 +38,6 @@ export const useStoryRealtime = (storyId: string | undefined) => {
     function handleUpdate(payload: any) {
         const seg = payload.new as StorySegmentRow;
         
-        console.log('[DBG] handleUpdate called with segment:', seg.id, seg.image_url);
-
         // write the new row into the list cache
         queryClient.setQueryData<StorySegmentRow[]>(
             SEGMENTS_KEY(seg.story_id),

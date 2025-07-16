@@ -1,8 +1,8 @@
 
-import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import React, { useState, useEffect } from 'react';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Home, BookOpen, Feather, Scroll, Wand2 } from 'lucide-react';
+import { Home, Wand2, Stars, Sparkles, BookOpen, Feather } from 'lucide-react';
 import StoryDisplayLayout from '@/components/story-display/StoryDisplayLayout';
 
 interface StoryLoadingStateProps {
@@ -14,77 +14,173 @@ const StoryLoadingState: React.FC<StoryLoadingStateProps> = ({
   apiCallsCount,
   onExit
 }) => {
+  const [currentStep, setCurrentStep] = useState(0);
+  const [magicalText, setMagicalText] = useState('');
+
+  const steps = [
+    { icon: Feather, text: "Weaving words into wonder...", delay: 0 },
+    { icon: Wand2, text: "Conjuring magical scenes...", delay: 4000 },
+    { icon: Stars, text: "Crafting your adventure...", delay: 8000 },
+    { icon: Sparkles, text: "Almost ready...", delay: 12000 }
+  ];
+
+  const magicalPhrases = [
+    "The tale begins to shimmer...",
+    "Characters are awakening...",
+    "Your story is taking shape...",
+    "Magic is flowing through words...",
+    "The adventure awaits...",
+    "Worlds are being born..."
+  ];
+
+  useEffect(() => {
+    // Cycle through steps
+    const stepInterval = setInterval(() => {
+      setCurrentStep((prev) => (prev + 1) % steps.length);
+    }, 4000);
+
+    // Cycle through magical text
+    const textInterval = setInterval(() => {
+      setMagicalText(magicalPhrases[Math.floor(Math.random() * magicalPhrases.length)]);
+    }, 2500);
+
+    return () => {
+      clearInterval(stepInterval);
+      clearInterval(textInterval);
+    };
+  }, []);
+
+  const CurrentIcon = steps[currentStep]?.icon || Sparkles;
+
   return (
     <StoryDisplayLayout>
-      <div className="flex items-center justify-center min-h-[60vh]">
-        <Card className="w-full max-w-3xl bg-slate-900/95 border-amber-500/30 backdrop-blur-sm">
-          <CardHeader className="text-center pb-6">
-            <CardTitle className="text-amber-200 text-3xl font-serif flex items-center justify-center gap-3 mb-4">
-              <BookOpen className="h-8 w-8 text-amber-400" />
-              The TaleForge is Writing...
-            </CardTitle>
-            <p className="text-amber-300/80 text-lg">Weaving the threads of your destiny into an enchanted tale</p>
-          </CardHeader>
-          <CardContent className="text-center space-y-8">
-            {/* Magical Animation Container */}
+      <div className="flex items-center justify-center min-h-[70vh] relative">
+        {/* Floating magical particles */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          {[...Array(12)].map((_, i) => (
+            <div
+              key={i}
+              className="absolute w-1 h-1 bg-amber-400 rounded-full opacity-70 animate-magical-float"
+              style={{
+                left: `${Math.random() * 100}%`,
+                top: `${Math.random() * 100}%`,
+                animationDelay: `${Math.random() * 3}s`
+              }}
+            />
+          ))}
+        </div>
+
+        <Card className="w-full max-w-3xl bg-gradient-to-br from-slate-900/95 via-slate-800/95 to-slate-900/95 border-2 border-amber-500/40 backdrop-blur-lg shadow-2xl relative overflow-hidden">
+          {/* Animated border glow */}
+          <div className="absolute inset-0 bg-gradient-to-r from-amber-500/20 via-purple-500/20 to-amber-500/20 opacity-75 animate-pulse"></div>
+          
+          <CardContent className="relative text-center space-y-10 py-12 px-8">
+            {/* Main title with magical effect */}
+            <div className="space-y-6">
+              <div className="relative inline-block">
+                <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-400 bg-clip-text text-transparent animate-pulse">
+                  ✨ Crafting Your Tale ✨
+                </h1>
+                <div className="absolute -inset-1 bg-gradient-to-r from-amber-400/20 to-yellow-400/20 blur-lg animate-pulse"></div>
+              </div>
+              
+              <p className="text-xl text-gray-300 font-medium animate-magical-fade-in">
+                {magicalText || "Your story is being born..."}
+              </p>
+            </div>
+
+            {/* Central magical animation */}
             <div className="relative flex items-center justify-center py-8">
-              {/* Central Magical Scroll */}
-              <div className="relative">
-                <Scroll className="h-16 w-16 text-amber-400 animate-pulse" />
-                <div className="absolute inset-0 h-16 w-16 border-2 border-amber-400/30 rounded-full animate-spin"></div>
-                
-                {/* Floating Magical Elements */}
-                <div className="absolute -top-4 -left-4">
-                  <div className="h-3 w-3 bg-purple-400 rounded-full animate-bounce shadow-lg shadow-purple-400/50" style={{ animationDelay: '0s' }}></div>
+              {/* Outer rotating ring */}
+              <div className="absolute w-32 h-32 border-2 border-amber-400/30 rounded-full animate-magical-spin-slow">
+                <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-2">
+                  <Sparkles className="h-4 w-4 text-amber-400 animate-pulse" />
                 </div>
-                <div className="absolute -top-4 -right-4">
-                  <Feather className="h-5 w-5 text-blue-400 animate-bounce" style={{ animationDelay: '0.5s' }} />
-                </div>
-                <div className="absolute -bottom-4 -left-4">
-                  <div className="h-2 w-2 bg-emerald-400 rounded-full animate-bounce shadow-lg shadow-emerald-400/50" style={{ animationDelay: '1s' }}></div>
-                </div>
-                <div className="absolute -bottom-4 -right-4">
-                  <Wand2 className="h-4 w-4 text-pink-400 animate-bounce" style={{ animationDelay: '1.5s' }} />
+                <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-2">
+                  <Stars className="h-4 w-4 text-purple-400 animate-pulse" />
                 </div>
               </div>
               
-              {/* Magical Glow Effect */}
-              <div className="absolute inset-0 bg-gradient-radial from-amber-400/20 via-transparent to-transparent animate-pulse"></div>
+              {/* Middle spinning circle */}
+              <div className="absolute w-20 h-20 border-3 border-purple-400/50 border-t-purple-400 rounded-full animate-spin"></div>
+              
+              {/* Center icon */}
+              <div className="relative z-10 bg-slate-800 rounded-full p-6 border-2 border-amber-400/50 shadow-lg">
+                <CurrentIcon className="h-10 w-10 text-amber-400 animate-bounce" />
+              </div>
+              
+              {/* Pulsing glow */}
+              <div className="absolute inset-0 bg-amber-400/10 rounded-full animate-ping"></div>
             </div>
 
-            {/* Enchanted Loading Messages */}
-            <div className="space-y-4">
-              <div className="flex items-center justify-center gap-3 text-amber-300">
-                <div className="w-2 h-2 bg-amber-400 rounded-full animate-pulse"></div>
-                <span className="font-serif text-lg">Summoning ancient words from the ether...</span>
+            {/* Dynamic progress indicator */}
+            <div className="space-y-6">
+              <div className="flex items-center justify-center gap-4">
+                {steps.map((step, index) => (
+                  <div
+                    key={index}
+                    className={`flex items-center gap-3 px-4 py-2 rounded-full transition-all duration-700 ${
+                      index === currentStep
+                        ? 'bg-amber-500/30 border-2 border-amber-400/60 scale-110'
+                        : index < currentStep
+                        ? 'bg-green-500/20 border border-green-400/40'
+                        : 'bg-slate-700/50 border border-slate-600/30'
+                    }`}
+                  >
+                    <step.icon 
+                      className={`h-5 w-5 transition-colors duration-500 ${
+                        index === currentStep
+                          ? 'text-amber-300 animate-pulse'
+                          : index < currentStep
+                          ? 'text-green-400'
+                          : 'text-gray-500'
+                      }`} 
+                    />
+                    <span 
+                      className={`text-sm font-medium transition-colors duration-500 ${
+                        index === currentStep
+                          ? 'text-amber-200'
+                          : index < currentStep
+                          ? 'text-green-300'
+                          : 'text-gray-400'
+                      }`}
+                    >
+                      {step.text}
+                    </span>
+                  </div>
+                ))}
               </div>
-              <div className="flex items-center justify-center gap-3 text-purple-300">
-                <div className="w-2 h-2 bg-purple-400 rounded-full animate-pulse" style={{ animationDelay: '0.5s' }}></div>
-                <span className="font-serif">Enchanting your narrative with mystical imagery...</span>
-              </div>
-              <div className="flex items-center justify-center gap-3 text-blue-300">
-                <div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse" style={{ animationDelay: '1s' }}></div>
-                <span className="font-serif">Binding the tale with threads of possibility...</span>
+
+              {/* Progress bar */}
+              <div className="w-full bg-slate-700/50 rounded-full h-2 overflow-hidden">
+                <div 
+                  className="h-full bg-gradient-to-r from-amber-400 to-purple-400 rounded-full transition-all duration-1000 ease-out"
+                  style={{ width: `${((currentStep + 1) / steps.length) * 100}%` }}
+                />
               </div>
             </div>
 
-            {/* API Usage Counter - Styled as Mystical Rune */}
-            <div className="bg-slate-800/60 border border-amber-500/30 rounded-lg p-4 mx-auto w-fit">
-              <div className="flex items-center gap-2 text-amber-400">
-                <Wand2 className="h-4 w-4" />
-                <span className="text-sm font-mono">Spell Invocations: {apiCallsCount}</span>
+            {/* Story creation tip */}
+            <div className="bg-slate-800/60 border border-amber-500/30 rounded-xl p-6 mx-auto max-w-md">
+              <div className="flex items-center gap-3 mb-3">
+                <BookOpen className="h-5 w-5 text-amber-400" />
+                <span className="text-amber-300 font-semibold">Did you know?</span>
               </div>
+              <p className="text-gray-300 text-sm leading-relaxed">
+                Each story is uniquely crafted by AI to match your chosen adventure. 
+                No two tales are ever the same!
+              </p>
             </div>
 
-            {/* Exit Button - Magical Style */}
+            {/* Exit button with enhanced styling */}
             <Button 
               onClick={onExit} 
               variant="outline" 
-              className="mt-6 border-amber-500/50 text-amber-300 hover:bg-amber-500/20 hover:text-amber-200 hover:border-amber-400"
+              className="group mt-8 bg-slate-800/50 border-amber-500/50 text-amber-300 hover:bg-amber-500/20 hover:text-amber-200 hover:border-amber-400 hover:shadow-lg hover:shadow-amber-500/25 transition-all duration-300 px-8 py-3"
               size="lg"
             >
-              <Home className="mr-2 h-5 w-5" />
-              Return to Sanctuary
+              <Home className="mr-3 h-5 w-5 group-hover:animate-pulse" />
+              Return to Stories
             </Button>
           </CardContent>
         </Card>

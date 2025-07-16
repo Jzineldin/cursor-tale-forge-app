@@ -1,6 +1,7 @@
 
 import { useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { secureConsole } from '@/utils/secureLogger';
 
 export default function RealtimeEcho(): null {
   useEffect(() => {
@@ -9,9 +10,9 @@ export default function RealtimeEcho(): null {
       .on(
         'broadcast',
         { event: '*' },
-        (payload: any) => console.log('[ECHO payload]', payload)
+        (payload: any) => secureConsole.debug('[ECHO payload]', payload)
       )
-      .subscribe((status: any) => console.log('[ECHO status]', status));
+      .subscribe((status: any) => secureConsole.debug('[ECHO status]', status));
 
     return () => {
       supabase.removeChannel(channel);

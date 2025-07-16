@@ -1,5 +1,6 @@
+/* CLEAN GLOBAL STYLES - UNIFIED DESIGN SYSTEM */
 
-/* GLOBAL BACKDROP */
+/* Global backdrop */
 .scene-bg {
   position: fixed;
   inset: 0;
@@ -10,94 +11,104 @@
   pointer-events: none;
 }
 
-/* CSS Variables for brand colors */
+/* Brand colors */
 :root {
   --brand-gold-light: #FFD700;
   --brand-gold-primary: #D4AF37;
   --brand-gold-dark: #B8860B;
 }
 
-/* Ensure consistent background transparency */
+/* UNIFIED FONT SYSTEM - ONLY INTER */
 * {
-  color-scheme: light dark;
+  font-family: 'Inter', sans-serif !important;
+  box-sizing: border-box;
 }
 
-body, #root {
+html, body, #root {
   background: transparent !important;
+  color-scheme: light dark;
+  height: 100%;
+  margin: 0;
+  padding: 0;
 }
 
-/* Import fonts */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800&display=swap');
-
-/* Font utility classes - STRICTLY ENFORCE APPROVED FONTS */
-.font-heading, .font-serif {
-  font-family: 'Playfair Display', serif !important;
-}
-
-.font-body, .font-sans {
-  font-family: 'Inter', sans-serif !important;
-}
-
-/* Remove all other font families */
-* {
-  font-family: 'Inter', sans-serif !important;
-}
-
+/* Typography hierarchy - all Inter */
 h1, h2, h3, h4, h5, h6 {
-  font-family: 'Playfair Display', serif !important;
+  font-family: 'Inter', sans-serif !important;
+  font-weight: 600;
+  line-height: 1.2;
 }
 
-/* Magical text utility class */
+p {
+  font-family: 'Inter', sans-serif !important;
+  line-height: 1.6;
+}
+
+/* Remove all conflicting font classes */
+.font-heading,
+.font-serif,
+.font-body,
+.font-sans,
+.font-kid-friendly,
+.font-kid-heading {
+  font-family: 'Inter', sans-serif !important;
+}
+
+/* Interactive elements */
+button, input, textarea, select, a {
+  font-family: 'Inter', sans-serif !important;
+  transition: all 0.2s ease-in-out;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* Clean text contrast */
+.text-high-contrast {
+  color: #FFFFFF !important;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.3) !important;
+}
+
+.text-readable {
+  color: #F8F9FA !important;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.2) !important;
+}
+
+/* Simplified magical effects */
 .magical-text {
   color: var(--brand-gold-light) !important;
-  text-shadow: 0 0 8px rgba(212, 175, 55, 0.3), 0 0 16px rgba(212, 175, 55, 0.2) !important;
 }
 
-/* Magical effects - using amber instead of purple */
 .magical-glow {
   box-shadow: 0 0 20px rgba(245, 158, 11, 0.15);
 }
 
-/* Enhanced spacing and typography */
+/* Clean scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.5);
+}
+
+/* Section spacing */
 .section-spacing {
   padding: 3rem 1rem;
 }
 
-@media (min-width: 768px) {
-  .section-spacing {
-    padding: 3rem 1rem;
-  }
-}
-
-/* Improved readability for cards and overlays */
-.text-shadow-strong {
-  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
-}
-
-.backdrop-blur-strong {
-  backdrop-filter: blur(12px) brightness(0.8);
-}
-
-/* Enhanced text readability */
-.text-enhanced-shadow {
-  text-shadow: 
-    0 1px 3px rgba(0, 0, 0, 0.8),
-    0 2px 6px rgba(0, 0, 0, 0.6);
-}
-
-/* Better gradient overlays for improved contrast */
-.gradient-overlay-strong {
-  background: linear-gradient(
-    to bottom,
-    transparent 0%,
-    rgba(0, 0, 0, 0.3) 40%,
-    rgba(0, 0, 0, 0.8) 80%,
-    rgba(0, 0, 0, 0.95) 100%
-  );
-}
-
-/* Footer Styling */
+/* Footer styling */
 .redesign-footer {
   background: linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(30, 41, 59, 0.95) 100%);
   backdrop-filter: blur(10px);
@@ -116,41 +127,4 @@ h1, h2, h3, h4, h5, h6 {
   .redesign-container {
     padding: 0 2rem;
   }
-}
-
-/* Ensure text is always visible with proper contrast */
-.text-white {
-  color: white !important;
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7);
-}
-
-.text-gray-400 {
-  color: rgb(156, 163, 175) !important;
-}
-
-.text-gray-300 {
-  color: rgb(209, 213, 219) !important;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
-}
-
-.text-amber-400 {
-  color: rgb(251, 191, 36) !important;
-}
-
-.text-amber-300 {
-  color: rgb(252, 211, 77) !important;
-}
-
-/* Remove any conflicting dark overlays that cause readability issues */
-section {
-  position: relative;
-}
-
-/* Ensure proper spacing and typography hierarchy */
-p {
-  line-height: 1.6;
-}
-
-h1, h2, h3, h4, h5, h6 {
-  line-height: 1.2;
 }

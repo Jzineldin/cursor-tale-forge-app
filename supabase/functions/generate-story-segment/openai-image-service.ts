@@ -1,7 +1,10 @@
 import { SupabaseClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { validateImagePrompt } from './content-safety.ts';
 
 function enhanceImagePrompt(prompt: string, visualContext?: any): string {
-  let enhancedPrompt = prompt;
+  // First ensure the prompt is safe for children
+  const safePrompt = validateImagePrompt(prompt);
+  let enhancedPrompt = safePrompt;
   
   // Add character consistency
   if (visualContext?.characters) {

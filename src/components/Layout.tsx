@@ -19,12 +19,8 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   const { theme, changeTheme } = useTheme();
 
   useEffect(() => {
-    // Show header for all routes except the landing page
-    if (location.pathname === '/') {
-      hideHeader();
-    } else {
-      showHeader();
-    }
+    // Show header for all routes including the landing page
+    showHeader();
   }, [location.pathname, showHeader, hideHeader]);
 
   useEffect(() => {

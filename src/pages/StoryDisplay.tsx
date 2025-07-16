@@ -18,7 +18,6 @@ import { useStoryChapterNavigation } from '@/hooks/useStoryDisplay/useStoryChapt
 
 // Import performance optimizations
 import { 
-  useDebounce, 
   useMemoizedCallback
 } from '@/utils/performanceOptimizations';
 
@@ -94,15 +93,7 @@ const StoryDisplay: React.FC = () => {
     return storyGeneration.isGenerating && allStorySegments.length === 0 && !currentStorySegment;
   }, [storyGeneration.isGenerating, allStorySegments.length, currentStorySegment]);
 
-  // Debounced logging for performance
-  const debouncedLogging = useDebounce({ genre, prompt, characterName }, 1000);
-
-  console.log('🎯 Enhanced StoryDisplay: URL params:', debouncedLogging);
-  console.log('📚 Story data:', { 
-    storyId: storyData?.id, 
-    hasFullAudio: !!storyData?.full_story_audio_url,
-    audioStatus: storyData?.audio_generation_status 
-  });
+  // Debug logging removed to prevent infinite re-renders
 
   // Optimized callbacks with performance monitoring
   const handleSwitchToPlayer = useMemoizedCallback(async () => {

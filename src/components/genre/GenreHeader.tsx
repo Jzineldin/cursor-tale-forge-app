@@ -9,12 +9,12 @@ const GenreHeader: React.FC = () => {
 
   return (
     <div className="text-center mb-12 relative">
-      {/* Navigation container with flexbox to prevent overlap */}
-      <div className="absolute top-0 left-0 right-0 flex justify-between items-center p-8 z-10">
+      {/* Navigation container - adjusted positioning to work with Layout padding */}
+      <div className="absolute top-2 left-0 right-0 flex justify-between items-center px-4 z-10">
         <Button
           variant="ghost"
           onClick={() => navigate('/')}
-          className="text-white hover:text-amber-400 flex items-center gap-2"
+          className="text-white hover:text-amber-400 flex items-center gap-2 bg-black/30 backdrop-blur-sm border border-white/20"
         >
           <Home className="h-4 w-4" />
           Home
@@ -22,8 +22,8 @@ const GenreHeader: React.FC = () => {
         <div className="flex-1" /> {/* Spacer */}
       </div>
       
-      {/* Title content with proper spacing */}
-      <div className="pt-16">
+      {/* Title content - reduced padding since Layout already provides spacing */}
+      <div className="pt-20 md:pt-24">
         <h1 className="text-4xl md:text-6xl font-bold text-white mb-6 font-serif magical-text">
           Choose Your <span className="text-amber-400">Adventure</span>
         </h1>

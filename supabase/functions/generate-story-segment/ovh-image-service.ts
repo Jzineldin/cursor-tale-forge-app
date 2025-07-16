@@ -1,3 +1,6 @@
+import { getSafeNegativePrompt } from './enhanced-image-prompting.ts';
+import { validateImagePrompt } from './content-safety.ts';
+
 export async function generateImageWithOVH(prompt: string, settings?: any): Promise<Blob | null> {
     const OVH_API_TOKEN = Deno.env.get('OVH_AI_ENDPOINTS_ACCESS_TOKEN');
     if (!OVH_API_TOKEN) {
@@ -7,11 +10,17 @@ export async function generateImageWithOVH(prompt: string, settings?: any): Prom
 
     const IMAGE_GENERATION_URL = 'https://stable-diffusion-xl.endpoints.kepler.ai.cloud.ovh.net/api/text2image';
 
-    console.log('🎨 Calling OVHcloud AI Endpoints for image generation...');
-    console.log(`📝 Prompt: "${prompt.substring(0, 100)}${prompt.length > 100 ? '...' : ''}"`);
+    // Validate and sanitize the prompt for child safety
+    const safePrompt = validateImagePrompt(prompt);
     
-    // Use settings if provided, otherwise use defaults
-    const negativePrompt = settings?.negative_prompt || 'Ugly, blurry, low quality, deformed, distorted';
+    console.log('🎨 Calling OVHcloud AI Endpoints for SAFE image generation...');
+    console.log(`📝 Original prompt: "${prompt.substring(0, 100)}${prompt.length > 100 ? '...' : ''}"`);
+    console.log(`🛡️ Safe prompt: "${safePrompt.substring(0, 100)}${safePrompt.length > 100 ? '...' : ''}"`);
+    
+    // Use comprehensive safe negative prompt
+    const safeNegativePrompt = getSafeNegativePrompt();
+    const customNegative = settings?.negative_prompt || '';
+    const negativePrompt = customNegative ? `${safeNegativePrompt}, ${customNegative}` : safeNegativePrompt;
     
     console.log(`⚙️ Using settings - Negative prompt: "${negativePrompt}"`);
     
@@ -24,7 +33,7 @@ export async function generateImageWithOVH(prompt: string, settings?: any): Prom
                 'Authorization': `Bearer ${OVH_API_TOKEN}` 
             },
             body: JSON.stringify({ 
-                prompt: prompt, 
+                prompt: safePrompt, 
                 negative_prompt: negativePrompt
             }),
         });

@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { ArrowRight } from 'lucide-react';
@@ -8,7 +8,27 @@ import GenreGrid from '@/components/genre/GenreGrid';
 
 const CreateGenre: React.FC = () => {
   const [selectedGenre, setSelectedGenre] = useState<string>('');
+  const [backgroundLoaded, setBackgroundLoaded] = useState<boolean>(false);
   const navigate = useNavigate();
+
+  // Set body data attribute for route isolation
+  useEffect(() => {
+    document.body.setAttribute('data-route', '/create/genre');
+    
+    // Preload background image
+    const bgImage = new Image();
+    bgImage.onload = () => {
+      setBackgroundLoaded(true);
+      document.body.classList.add('loaded');
+    };
+    bgImage.src = '/images/astronaut-background-genre.jpg';
+    
+    // Cleanup on unmount
+    return () => {
+      document.body.removeAttribute('data-route');
+      document.body.classList.remove('loaded');
+    };
+  }, []);
 
   const handleGenreSelect = (genreId: string) => {
     setSelectedGenre(genreId);
@@ -22,31 +42,28 @@ const CreateGenre: React.FC = () => {
 
   return (
     <div 
-      className="min-h-screen bg-slate-900"
-      style={{
-        backgroundImage: `url('/images/Flux_Dev_Lonely_astronaut_sitting_on_a_pile_of_books_in_space__0.jpg')`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat'
-      }}
+      className={`genre-page-container ${backgroundLoaded ? 'loaded' : ''}`}
     >
-      <div className="container mx-auto px-4 py-16">
-        <GenreHeader />
-        <GenreGrid 
-          selectedGenre={selectedGenre}
-          onGenreSelect={handleGenreSelect}
-        />
-        
-        {/* Next Button */}
-        <div className="text-center">
-          <Button
-            onClick={handleNext}
-            disabled={!selectedGenre}
-            className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white px-8 py-3 text-lg font-medium disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            Next
-            <ArrowRight className="ml-2 h-5 w-5" />
-          </Button>
+      {/* Content wrapper with proper spacing - Layout provides pt-16 sm:pt-20 */}
+      <div className="genre-content relative z-10 min-h-full">
+        <div className="container mx-auto px-4 pb-16">
+          <GenreHeader />
+          <GenreGrid 
+            selectedGenre={selectedGenre}
+            onGenreSelect={handleGenreSelect}
+          />
+          
+          {/* Next Button */}
+          <div className="text-center mt-12">
+            <Button
+              onClick={handleNext}
+              disabled={!selectedGenre}
+              className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white px-8 py-3 text-lg font-medium disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-amber-500/30 hover:shadow-xl hover:shadow-amber-500/40 transition-all duration-300 hover:scale-105"
+            >
+              Next
+              <ArrowRight className="ml-2 h-5 w-5" />
+            </Button>
+          </div>
         </div>
       </div>
     </div>

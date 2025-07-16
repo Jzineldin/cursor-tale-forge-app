@@ -25,7 +25,7 @@ const GeneratedImage: React.FC<GeneratedImageProps> = ({
     className = "",
     showDebugInfo = false
 }) => {
-    console.log('[DBG] GeneratedImage src', imageUrl); // ← DEBUG LOG
+    // Debug logging removed for production
     
     const [error, setError] = useState(false);
     
@@ -37,7 +37,7 @@ const GeneratedImage: React.FC<GeneratedImageProps> = ({
     
     // TEMPORARY: Don't show anything if no real image URL
     if (!isRealImageUrl) {
-        console.log('[DBG] No real image URL, hiding component entirely');
+        // No real image URL available
         return null;
     }
 

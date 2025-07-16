@@ -15,22 +15,24 @@ export const usePollingManager = (storyId: string | undefined) => {
         queryClient.refetchQueries({ queryKey: ['story', storyId] });
     }, [queryClient, storyId]);
 
-    const startPolling = useCallback((interval: number = 10000) => { // Increased to 10 seconds
-        if (pollingInterval.current || !isActiveGeneration.current) return;
+    const startPolling = useCallback((interval: number = 15000) => { // Increased to 15 seconds
+        if (pollingInterval.current || !isActiveGeneration.current) {
+            console.log('⏭️ Skipping polling start - already polling or no active generation');
+            return;
+        }
         console.log(`🔄 Starting conservative polling (${interval}ms interval)...`);
         
         pollingInterval.current = window.setInterval(() => {
             const timeSinceUpdate = Date.now() - lastUpdateTime.current;
             
             // Only poll if we haven't had updates recently AND there's active generation
-            if (timeSinceUpdate < 5000 || !isActiveGeneration.current) {
+            if (timeSinceUpdate < 10000 || !isActiveGeneration.current) {
                 console.log('⏭️ Skipping poll - recent update or no active generation');
                 return;
             }
             
             console.log('📡 Polling for story updates...');
             queryClient.invalidateQueries({ queryKey: ['story', storyId] });
-            queryClient.refetchQueries({ queryKey: ['story', storyId] });
         }, interval);
     }, [queryClient, storyId]);
 
@@ -43,35 +45,33 @@ export const usePollingManager = (storyId: string | undefined) => {
         isActiveGeneration.current = false;
     }, []);
 
-    const setActiveGeneration = useCallback((active: boolean) => {
-        console.log(`🎯 Setting active generation: ${active}`);
-        isActiveGeneration.current = active;
-        
-        if (active) {
-            startPolling();
-        } else {
-            stopPolling();
-        }
-    }, [startPolling, stopPolling]);
-
     const updateLastUpdateTime = useCallback(() => {
         lastUpdateTime.current = Date.now();
     }, []);
 
-    // Clean up on unmount
+    const setActiveGeneration = useCallback((active: boolean) => {
+        isActiveGeneration.current = active;
+        console.log(`📊 Generation status changed: ${active ? 'active' : 'inactive'}`);
+        
+        if (!active) {
+            // Stop polling when generation is complete
+            stopPolling();
+        }
+    }, [stopPolling]);
+
+    // Cleanup on unmount
     useEffect(() => {
         return () => {
-            if (pollingInterval.current) {
-                clearInterval(pollingInterval.current);
-            }
+            stopPolling();
         };
-    }, []);
+    }, [stopPolling]);
 
     return {
         startPolling,
         stopPolling,
         forceRefresh,
         updateLastUpdateTime,
-        setActiveGeneration
+        setActiveGeneration,
+        isPolling: !!pollingInterval.current
     };
 };

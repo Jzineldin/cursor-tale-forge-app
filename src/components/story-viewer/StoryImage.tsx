@@ -27,21 +27,11 @@ const StoryImage: React.FC<StoryImageProps> = ({
     const [imageKey, setImageKey] = useState(0);
     const [isRetrying, setIsRetrying] = useState(false);
 
-    console.log('[StoryImage] Debug info:', {
-        imageUrl: imageUrl || 'null/undefined',
-        imageGenerationStatus,
-        hasImageUrl: !!imageUrl,
-        imageUrlLength: imageUrl?.length || 0,
-        isPlaceholder: imageUrl === '/placeholder.svg',
-        imageError,
-        retryCount,
-        segmentId
-    });
+    // Debug info available in development mode only
 
     // Reset error state when imageUrl changes
     useEffect(() => {
         if (imageUrl && imageUrl !== '/placeholder.svg') {
-            console.log('[StoryImage] Valid image URL changed, resetting error state');
             setImageError(false);
             setRetryCount(0);
             setImageKey(prev => prev + 1);
@@ -52,7 +42,6 @@ const StoryImage: React.FC<StoryImageProps> = ({
     useEffect(() => {
         const handleForceRefresh = (event: CustomEvent) => {
             if (event.detail?.segmentId === segmentId) {
-                console.log('[StoryImage] Force refresh event received for segment:', segmentId);
                 setImageKey(prev => prev + 1);
                 setImageError(false);
                 setIsRetrying(false);

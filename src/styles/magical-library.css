@@ -9,14 +9,7 @@
   overflow-wrap: anywhere !important;
 }
 
-.story-card-landscape .content h3 {
-  overflow: hidden !important;
-  max-width: 100% !important;
-  display: -webkit-box !important;
-  -webkit-line-clamp: 3 !important;
-  -webkit-box-orient: vertical !important;
-  white-space: normal !important;
-}
+/* Typography styles now handled by story-card-shared.css */
 
 .story-card-landscape .content p {
   overflow-wrap: break-word !important;

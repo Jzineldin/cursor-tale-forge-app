@@ -1,6 +1,5 @@
 
 import React from 'react';
-import ValuePropositionSection from '@/components/home/ValuePropositionSection';
 import ExampleStoriesSection from '@/components/home/ExampleStoriesSection';
 import WhyTaleForgeWorksSection from '@/components/home/WhyTaleForgeWorksSection';
 import FAQSection from '@/components/home/FAQSection';
@@ -22,9 +21,6 @@ const About: React.FC = () => {
           </div>
         </div>
       </section>
-
-      {/* Value Proposition - Transform Any Idea */}
-      <ValuePropositionSection />
 
       {/* Examples Section */}
       <ExampleStoriesSection />

@@ -22,22 +22,19 @@ interface EdgeFunctionResponse {
 }
 
 const generateSegment = async (variables: StoryGenerationVariables) => {
-  console.log('=== generateSegment called ===');
-  console.log('Variables:', variables);
-  
   try {
-    console.log('Invoking Supabase function with variables:', variables);
+    const requestBody = {
+      storyId: variables.storyId,
+      prompt: variables.prompt || '',
+      choiceText: variables.choiceText || null,
+      parentSegmentId: variables.parentSegmentId || null,
+      storyMode: variables.storyMode || 'fantasy',
+      skipImage: variables.skipImage || false,
+      skipAudio: variables.skipAudio || false
+    };
     
     const { data, error } = await supabase.functions.invoke('generate-story-segment', {
-      body: {
-        storyId: variables.storyId,
-        prompt: variables.prompt || '',
-        choiceText: variables.choiceText || null,
-        parentSegmentId: variables.parentSegmentId || null,
-        storyMode: variables.storyMode || 'fantasy',
-        skipImage: variables.skipImage || false,
-        skipAudio: variables.skipAudio || false
-      }
+      body: requestBody
     });
 
     console.log('=== Supabase function response ===');
@@ -75,6 +72,11 @@ const generateSegment = async (variables: StoryGenerationVariables) => {
 
       console.log('=== Successful response ===');
       console.log('Story data:', response.data);
+      console.log('🖼️ Image status in response:', {
+        image_url: response.data.image_url,
+        image_generation_status: response.data.image_generation_status,
+        shouldHaveImage: !requestBody.skipImage
+      });
       return response.data as StorySegmentRow;
     }
     
