@@ -11,6 +11,7 @@ import SystemLogsViewer from '@/components/admin/SystemLogsViewer';
 import APIMonitoringDashboard from '@/components/admin/APIMonitoringDashboard';
 import ModelManagementSystem from '@/components/admin/ModelManagementSystem';
 import CostTracker from '@/components/admin/CostTracker';
+import SystemDiagnostics from '@/components/SystemDiagnostics';
 
 import { ElevenLabsVoicesExplorer } from '@/components/admin/ElevenLabsVoicesExplorer';
 import AudioGenerationManager from '@/components/admin/AudioGenerationManager';
@@ -126,7 +127,7 @@ const Admin: React.FC = () => {
         <AdminHeader />
         
         <Tabs value={activeTab} onValueChange={setActiveTab} className="mt-8">
-          <TabsList className="grid w-full grid-cols-10 bg-slate-800 border-purple-600">
+          <TabsList className="grid w-full grid-cols-11 bg-slate-800 border-purple-600">
             <TabsTrigger 
               value="overview" 
               className="flex items-center gap-2 data-[state=active]:bg-purple-600 data-[state=active]:text-white"
@@ -196,6 +197,13 @@ const Admin: React.FC = () => {
             >
               <Settings className="h-4 w-4" />
               Settings
+            </TabsTrigger>
+            <TabsTrigger 
+              value="diagnostics" 
+              className="flex items-center gap-2 data-[state=active]:bg-purple-600 data-[state=active]:text-white"
+            >
+              <AlertTriangle className="h-4 w-4" />
+              Debug
             </TabsTrigger>
           </TabsList>
 
@@ -304,6 +312,10 @@ const Admin: React.FC = () => {
                 Save All Settings
               </Button>
             </div>
+          </TabsContent>
+
+          <TabsContent value="diagnostics" className="space-y-6 mt-6">
+            <SystemDiagnostics />
           </TabsContent>
         </Tabs>
       </div>

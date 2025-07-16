@@ -7,7 +7,8 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
-import { Search, Heart, Calendar, User, BookOpen, Sparkles, Filter, Grid, List, PenTool, Check, X } from 'lucide-react';
+import { Search, Heart, Calendar, User, BookOpen, Sparkles, Filter, Grid, List, PenTool, Check, X, MessageCircle, Eye, Bookmark } from 'lucide-react';
+import { LikeButton } from '@/components/ui/LikeButton';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/context/AuthProvider';
 import { toast } from 'sonner';
@@ -124,11 +125,39 @@ const Discover: React.FC = () => {
         }))
       });
 
+      // Get likes and comments counts for all stories
+      const storyIds = publishedStories.map(story => story.id);
+      
+      const { data: likesData } = await supabase
+        .from('story_likes')
+        .select('story_id')
+        .in('story_id', storyIds);
+
+      const { data: commentsData } = await supabase
+        .from('story_comments')
+        .select('story_id')
+        .in('story_id', storyIds);
+
+      // Count likes and comments per story
+      const likeCounts = likesData?.reduce((acc, like) => {
+        if (like.story_id) {
+          acc[like.story_id] = (acc[like.story_id] || 0) + 1;
+        }
+        return acc;
+      }, {} as Record<string, number>) || {};
+
+      const commentCounts = commentsData?.reduce((acc, comment) => {
+        if (comment.story_id) {
+          acc[comment.story_id] = (acc[comment.story_id] || 0) + 1;
+        }
+        return acc;
+      }, {} as Record<string, number>) || {};
+
       const stories = publishedStories.map(story => ({
         ...story,
         author_name: story.user_id ? 'Story Creator' : 'Anonymous',
-        like_count: 0, // TODO: Implement likes system
-        comment_count: 0 // TODO: Implement comments system
+        like_count: likeCounts[story.id] || 0,
+        comment_count: commentCounts[story.id] || 0
       })) as PublicStory[];
 
       return {
@@ -481,28 +510,27 @@ const Discover: React.FC = () => {
         backgroundPosition: 'center'
       }}
     >
-      <div className="container mx-auto px-4 py-16">
-        {/* Enhanced Header */}
-        <div className="text-center mb-12">
-          <div className="flex items-center justify-center gap-4 mb-4">
-            <div className="p-3 bg-gradient-to-br from-amber-500/20 to-orange-500/20 rounded-xl border border-amber-400/30">
-              <Sparkles className="h-8 w-8 text-amber-400" />
+      <div className="container mx-auto px-4 pb-16">
+        {/* Enhanced Page Header */}
+        <div className="mb-8 pt-8">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div>
+              <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-amber-300 to-orange-400 bg-clip-text text-transparent mb-2">
+                Discover Amazing Stories
+              </h1>
+              <p className="text-gray-400 text-lg">
+                Explore stories created by our community of storytellers
+              </p>
             </div>
-            <h1 className="text-4xl md:text-6xl font-bold text-white font-serif">
-              Discover <span className="text-amber-400">Stories</span>
-            </h1>
-          </div>
-          <p className="text-xl text-gray-300 max-w-2xl mx-auto">
-            Explore incredible interactive stories created by our community
-          </p>
-          <div className="flex items-center justify-center gap-6 mt-6 text-amber-300/80">
-            <div className="flex items-center gap-2">
-              <BookOpen className="h-5 w-5" />
-              <span>{storiesData?.totalCount || 0} stories</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <User className="h-5 w-5" />
-              <span>Community created</span>
+            <div className="flex items-center gap-6 text-amber-300/80">
+              <div className="flex items-center gap-2">
+                <BookOpen className="h-5 w-5" />
+                <span>{storiesData?.totalCount || 0} stories</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <User className="h-5 w-5" />
+                <span>Community created</span>
+              </div>
             </div>
           </div>
         </div>

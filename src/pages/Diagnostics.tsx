@@ -1,5 +1,5 @@
 
-import { SystemDiagnostics } from '@/components/SystemDiagnostics';
+import SystemDiagnostics from '@/components/SystemDiagnostics';
 
 const Diagnostics = () => {
   return (

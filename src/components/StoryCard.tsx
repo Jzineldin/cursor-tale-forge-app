@@ -73,8 +73,8 @@ const StoryCard = ({ story }: StoryCardProps) => {
 
         {/* Title and date overlay with gradient background */}
         <div className="content">
-          <h3 className="story-title text-sm sm:text-base font-semibold break-words leading-tight">{story.title || 'Untitled Story'}</h3>
-          <p className="line-clamp-2 text-xs sm:text-sm opacity-90 break-words">{format(new Date(story.published_at || story.created_at), 'MMM d, yyyy')}</p>
+          <h3 className="story-title">{story.title || 'Untitled Story'}</h3>
+          <p className="story-content-text">{format(new Date(story.published_at || story.created_at), 'MMM d, yyyy')}</p>
         </div>
       </div>
     </Link>

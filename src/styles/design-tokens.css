@@ -9,9 +9,23 @@
   --brand-amber-dark: #d97706;
   --brand-amber-light: #fcd34d;
   
-  /* Text Colors */
-  --text-light: #F8F9FA;
-  --text-muted: #9CA3AF;
+  /* Kid-Friendly Accent Colors */
+  --kid-blue: #3B82F6;
+  --kid-blue-light: #93C5FD;
+  --kid-green: #10B981;
+  --kid-green-light: #6EE7B7;
+  --kid-pink: #F472B6;
+  --kid-pink-light: #FBCFE8;
+  --kid-purple: #8B5CF6;
+  --kid-purple-light: #C4B5FD;
+  --kid-orange: #FB923C;
+  --kid-orange-light: #FED7AA;
+  
+  /* Text Colors - Improved Contrast */
+  --text-light: #FFFFFF;
+  --text-light-readable: #F8F9FA;
+  --text-muted: #D1D5DB;
+  --text-muted-readable: #9CA3AF;
   --text-dark: #1F2937;
   
   /* Background Colors */
@@ -20,20 +34,29 @@
   --bg-overlay: rgba(30,41,59,0.85);
   --bg-card: rgba(248,249,250,0.05);
   --bg-card-hover: rgba(248,249,250,0.1);
+  --bg-kid-friendly: rgba(59,130,246,0.1);
+  --bg-safe: rgba(16,185,129,0.1);
   
   /* Accent Colors - All Amber/Gold based */
   --accent-primary: #f59e0b;
   --accent-secondary: #10B981;
   --accent-tertiary: #F43F5E;
+  --accent-safe: #10B981;
+  --accent-family: #F472B6;
+  --accent-creative: #8B5CF6;
   
   /* Borders */
   --border-light: rgba(248,249,250,0.2);
   --border-gold: rgba(212,175,55,0.3);
+  --border-kid-friendly: rgba(59,130,246,0.3);
+  --border-safe: rgba(16,185,129,0.3);
   
   /* Shadows */
   --shadow-soft: 0 4px 20px rgba(0,0,0,0.15);
   --shadow-strong: 0 8px 32px rgba(0,0,0,0.3);
   --shadow-gold: 0 4px 20px rgba(212,175,55,0.2);
+  --shadow-kid-friendly: 0 4px 20px rgba(59,130,246,0.2);
+  --shadow-warm: 0 4px 20px rgba(251,146,60,0.2);
   
   /* Spacing */
   --space-xs: 0.5rem;

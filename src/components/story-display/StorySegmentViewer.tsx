@@ -38,6 +38,7 @@ const StorySegmentViewer: React.FC<StorySegmentViewerProps> = ({
       <StoryImageSection
         imageUrl={segment.image_url || ''}
         imageGenerationStatus={segment.image_generation_status}
+        segmentId={segment.id}
       />
 
       {showChoices && !segment.is_end && (

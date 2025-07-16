@@ -1,369 +1,311 @@
 
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { useHealthCheck } from '@/hooks/useHealthCheck';
-import { AlertCircle, CheckCircle2, RefreshCw, Zap } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 import { supabase } from '@/integrations/supabase/client';
+import { RefreshCw, Image, AlertCircle, CheckCircle, Clock, Wand2 } from 'lucide-react';
 import { toast } from 'sonner';
 
-export const SystemDiagnostics = () => {
-  const healthCheck = useHealthCheck();
-  const [diagnosticsResult, setDiagnosticsResult] = useState<any>(null);
-  const [storyTestResult, setStoryTestResult] = useState<any>(null);
-  const [isTestingStory, setIsTestingStory] = useState(false);
-  const [loading, setLoading] = useState(false);
+interface StorySegment {
+  id: string;
+  segment_text: string;
+  image_url: string | null;
+  image_generation_status: string | null;
+  created_at: string;
+  story_id: string;
+}
 
-  const runDiagnostics = () => {
-    setDiagnosticsResult(null);
-    healthCheck.mutate(undefined, {
-      onSuccess: (data) => {
-        setDiagnosticsResult(data);
-      },
-      onError: (error) => {
-        setDiagnosticsResult({ 
-          status: 'error', 
-          error: error.message,
-          timestamp: new Date().toISOString()
-        });
-      }
-    });
-  };
+const SystemDiagnostics: React.FC = () => {
+  const [segments, setSegments] = useState<StorySegment[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [connectionStatus, setConnectionStatus] = useState<string>('Not tested');
+  const [imageTestResult, setImageTestResult] = useState<string | null>(null);
 
-  const testStoryGeneration = async () => {
-    setIsTestingStory(true);
-    setStoryTestResult(null);
-    
+  const loadRecentSegments = async () => {
+    setIsLoading(true);
     try {
-      console.log('Starting story generation test...');
+      console.log('🔍 Loading recent story segments for diagnostics...');
       
-      // Test 1: Basic function connectivity
-      const testPrompt = "A simple test story about a cat.";
-      const testPayload = {
-        prompt: testPrompt,
-        storyMode: "Epic Fantasy"
-      };
-      
-      console.log('Sending test payload:', testPayload);
-      
-      const startTime = performance.now();
-      const { data, error } = await supabase.functions.invoke('generate-story-segment', {
-        body: testPayload,
-      });
-      const endTime = performance.now();
-      const duration = Math.round(endTime - startTime);
-      
-      console.log('Story generation test response:', { data, error, duration });
-      
+      const { data, error } = await supabase
+        .from('story_segments')
+        .select('id, segment_text, image_url, image_generation_status, created_at, story_id')
+        .order('created_at', { ascending: false })
+        .limit(10);
+
       if (error) {
-        console.error('Story generation test failed with error:', error);
-        setStoryTestResult({
-          status: 'failed',
-          error: error.message,
-          errorType: error.constructor.name,
-          duration,
-          testPayload,
-          timestamp: new Date().toISOString()
-        });
-        toast.error(`Story generation test failed: ${error.message}`);
-        return;
+        console.error('❌ Error loading segments:', error);
+        throw error;
       }
-      
-      if (!data) {
-        console.error('Story generation test returned no data');
-        setStoryTestResult({
-          status: 'failed',
-          error: 'No data returned from function',
-          duration,
-          testPayload,
-          timestamp: new Date().toISOString()
-        });
-        toast.error('Story generation test failed: No data returned');
-        return;
-      }
-      
-      // Check if it's the new response format
-      if (data.success === false) {
-        console.error('Story generation function returned error:', data);
-        setStoryTestResult({
-          status: 'failed',
-          error: data.error || 'Unknown error',
-          errorCode: data.code,
-          duration,
-          testPayload,
-          timestamp: new Date().toISOString()
-        });
-        toast.error(`Story generation failed: ${data.error}`);
-        return;
-      }
-      
-      // Success case
-      console.log('Story generation test successful:', data);
-      setStoryTestResult({
-        status: 'success',
-        data: data.success ? data.data : data,
-        duration,
-        testPayload,
-        timestamp: new Date().toISOString()
-      });
-      toast.success('Story generation test completed successfully!');
-      
-    } catch (error: any) {
-      console.error('Story generation test caught exception:', error);
-      setStoryTestResult({
-        status: 'failed',
-        error: error.message,
-        errorType: error.constructor.name,
-        stack: error.stack,
-        timestamp: new Date().toISOString()
-      });
-      toast.error(`Story generation test failed: ${error.message}`);
-    } finally {
-      setIsTestingStory(false);
-    }
-  };
 
-  const testDatabaseConnection = async () => {
-    setLoading(true);
-    try {
-      // Test basic database connection
-      const { error } = await supabase
-        .from('profiles')
+      console.log('✅ Loaded segments:', data?.length || 0);
+      setSegments(data || []);
+      
+      // Test connection status
+      const { data: testData, error: testError } = await supabase
+        .from('story_segments')
         .select('count')
         .limit(1);
-
-      if (error) {
-        console.error('Database connection error:', error);
-        toast.error(`Database error: ${error.message}`);
+        
+      if (testError) {
+        setConnectionStatus('❌ Connection Failed');
       } else {
-        console.log('Database connection successful');
-        toast.success('Database connection successful');
+        setConnectionStatus('✅ Connected');
       }
-
-      // Test auth connection
-      const { error: authError } = await supabase.auth.getSession();
-      if (authError) {
-        console.error('Auth connection error:', authError);
-        toast.error(`Auth error: ${authError.message}`);
-      } else {
-        console.log('Auth connection successful');
-        toast.success('Auth connection successful');
-      }
-
+      
     } catch (error) {
-      console.error('Test failed:', error);
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-      toast.error(`Test failed: ${errorMessage}`);
+      console.error('Error in diagnostics:', error);
+      toast.error('Failed to load diagnostic data');
+      setConnectionStatus('❌ Error');
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   };
 
-  const getStatusIcon = (status: string) => {
+  const testImageGeneration = async () => {
+    setImageTestResult('Testing...');
+    try {
+      console.log('🧪 Testing image generation capabilities...');
+      
+      const { data, error } = await supabase.functions.invoke('regenerate-image', {
+        body: {
+          prompt: 'A simple test image of a magical forest',
+          testMode: true
+        }
+      });
+
+      if (error) {
+        console.error('❌ Image test error:', error);
+        setImageTestResult(`❌ Test Failed: ${error.message}`);
+        return;
+      }
+
+      if (data?.success) {
+        setImageTestResult(`✅ Test Successful: ${data.message}`);
+        console.log('✅ Image generation test successful');
+      } else {
+        setImageTestResult(`❌ Test Failed: ${data?.error || 'Unknown error'}`);
+      }
+    } catch (error) {
+      console.error('❌ Image test exception:', error);
+      setImageTestResult(`❌ Test Exception: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    }
+  };
+
+  const refreshSegment = async (segmentId: string) => {
+    try {
+      console.log(`🔄 Force refreshing segment: ${segmentId}`);
+      
+      const { data, error } = await supabase
+        .from('story_segments')
+        .select('*')
+        .eq('id', segmentId)
+        .single();
+
+      if (error) throw error;
+      
+      console.log('📊 Refreshed segment data:', {
+        id: data.id,
+        image_url: data.image_url ? 'present' : 'missing',
+        image_generation_status: data.image_generation_status,
+        created_at: data.created_at
+      });
+
+      // Update the segment in our local state
+      setSegments(prev => prev.map(seg => 
+        seg.id === segmentId ? { ...seg, ...data } : seg
+      ));
+      
+      toast.success('Segment refreshed');
+    } catch (error) {
+      console.error('❌ Error refreshing segment:', error);
+      toast.error('Failed to refresh segment');
+    }
+  };
+
+  const getStatusIcon = (status: string | null) => {
     switch (status) {
-      case 'healthy':
-      case 'success':
-        return <CheckCircle2 className="h-5 w-5 text-green-500" />;
-      case 'unhealthy':
-      case 'error':
-      case 'failed':
-        return <AlertCircle className="h-5 w-5 text-red-500" />;
-      default:
-        return <RefreshCw className="h-5 w-5 text-yellow-500" />;
+      case 'completed': return <CheckCircle className="h-4 w-4 text-green-500" />;
+      case 'in_progress': return <Wand2 className="h-4 w-4 text-blue-500" />;
+      case 'pending': return <Clock className="h-4 w-4 text-yellow-500" />;
+      case 'failed': return <AlertCircle className="h-4 w-4 text-red-500" />;
+      default: return <Image className="h-4 w-4 text-gray-500" />;
+    }
+  };
+
+  const getStatusColor = (status: string | null) => {
+    switch (status) {
+      case 'completed': return 'bg-green-100 text-green-800';
+      case 'in_progress': return 'bg-blue-100 text-blue-800';
+      case 'pending': return 'bg-yellow-100 text-yellow-800';
+      case 'failed': return 'bg-red-100 text-red-800';
+      default: return 'bg-gray-100 text-gray-800';
     }
   };
 
   return (
-    <div className="space-y-6">
-      <Card className="w-full max-w-2xl mx-auto">
+    <div className="p-6 max-w-6xl mx-auto space-y-6">
+      <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <AlertCircle className="h-5 w-5" />
-            System Health Check
+            System Diagnostics
           </CardTitle>
-          <CardDescription>
-            Check the health and status of your application's backend services
-          </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          <Button 
-            onClick={runDiagnostics}
-            disabled={healthCheck.isPending}
-            className="w-full"
-          >
-            {healthCheck.isPending ? (
-              <>
-                <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
-                Running Health Check...
-              </>
-            ) : (
-              'Run Health Check'
-            )}
-          </Button>
+          <div className="flex gap-4 items-center">
+            <Button 
+              onClick={loadRecentSegments}
+              disabled={isLoading}
+              className="flex items-center gap-2"
+            >
+              <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
+              Load Recent Segments
+            </Button>
+            
+            <Button 
+              onClick={testImageGeneration}
+              variant="outline"
+              className="flex items-center gap-2"
+            >
+              <Image className="h-4 w-4" />
+              Test Image Generation
+            </Button>
+            
+            <Badge variant="outline" className="flex items-center gap-2">
+              Database: {connectionStatus}
+            </Badge>
+          </div>
 
-          {diagnosticsResult && (
-            <Alert className={diagnosticsResult.status === 'healthy' ? 'border-green-200' : 'border-red-200'}>
-              <div className="flex items-center gap-2">
-                {getStatusIcon(diagnosticsResult.status)}
-                <AlertDescription className="flex-1">
-                  <div className="space-y-2">
-                    <div><strong>Status:</strong> {diagnosticsResult.status}</div>
-                    <div><strong>Timestamp:</strong> {new Date(diagnosticsResult.timestamp).toLocaleString()}</div>
-                    
-                    {diagnosticsResult.database && (
-                      <div><strong>Database:</strong> {diagnosticsResult.database}</div>
-                    )}
-                    
-                    {diagnosticsResult.environment && (
-                      <div className="mt-2">
-                        <strong>Environment Check:</strong>
-                        <ul className="ml-4 mt-1 space-y-1">
-                          <li>Supabase URL: {diagnosticsResult.environment.hasSupabaseUrl ? '✓' : '✗'}</li>
-                          <li>Service Key: {diagnosticsResult.environment.hasServiceKey ? '✓' : '✗'}</li>
-                          <li>OpenAI Key: {diagnosticsResult.environment.hasOpenAIKey ? '✓' : '✗'}</li>
-                          <li>Google API Key: {diagnosticsResult.environment.hasGoogleKey ? '✓' : '✗'}</li>
-                          <li>Replicate Key: {diagnosticsResult.environment.hasReplicateKey ? '✓' : '✗'}</li>
-                        </ul>
-                      </div>
-                    )}
-                    
-                    {diagnosticsResult.error && (
-                      <div className="mt-2 text-red-600">
-                        <strong>Error:</strong> {diagnosticsResult.error}
-                      </div>
-                    )}
-                    
-                    {diagnosticsResult.message && (
-                      <div className="mt-2 text-green-600">
-                        <strong>Message:</strong> {diagnosticsResult.message}
-                      </div>
-                    )}
-                  </div>
-                </AlertDescription>
-              </div>
-            </Alert>
+          {imageTestResult && (
+            <div className="p-3 rounded-lg bg-muted">
+              <strong>Image Generation Test:</strong> {imageTestResult}
+            </div>
           )}
         </CardContent>
       </Card>
 
-      <Card className="w-full max-w-2xl mx-auto">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Zap className="h-5 w-5" />
-            Story Generation Test
-          </CardTitle>
-          <CardDescription>
-            Test the complete story generation pipeline to identify specific issues
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <Button 
-            onClick={testStoryGeneration}
-            disabled={isTestingStory}
-            className="w-full"
-            variant="outline"
-          >
-            {isTestingStory ? (
-              <>
-                <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
-                Testing Story Generation...
-              </>
-            ) : (
-              <>
-                <Zap className="mr-2 h-4 w-4" />
-                Test Story Generation
-              </>
-            )}
-          </Button>
-
-          {storyTestResult && (
-            <Alert className={storyTestResult.status === 'success' ? 'border-green-200' : 'border-red-200'}>
-              <div className="flex items-center gap-2">
-                {getStatusIcon(storyTestResult.status)}
-                <AlertDescription className="flex-1">
-                  <div className="space-y-2">
-                    <div><strong>Status:</strong> {storyTestResult.status}</div>
-                    <div><strong>Duration:</strong> {storyTestResult.duration}ms</div>
-                    <div><strong>Timestamp:</strong> {new Date(storyTestResult.timestamp).toLocaleString()}</div>
+      {segments.length > 0 && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Recent Story Segments</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              {segments.map((segment) => (
+                <div key={segment.id} className="border rounded-lg p-4 space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      {getStatusIcon(segment.image_generation_status)}
+                      <span className="font-mono text-sm text-muted-foreground">
+                        {segment.id.substring(0, 8)}...
+                      </span>
+                      <Badge className={getStatusColor(segment.image_generation_status)}>
+                        {segment.image_generation_status || 'not_started'}
+                      </Badge>
+                    </div>
                     
-                    {storyTestResult.error && (
-                      <div className="mt-2">
-                        <div className="text-red-600"><strong>Error:</strong> {storyTestResult.error}</div>
-                        {storyTestResult.errorCode && (
-                          <div className="text-red-600"><strong>Error Code:</strong> {storyTestResult.errorCode}</div>
-                        )}
-                        {storyTestResult.errorType && (
-                          <div className="text-red-600"><strong>Error Type:</strong> {storyTestResult.errorType}</div>
-                        )}
-                      </div>
-                    )}
-                    
-                    {storyTestResult.data && (
-                      <div className="mt-2">
-                        <div className="text-green-600"><strong>Success:</strong> Story segment generated</div>
-                        <div className="text-sm text-gray-600 mt-1">
-                          <strong>Story ID:</strong> {storyTestResult.data.story_id}<br/>
-                          <strong>Segment ID:</strong> {storyTestResult.data.id}<br/>
-                          <strong>Text Length:</strong> {storyTestResult.data.segment_text?.length || 0} characters<br/>
-                          <strong>Choices:</strong> {storyTestResult.data.choices?.length || 0}
-                        </div>
-                      </div>
-                    )}
-                    
-                    {storyTestResult.testPayload && (
-                      <details className="mt-2">
-                        <summary className="cursor-pointer text-sm font-medium">Test Payload</summary>
-                        <pre className="text-xs mt-1 p-2 bg-gray-100 rounded">
-                          {JSON.stringify(storyTestResult.testPayload, null, 2)}
-                        </pre>
-                      </details>
-                    )}
-                    
-                    {storyTestResult.stack && (
-                      <details className="mt-2">
-                        <summary className="cursor-pointer text-sm font-medium text-red-600">Stack Trace</summary>
-                        <pre className="text-xs mt-1 p-2 bg-red-50 rounded text-red-800">
-                          {storyTestResult.stack}
-                        </pre>
-                      </details>
-                    )}
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => refreshSegment(segment.id)}
+                      className="flex items-center gap-1"
+                    >
+                      <RefreshCw className="h-3 w-3" />
+                      Refresh
+                    </Button>
                   </div>
-                </AlertDescription>
-              </div>
-            </Alert>
-          )}
-
-          <Alert>
-            <AlertCircle className="h-4 w-4" />
-            <AlertDescription>
-              This test creates a minimal story segment to verify the complete pipeline including database operations, AI generation, and response formatting.
-            </AlertDescription>
-          </Alert>
-        </CardContent>
-      </Card>
-
-      <Card className="w-full max-w-2xl mx-auto">
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                    <div>
+                      <strong>Story Text:</strong>
+                      <p className="text-muted-foreground mt-1 line-clamp-2">
+                        {segment.segment_text?.substring(0, 150)}...
+                      </p>
+                    </div>
+                    
+                    <div>
+                      <strong>Image Status:</strong>
+                      <div className="mt-1 space-y-1">
+                        <p className="text-muted-foreground">
+                          URL: {segment.image_url ? (
+                            <span className="text-green-600 font-mono text-xs">
+                              {segment.image_url.substring(0, 50)}...
+                            </span>
+                          ) : (
+                            <span className="text-red-600">None</span>
+                          )}
+                        </p>
+                        <p className="text-muted-foreground">
+                          Created: {new Date(segment.created_at).toLocaleString()}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {segment.image_generation_status === 'failed' && (
+                    <div className="bg-red-50 border border-red-200 rounded-lg p-3">
+                      <p className="text-red-800 text-sm">
+                        <AlertCircle className="h-4 w-4 inline mr-2" />
+                        <strong>Image Generation Failed</strong>
+                      </p>
+                      <p className="text-red-600 text-sm mt-1">
+                        This segment's image generation failed. Common causes:
+                      </p>
+                      <ul className="text-red-600 text-sm mt-1 ml-4 list-disc">
+                        <li>OVH API rate limits exceeded (2 req/min for anonymous users)</li>
+                        <li>Missing OVH API token configuration</li>
+                        <li>Network connectivity issues</li>
+                        <li>OpenAI fallback also failed</li>
+                      </ul>
+                    </div>
+                  )}
+                  
+                  {segment.image_generation_status === 'in_progress' && (
+                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                      <p className="text-blue-800 text-sm">
+                        <Wand2 className="h-4 w-4 inline mr-2" />
+                        <strong>Image Currently Generating</strong>
+                      </p>
+                      <p className="text-blue-600 text-sm mt-1">
+                        This may take 30-60 seconds. The page should automatically update when complete.
+                      </p>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+      
+      <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <RefreshCw className="h-5 w-5" />
-            Database Connection Test
-          </CardTitle>
-          <CardDescription>
-            Test the connection to your Supabase database and authentication service
-          </CardDescription>
+          <CardTitle>Troubleshooting Tips</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4">
-          <Button 
-            onClick={testDatabaseConnection}
-            disabled={loading}
-            variant="outline"
-            className="w-full"
-          >
-            {loading ? 'Testing...' : 'Test Database Connection'}
-          </Button>
+        <CardContent className="space-y-3 text-sm">
+          <div className="space-y-2">
+            <h4 className="font-semibold">If images aren't generating:</h4>
+            <ul className="list-disc ml-6 space-y-1 text-muted-foreground">
+              <li>Check if you're hitting OVH rate limits (2 requests per minute for anonymous users)</li>
+              <li>Wait 1-2 minutes between story generation attempts</li>
+              <li>Verify your internet connection is stable</li>
+              <li>Try refreshing the page if segments show "in_progress" for more than 2 minutes</li>
+            </ul>
+          </div>
+          
+          <div className="space-y-2">
+            <h4 className="font-semibold">If real-time updates aren't working:</h4>
+            <ul className="list-disc ml-6 space-y-1 text-muted-foreground">
+              <li>Check browser console for WebSocket connection errors</li>
+              <li>Ensure you're on a supported browser (Chrome, Firefox, Safari)</li>
+              <li>Try refreshing the page to restart the connection</li>
+            </ul>
+          </div>
         </CardContent>
       </Card>
     </div>
   );
 };
+
+export default SystemDiagnostics;

@@ -75,7 +75,7 @@ const CreateCustomize: React.FC = () => {
         backgroundRepeat: 'no-repeat'
       }}
     >
-      <div className="container mx-auto px-4 py-16 max-w-4xl">
+      <div className="container mx-auto px-4 pb-16 max-w-4xl">
         {/* Header */}
         <div className="text-center mb-12">
           <Button

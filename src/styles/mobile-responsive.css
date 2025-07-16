@@ -74,14 +74,7 @@ input, textarea, select {
   max-width: 100% !important;
 }
 
-/* Card title overflow prevention */
-.card-title,
-.story-title {
-  overflow: hidden !important;
-  text-overflow: ellipsis !important;
-  white-space: nowrap !important;
-  max-width: 100% !important;
-}
+/* Card title styles moved to story-card-shared.css for consistency */
 
 /* Modal and dialog text overflow prevention */
 .modal-title,
@@ -499,24 +492,11 @@ input, textarea, select {
     overflow-wrap: anywhere !important;
   }
 
-  .story-card-landscape h3,
-  .genre-card h3,
-  .story-card-landscape .card-title,
-  .genre-card .card-title {
-    font-size: 0.875rem !important;
-    line-height: 1.3 !important;
-    overflow: hidden !important;
-    display: -webkit-box !important;
-    -webkit-line-clamp: 3 !important;
-    -webkit-box-orient: vertical !important;
-    white-space: normal !important;
-    word-break: break-word !important;
-    overflow-wrap: anywhere !important;
-  }
+  /* Typography styles for genre cards now handled by components.css */
+  /* Removed all conflicting .genre-card rules that were causing text cutoff */
 
-  .story-card-landscape p,
+  /* Typography styles for story cards now handled by story-card-shared.css */
   .genre-card p,
-  .story-card-landscape .card-description,
   .genre-card .card-description {
     font-size: 0.75rem !important;
     line-height: 1.4 !important;

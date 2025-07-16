@@ -1,6 +1,7 @@
 
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { secureConsole } from '@/utils/secureLogger';
 
 
 interface GenerateStoryParams {
@@ -19,27 +20,27 @@ export const useStoryGeneration = () => {
 
   const mutation = useMutation({
     mutationFn: async (params: GenerateStoryParams) => {
-      console.log('🚀 Generating story with params:', params);
+      secureConsole.debug('🚀 Generating story with params:', params);
 
       const { data, error } = await supabase.functions.invoke('generate-story-segment', {
         body: params
       });
 
-      console.log('📡 Raw response from edge function:', { data, error });
+      secureConsole.debug('📡 Raw response from edge function:', { data, error });
 
       if (error) {
-        console.error('❌ Supabase function error:', error);
+        secureConsole.error('❌ Supabase function error:', error);
         throw new Error(error.message || 'Failed to generate story');
       }
 
       if (!data) {
-        console.error('❌ No data returned from function');
+        secureConsole.error('❌ No data returned from function');
         throw new Error('No data returned from story generation');
       }
 
       // Handle both old and new response formats
       if (data.success === false) {
-        console.error('❌ Story generation failed:', data.error);
+        secureConsole.error('❌ Story generation failed:', data.error);
         throw new Error(data.error || 'Story generation failed');
       }
 
@@ -47,15 +48,15 @@ export const useStoryGeneration = () => {
       const storyData = data.success ? data.data : data;
       
       if (!storyData) {
-        console.error('❌ No story data in response');
+        secureConsole.error('❌ No story data in response');
         throw new Error('No story data returned');
       }
 
-      console.log('✅ Story generation successful:', storyData);
+      secureConsole.info('✅ Story generation successful:', storyData);
       return storyData;
     },
     onSuccess: (segment) => {
-      console.log('🎉 Story segment generated successfully:', segment);
+      secureConsole.info('🎉 Story segment generated successfully:', segment);
       
       // Invalidate and refetch story data
       if (segment.story_id) {
@@ -64,9 +65,9 @@ export const useStoryGeneration = () => {
       queryClient.invalidateQueries({ queryKey: ['stories'] });
     },
     onError: (error) => {
-      console.error('💥 Story generation failed:', error);
+      secureConsole.error('💥 Story generation failed:', error);
       const errorMessage = error.message || 'Failed to generate story';
-      console.error('Error details:', errorMessage);
+      secureConsole.error('Error details:', errorMessage);
     }
   });
 

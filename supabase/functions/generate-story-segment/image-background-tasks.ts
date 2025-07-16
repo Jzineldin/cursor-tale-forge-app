@@ -9,10 +9,6 @@ export async function processImageGeneration(
   supabaseClient: SupabaseClient,
   visualContext?: any
 ) {
-  console.log(`🎨 Starting image background task for segment ${segmentId}`);
-  console.log('🎨 Image prompt:', imagePrompt);
-  console.log('🎨 Visual context:', visualContext);
-  
   try {
     if (!imagePrompt || imagePrompt.trim() === '') {
       console.log('❌ No image prompt provided, skipping image generation');
@@ -32,6 +28,8 @@ export async function processImageGeneration(
 
     if (statusError) {
       console.error('❌ Failed to update status to in_progress:', statusError);
+    } else {
+      console.log('✅ Successfully updated status to in_progress');
     }
 
     console.log('🚀 Generating image with DALL-E-3...');
@@ -45,6 +43,7 @@ export async function processImageGeneration(
     
     if (!imageBlob) {
       console.error('❌ Failed to generate image with DALL-E-3');
+      console.log('📝 Updating status to failed...');
       await supabaseAdmin
         .from('story_segments')
         .update({ image_generation_status: 'failed' })
@@ -53,6 +52,10 @@ export async function processImageGeneration(
     }
 
     console.log('📤 Image generated successfully, uploading to storage...');
+    console.log('📊 Image blob details:', {
+      size: imageBlob.size,
+      type: imageBlob.type
+    });
     const uploadStartTime = Date.now();
     
     const imageUrl = await uploadImageToStorage(imageBlob, supabaseAdmin);

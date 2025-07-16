@@ -11,7 +11,7 @@ const StoryDisplayLayout: React.FC<StoryDisplayLayoutProps> = ({ children }) => 
       className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900"
       style={{
         background: `
-          linear-gradient(rgba(15, 23, 42, 0.95), rgba(30, 41, 59, 0.95)),
+          linear-gradient(rgba(15, 23, 42, 0.7), rgba(30, 41, 59, 0.7)),
           url('/images/Flux_Dev_Lonely_astronaut_sitting_on_a_pile_of_books_in_space__0.jpg')
         `,
         backgroundSize: 'cover',

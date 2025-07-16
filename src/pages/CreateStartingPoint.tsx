@@ -130,13 +130,13 @@ const CreateStartingPoint: React.FC = () => {
         backgroundRepeat: 'no-repeat'
       }}
     >
-      <div className="container mx-auto px-4 py-16 max-w-4xl">
+      <div className="container mx-auto px-4 pb-16 max-w-4xl">
         {/* Header */}
         <div className="text-center mb-12">
           <Button
             variant="ghost"
             onClick={() => navigate('/create/genre')}
-            className="absolute top-8 left-8 text-white hover:text-amber-400"
+            className="absolute top-2 left-4 text-white hover:text-amber-400 bg-black/30 backdrop-blur-sm border border-white/20"
           >
             <ArrowLeft className="mr-2 h-4 w-4" />
             Back to Genres
@@ -145,21 +145,23 @@ const CreateStartingPoint: React.FC = () => {
           <Button
             variant="ghost"
             onClick={() => navigate('/')}
-            className="absolute top-8 right-8 text-white hover:text-amber-400"
+            className="absolute top-2 right-4 text-white hover:text-amber-400 bg-black/30 backdrop-blur-sm border border-white/20"
           >
             <Home className="mr-2 h-4 w-4" />
             Home
           </Button>
           
-          <h1 className="text-4xl md:text-6xl font-bold text-white mb-6 font-serif">
-            Choose Your <span className="text-amber-400">Starting Point</span>
-          </h1>
-          <p className="text-xl text-gray-300 mb-4">
-            Genre: <span className="text-amber-400 font-medium">{getGenreTitle(selectedGenre || '')}</span>
-          </p>
-          <p className="text-lg text-gray-400">
-            Pick one of our crafted beginnings or write your own
-          </p>
+          <div className="pt-20 md:pt-24">
+            <h1 className="text-4xl md:text-6xl font-bold text-white mb-6 font-serif">
+              Choose Your <span className="text-amber-400">Starting Point</span>
+            </h1>
+            <p className="text-xl text-gray-300 mb-4">
+              Genre: <span className="text-amber-400 font-medium">{getGenreTitle(selectedGenre || '')}</span>
+            </p>
+            <p className="text-lg text-gray-400">
+              Pick one of our crafted beginnings or write your own
+            </p>
+          </div>
         </div>
 
         {/* Generated Starting Points */}

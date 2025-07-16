@@ -94,7 +94,7 @@ const MagicalStoryCard: React.FC<MagicalStoryCardProps> = ({
                   </button>
                 </div>
               ) : (
-                <h3 className="text-lg font-semibold text-amber-200 truncate">
+                <h3 className="story-title text-amber-200">
                   {story.title || 'Untitled Story'}
                 </h3>
               )}
@@ -182,7 +182,7 @@ const MagicalStoryCard: React.FC<MagicalStoryCardProps> = ({
               </button>
             </div>
           ) : (
-            <h3 className="text-xl font-bold text-amber-200 mb-3 line-clamp-2">
+            <h3 className="story-title text-amber-200 mb-3">
               {story.title || 'Untitled Story'}
             </h3>
           )}

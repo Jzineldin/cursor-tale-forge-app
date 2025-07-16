@@ -11,7 +11,7 @@ import { Suspense, lazy } from "react";
 
 // Lazy load components for better performance
 const Index = lazy(() => import("./pages/Index"));
-const Adventure = lazy(() => import("./pages/Adventure"));
+
 const Learning = lazy(() => import("./pages/Learning"));
 const Auth = lazy(() => import("./pages/Auth"));
 const SignIn = lazy(() => import("./pages/auth/SignIn"));
@@ -76,7 +76,6 @@ function App() {
                       <Suspense fallback={<LoadingFallback />}>
                         <Routes>
                           <Route path="/" element={<Index />} />
-                          <Route path="/adventure" element={<Adventure />} />
                           <Route path="/learning" element={<Learning />} />
                           <Route path="/about" element={<About />} />
                           

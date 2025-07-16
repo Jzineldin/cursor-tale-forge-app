@@ -4,12 +4,15 @@ import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { StorySegment } from './types';
 import { autosaveStoryProgress } from '@/utils/autosaveUtils';
+import { useNavigate } from 'react-router-dom';
 
 export const useStoryActions = (
   storyGeneration: any,
   addToHistory: (segment: StorySegment) => void,
   incrementApiUsage: () => void
 ) => {
+  const navigate = useNavigate();
+
   const confirmGeneration = useCallback(async (
     pendingAction: 'start' | 'choice' | null,
     pendingParams: any,
@@ -55,6 +58,9 @@ export const useStoryActions = (
 
         if (storyError) throw storyError;
         params.storyId = story.id;
+        
+        // Navigate to the new story URL so real-time subscription connects to correct story
+        navigate(`/story/${story.id}?genre=${genre}&prompt=${encodeURIComponent(prompt)}${characterName ? `&characterName=${encodeURIComponent(characterName)}` : ''}`, { replace: true });
       }
 
       const segment = await storyGeneration.generateSegment(params);
@@ -98,7 +104,7 @@ export const useStoryActions = (
     }
     
     setPendingAction(null, null);
-  }, [storyGeneration, addToHistory, incrementApiUsage]);
+  }, [storyGeneration, addToHistory, incrementApiUsage, navigate]);
 
   const handleFinishStory = useCallback(async (
     currentStorySegment: StorySegment | null,
