@@ -35,16 +35,16 @@ const GeneratedImage: React.FC<GeneratedImageProps> = ({
     const urlValidation = validateImageUrl(imageUrl);
     const { isRealImageUrl } = urlValidation;
     
+    // bust cache + trigger React remount
+    const signedSrc = imageUrl ? `${imageUrl}?v=${Date.now()}` : '';
+
+    useEffect(() => setError(false), [signedSrc]);
+    
     // TEMPORARY: Don't show anything if no real image URL
     if (!isRealImageUrl) {
         // No real image URL available
         return null;
     }
-
-    // bust cache + trigger React remount
-    const signedSrc = imageUrl ? `${imageUrl}?v=${Date.now()}` : '';
-
-    useEffect(() => setError(false), [signedSrc]);
 
     const status = getImageStatusDisplay(imageGenerationStatus, isRealImageUrl, !error && !!signedSrc, error);
     
