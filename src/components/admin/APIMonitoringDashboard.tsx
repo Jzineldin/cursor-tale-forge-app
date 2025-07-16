@@ -63,7 +63,7 @@ const APIMonitoringDashboard: React.FC = () => {
 
     try {
       switch (service) {
-        case 'text':
+        case 'text': {
           const textEndpoint = provider === 'Gemini' || provider === 'OVH' ? 'generate-story-segment' : 'generate-story-segment';
           const { error: textError } = await supabase.functions.invoke(textEndpoint, {
             body: {
@@ -76,8 +76,9 @@ const APIMonitoringDashboard: React.FC = () => {
           if (textError) throw textError;
           success = true;
           break;
+        }
 
-        case 'image':
+        case 'image': {
           const { error: imageError } = await supabase.functions.invoke('regenerate-image', {
             body: {
               prompt: 'A simple test image for admin panel',
@@ -89,8 +90,9 @@ const APIMonitoringDashboard: React.FC = () => {
           if (imageError) throw imageError;
           success = true;
           break;
+        }
 
-        case 'audio':
+        case 'audio': {
           const { error: audioError } = await supabase.functions.invoke('test-voice', {
             body: {
               text: 'This is a test of the audio generation system.',
@@ -102,6 +104,7 @@ const APIMonitoringDashboard: React.FC = () => {
           if (audioError) throw audioError;
           success = true;
           break;
+        }
       }
     } catch (err: any) {
       error = err.message || 'Unknown error';

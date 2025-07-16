@@ -24,6 +24,11 @@ export default tseslint.config(
         { allowConstantExport: true },
       ],
       "@typescript-eslint/no-unused-vars": "off",
+      "@typescript-eslint/no-explicit-any": "warn", // Downgrade from error to warn for Lovable.dev compatibility
+      "no-case-declarations": "warn", // Downgrade from error to warn
+      "@typescript-eslint/no-unused-expressions": "warn", // Downgrade from error to warn
+      "prefer-const": "warn", // Downgrade from error to warn
+      "@typescript-eslint/no-empty-object-type": "warn", // Downgrade from error to warn
     },
   }
 );

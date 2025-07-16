@@ -1,8 +1,8 @@
 
-import { Loader2, Clock, AlertCircle, RefreshCw, ImageIcon, Wand2, Sparkles } from 'lucide-react';
+import { Loader2, Clock, AlertCircle, RefreshCw, ImageIcon, Wand2, Sparkles, LucideIcon } from 'lucide-react';
 
 export interface ImageStatusDisplay {
-    icon: any;
+    icon: LucideIcon;
     text: string;
     subtext: string;
     spinning: boolean;
