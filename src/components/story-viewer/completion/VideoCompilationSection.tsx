@@ -212,11 +212,15 @@ export const VideoCompilationSection: React.FC<VideoCompilationSectionProps> = (
               <Button
                 variant="outline"
                 onClick={() => {
-                  navigator.share?.({
-                    title: story.title || 'My Story Video',
-                    url: story.shotstack_video_url || '',
-                  }) || navigator.clipboard.writeText(story.shotstack_video_url || '');
-                  toast.success('Video link copied to clipboard');
+                  if (navigator.share) {
+                    navigator.share({
+                      title: story.title || 'My Story Video',
+                      url: story.shotstack_video_url || '',
+                    });
+                  } else {
+                    navigator.clipboard.writeText(story.shotstack_video_url || '');
+                    toast.success('Video link copied to clipboard');
+                  }
                 }}
               >
                 <Share2 className="w-4 h-4 mr-2" />

@@ -6,8 +6,28 @@ import { StorySegment } from './types';
 import { autosaveStoryProgress } from '@/utils/autosaveUtils';
 import { useNavigate } from 'react-router-dom';
 
+interface StoryGenerationParams {
+  genre: string;
+  skipImage: boolean;
+  skipAudio: boolean;
+  prompt?: string;
+  storyId?: string;
+  parentSegmentId?: string;
+  choiceText?: string;
+}
+
+interface PendingParams {
+  choice?: string;
+}
+
+type PendingAction = 'start' | 'choice' | null;
+
+interface StoryGeneration {
+  generateSegment: (params: StoryGenerationParams) => Promise<StorySegment>;
+}
+
 export const useStoryActions = (
-  storyGeneration: any,
+  storyGeneration: StoryGeneration,
   addToHistory: (segment: StorySegment) => void,
   incrementApiUsage: () => void
 ) => {
@@ -15,7 +35,7 @@ export const useStoryActions = (
 
   const confirmGeneration = useCallback(async (
     pendingAction: 'start' | 'choice' | null,
-    pendingParams: any,
+    pendingParams: PendingParams,
     genre: string,
     prompt: string,
     characterName: string,
@@ -26,11 +46,11 @@ export const useStoryActions = (
     setCurrentStorySegment: (segment: StorySegment) => void,
     setAllStorySegments: (updater: (prev: StorySegment[]) => StorySegment[]) => void,
     setSegmentCount: (updater: (prev: number) => number) => void,
-    setPendingAction: (action: 'start' | 'choice' | null, params: any) => void
+    setPendingAction: (action: PendingAction, params: PendingParams | null) => void
   ) => {
     setError(null);
     
-    let params: any = {
+    const params: StoryGenerationParams = {
       genre,
       skipImage,
       skipAudio
@@ -39,9 +59,9 @@ export const useStoryActions = (
     if (pendingAction === 'start') {
       params.prompt = `${prompt}${characterName ? ` featuring ${characterName}` : ''}`;
     } else {
-      params.storyId = currentStorySegment?.story_id;
-      params.parentSegmentId = currentStorySegment?.id;
-      params.choiceText = pendingParams?.choice;
+      params.storyId = currentStorySegment?.story_id || undefined;
+      params.parentSegmentId = currentStorySegment?.id || undefined;
+      params.choiceText = pendingParams?.choice || undefined;
     }
 
     try {

@@ -47,7 +47,7 @@ const CostTracker: React.FC = () => {
     try {
       // Calculate date range
       const now = new Date();
-      let startDate = new Date();
+      const startDate = new Date();
       
       switch (timeRange) {
         case 'today':
