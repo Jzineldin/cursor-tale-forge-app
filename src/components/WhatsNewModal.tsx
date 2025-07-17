@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { Star, X } from 'lucide-react';
+import { Star, X, Calendar } from 'lucide-react';
 
 interface WhatsNewModalProps {
   trigger?: React.ReactNode;
@@ -13,7 +13,52 @@ const WhatsNewModal: React.FC<WhatsNewModalProps> = ({ trigger }) => {
 
   const recentFeatures = [
     {
+      category: "📱 Mobile Experience Overhaul",
+      date: "2025-07-18",
+      items: [
+        "Perfect Mobile Navigation - Smooth hamburger menu with all features accessible on any device",
+        "Glass Design Enhancement - Beautiful new glass morphism effects that work flawlessly across all screen sizes",
+        "Improved Touch Interactions - Every button, menu, and feature optimized for mobile users",
+        "Fixed Mobile Menu Visibility - Resolved hamburger menu dropdown positioning and interaction issues",
+        "Header-Footer Consistency - Updated header styling to match footer's glass morphism design"
+      ]
+    },
+    {
+      category: "✨ User Experience Improvements",
+      date: "2025-07-18",
+      items: [
+        "Better Visual Hierarchy - Enhanced contrast and readability for parents and children",
+        "Streamlined Navigation - Cleaner, more intuitive menu structure",
+        "Responsive Design Perfection - Looks amazing on phones, tablets, and desktops",
+        "Enhanced Typography - Consistent fantasy-heading class across all major headings",
+        "Golden Color System - Unified golden colors (#F4D03F for titles, #FF9500 for buttons)"
+      ]
+    },
+    {
+      category: "🛠️ Platform Stability",
+      date: "2025-07-18",
+      items: [
+        "Bug Fixes - Resolved mobile menu visibility and interaction issues",
+        "Performance Optimization - Faster loading and smoother animations",
+        "Cross-Device Compatibility - Consistent experience across all devices",
+        "Mobile Menu Positioning - Fixed full-width dropdown positioning outside container",
+        "CSS Specificity Fixes - Resolved conflicts between desktop and mobile menu styles"
+      ]
+    },
+    {
+      category: "🎨 Design & Layout Fixes",
+      date: "2025-07-17",
+      items: [
+        "Fixed 'Tale Forge' Title Wrapping - Added whitespace-nowrap to prevent text overflow",
+        "Removed Dark Overlay - Cleaned up unwanted dark overlay div causing layout issues",
+        "Glass Container Enhancement - Improved glassmorphic box with darker background and stronger blur",
+        "Button Alignment - Fixed hero section button container alignment and spacing",
+        "Font Consistency - Applied fantasy-heading class consistently across all major headings"
+      ]
+    },
+    {
       category: "🎨 User Experience",
+      date: "2025-07-16",
       items: [
         "Fixed story card title truncation issues across Discover and My Stories pages",
         "Enhanced mobile responsiveness for better viewing on all devices",
@@ -23,6 +68,7 @@ const WhatsNewModal: React.FC<WhatsNewModalProps> = ({ trigger }) => {
     },
     {
       category: "🔧 Technical Improvements",
+      date: "2025-07-15",
       items: [
         "Optimized story generation with narrative context building for consistency",
         "Enhanced slideshow and audio synchronization for better user experience",
@@ -32,6 +78,7 @@ const WhatsNewModal: React.FC<WhatsNewModalProps> = ({ trigger }) => {
     },
     {
       category: "🚀 New Features",
+      date: "2025-07-14",
       items: [
         "Community story discovery with public story sharing",
         "Advanced story export options (EPUB, PDF, HTML, Text)",
@@ -41,6 +88,7 @@ const WhatsNewModal: React.FC<WhatsNewModalProps> = ({ trigger }) => {
     },
     {
       category: "🛡️ Security & Performance",
+      date: "2025-07-13",
       items: [
         "Enhanced security with rate limiting and input validation",
         "Improved error handling and user feedback systems",
@@ -83,9 +131,15 @@ const WhatsNewModal: React.FC<WhatsNewModalProps> = ({ trigger }) => {
           <div className="space-y-6 mt-4">
             {recentFeatures.map((category, index) => (
               <div key={index} className="space-y-3">
-                <h3 className="text-lg font-semibold text-amber-200 border-b border-amber-400/30 pb-2">
-                  {category.category}
-                </h3>
+                <div className="flex items-center justify-between border-b border-amber-400/30 pb-2">
+                  <h3 className="text-lg font-semibold text-amber-200">
+                    {category.category}
+                  </h3>
+                  <div className="flex items-center text-gray-400 text-sm">
+                    <Calendar className="h-4 w-4 mr-1" />
+                    {category.date}
+                  </div>
+                </div>
                 <ul className="space-y-2 pl-4">
                   {category.items.map((item, itemIndex) => (
                     <li key={itemIndex} className="text-gray-300 flex items-start gap-2">

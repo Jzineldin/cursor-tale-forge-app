@@ -38,6 +38,26 @@ class ChangelogManager {
     // Return updated default changelog with latest improvements
     const defaultChangelog: ChangelogEntry[] = [
       {
+        version: '2.9.0',
+        date: '2025-07-18',
+        type: 'minor' as const,
+        changes: [
+          { type: 'feature' as const, description: 'Mobile Experience Overhaul - Complete redesign of mobile navigation with smooth hamburger menu and glass morphism effects' },
+          { type: 'feature' as const, description: 'Perfect Mobile Navigation - All features now accessible on any device with intuitive touch interactions' },
+          { type: 'feature' as const, description: 'Glass Design Enhancement - Beautiful glass morphism effects that work flawlessly across all screen sizes' },
+          { type: 'improvement' as const, description: 'Improved Touch Interactions - Every button, menu, and feature optimized for mobile users with better touch targets' },
+          { type: 'improvement' as const, description: 'Better Visual Hierarchy - Enhanced contrast and readability for parents and children across all devices' },
+          { type: 'improvement' as const, description: 'Streamlined Navigation - Cleaner, more intuitive menu structure with improved user flow' },
+          { type: 'improvement' as const, description: 'Responsive Design Perfection - Looks amazing on phones, tablets, and desktops with consistent experience' },
+          { type: 'fix' as const, description: 'Resolved Mobile Menu Visibility Issues - Fixed hamburger menu dropdown positioning and interaction problems' },
+          { type: 'fix' as const, description: 'Fixed Header Styling Consistency - Updated header to match footer glass morphism design for unified appearance' },
+          { type: 'improvement' as const, description: 'Performance Optimization - Faster loading and smoother animations across all devices' },
+          { type: 'improvement' as const, description: 'Cross-Device Compatibility - Consistent experience across all devices with proper responsive breakpoints' },
+          { type: 'fix' as const, description: 'Fixed Mobile Menu Positioning - Moved mobile menu outside container div for proper full-width display' },
+          { type: 'improvement' as const, description: 'Enhanced Mobile Menu Styling - Better background, spacing, hover effects, and scrolling for professional appearance' },
+        ],
+      },
+      {
         version: '2.8.0',
         date: '2025-07-12',
         type: 'minor' as const,
