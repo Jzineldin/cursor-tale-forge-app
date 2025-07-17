@@ -262,6 +262,65 @@ export const useStoryActions = ({
     }
   };
 
+  const handleResumeStory = async (storyId: string) => {
+    try {
+      console.log('🔄 Resuming story:', storyId);
+      setError(null);
+      setIsGeneratingStartup(true);
+      
+      // Fetch story data from database
+      const { data: storyData, error: storyError } = await supabase
+        .from('stories')
+        .select('*')
+        .eq('id', storyId)
+        .single();
+
+      if (storyError || !storyData) {
+        throw new Error('Story not found');
+      }
+
+      // Fetch story segments
+      const { data: segmentsData, error: segmentsError } = await supabase
+        .from('story_segments')
+        .select('*')
+        .eq('story_id', storyId)
+        .order('created_at', { ascending: true });
+
+      if (segmentsError) {
+        throw new Error('Failed to load story segments');
+      }
+
+      if (!segmentsData || segmentsData.length === 0) {
+        throw new Error('No story segments found');
+      }
+
+      // Convert segments to StorySegment format
+      const storyHistory: StorySegment[] = segmentsData.map(segment => ({
+        storyId: segment.story_id,
+        text: segment.segment_text,
+        imageUrl: segment.image_url || '/placeholder.svg',
+        choices: segment.choices || [],
+        isEnd: segment.is_end || false,
+        imageGenerationStatus: segment.image_generation_status || 'completed',
+        segmentId: segment.id
+      }));
+
+      // Set the last segment as current
+      const currentSegment = storyHistory[storyHistory.length - 1];
+      
+      setStoryHistory(storyHistory);
+      setCurrentSegment(currentSegment);
+      setIsGeneratingStartup(false);
+      
+      toast.success('Story resumed successfully!');
+    } catch (error: any) {
+      console.error('❌ Failed to resume story:', error);
+      setError('Failed to resume story. Please try again.');
+      setIsGeneratingStartup(false);
+      toast.error('Failed to resume story');
+    }
+  };
+
   const handleGenerateAudio = async () => {
     if (!currentSegment?.storyId) return;
 
@@ -295,6 +354,7 @@ export const useStoryActions = ({
     handleStartStory,
     handleSelectChoice,
     handleFinishStory,
+    handleResumeStory,
     handleGenerateAudio,
     generateAudioMutation,
   };

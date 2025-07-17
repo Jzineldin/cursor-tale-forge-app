@@ -32,7 +32,9 @@ const ErrorDisplay: React.FC<ErrorDisplayProps> = ({
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-6 text-center">
-          <p className="text-gray-300">{error}</p>
+          <p className="text-gray-300">
+            {typeof error === 'string' ? error : 'Something went wrong while creating your story. Please try again.'}
+          </p>
           <div className="flex gap-4 justify-center">
             <Button onClick={onRetry} className="bg-purple-600 hover:bg-purple-700">
               Try Again

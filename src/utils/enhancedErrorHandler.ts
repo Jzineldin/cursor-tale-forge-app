@@ -1,19 +1,15 @@
 import { toast } from 'sonner';
 
-/**
- * Enhanced Error Handling System for TaleForge
- * Provides centralized error handling, logging, and user feedback
- */
-
 export interface ErrorContext {
-  component?: string;
-  action?: string;
-  userId?: string;
-  storyId?: string;
-  segmentId?: string;
   timestamp: string;
   userAgent: string;
   url: string;
+  component: string;
+  action: string;
+  userId: string;
+  storyId: string;
+  segmentId: string;
+  additionalData?: any;
 }
 
 export interface ErrorReport {
@@ -22,6 +18,7 @@ export interface ErrorReport {
   severity: 'low' | 'medium' | 'high' | 'critical';
   retryable: boolean;
   userMessage: string;
+  suggestedAction: string | undefined;
 }
 
 export class EnhancedErrorHandler {
@@ -112,7 +109,8 @@ export class EnhancedErrorHandler {
         context,
         'medium',
         true,
-        'Connection issue detected. Please check your internet connection and try again.'
+        'Connection issue detected. Please check your internet connection and try again.',
+        'Check your internet connection and refresh the page'
       );
     }
 
@@ -123,7 +121,8 @@ export class EnhancedErrorHandler {
         context,
         'high',
         false,
-        'Authentication required. Please sign in to continue.'
+        'Authentication required. Please sign in to continue.',
+        'Sign in to your account'
       );
     }
 
@@ -134,7 +133,8 @@ export class EnhancedErrorHandler {
         context,
         'medium',
         true,
-        'Too many requests. Please wait a moment before trying again.'
+        'Too many requests. Please wait a moment before trying again.',
+        'Wait 30 seconds and try again'
       );
     }
 
@@ -145,7 +145,8 @@ export class EnhancedErrorHandler {
         context,
         'medium',
         true,
-        'AI service temporarily unavailable. Please try again in a moment.'
+        'AI service temporarily unavailable. Please try again in a moment.',
+        'Try again in 1-2 minutes'
       );
     }
 
@@ -156,7 +157,8 @@ export class EnhancedErrorHandler {
         context,
         'high',
         true,
-        'Data service issue. Please try again or contact support if the problem persists.'
+        'Data service issue. Please try again or contact support if the problem persists.',
+        'Refresh the page and try again'
       );
     }
 
@@ -167,17 +169,55 @@ export class EnhancedErrorHandler {
         context,
         'medium',
         true,
-        'File service issue. Please try again or skip file generation.'
+        'File service issue. Please try again or skip file generation.',
+        'Continue without file generation'
       );
     }
 
-    // Unknown Errors
+    // Voice/Audio Errors
+    if (this.isAudioError(errorMessage, errorStack)) {
+      return this.createErrorReport(
+        error,
+        context,
+        'low',
+        true,
+        'Audio generation issue. Your story is still available to read.',
+        'Continue without audio narration'
+      );
+    }
+
+    // Image Generation Errors
+    if (this.isImageError(errorMessage, errorStack)) {
+      return this.createErrorReport(
+        error,
+        context,
+        'low',
+        true,
+        'Image generation issue. You can continue with your story and add images later.',
+        'Continue without images'
+      );
+    }
+
+    // Story Generation Errors
+    if (this.isStoryGenerationError(errorMessage, errorStack)) {
+      return this.createErrorReport(
+        error,
+        context,
+        'high',
+        true,
+        'Story generation failed. Please try again with a different prompt.',
+        'Try a different story idea'
+      );
+    }
+
+    // Default error
     return this.createErrorReport(
       error,
       context,
-      'high',
-      false,
-      'An unexpected error occurred. Please try again or contact support.'
+      'medium',
+      true,
+      'Something went wrong. Please try again.',
+      'Refresh the page and try again'
     );
   }
 
@@ -189,82 +229,21 @@ export class EnhancedErrorHandler {
     context: ErrorContext,
     severity: 'low' | 'medium' | 'high' | 'critical',
     retryable: boolean,
-    userMessage: string
+    userMessage: string,
+    suggestedAction?: string
   ): ErrorReport {
     return {
       error,
       context,
       severity,
       retryable,
-      userMessage
+      userMessage,
+      suggestedAction
     };
   }
 
   /**
-   * Error type detection methods
-   */
-  private static isNetworkError(message: string, stack: string): boolean {
-    const networkKeywords = [
-      'network', 'connection', 'fetch', 'timeout', 'offline',
-      'failed to fetch', 'network error', 'connection refused'
-    ];
-    return networkKeywords.some(keyword => 
-      message.includes(keyword) || stack.includes(keyword)
-    );
-  }
-
-  private static isAuthError(message: string, stack: string): boolean {
-    const authKeywords = [
-      'unauthorized', '401', '403', 'authentication', 'auth',
-      'token', 'session', 'login', 'signin'
-    ];
-    return authKeywords.some(keyword => 
-      message.includes(keyword) || stack.includes(keyword)
-    );
-  }
-
-  private static isRateLimitError(message: string, stack: string): boolean {
-    const rateLimitKeywords = [
-      'rate limit', '429', 'too many requests', 'quota exceeded',
-      'throttle', 'limit exceeded'
-    ];
-    return rateLimitKeywords.some(keyword => 
-      message.includes(keyword) || stack.includes(keyword)
-    );
-  }
-
-  private static isAIServiceError(message: string, stack: string): boolean {
-    const aiKeywords = [
-      'openai', 'gpt', 'dall-e', 'elevenlabs', 'ai service',
-      'model', 'generation', 'completion'
-    ];
-    return aiKeywords.some(keyword => 
-      message.includes(keyword) || stack.includes(keyword)
-    );
-  }
-
-  private static isDatabaseError(message: string, stack: string): boolean {
-    const dbKeywords = [
-      'database', 'sql', 'postgres', 'supabase', 'db',
-      'constraint', 'foreign key', 'unique'
-    ];
-    return dbKeywords.some(keyword => 
-      message.includes(keyword) || stack.includes(keyword)
-    );
-  }
-
-  private static isStorageError(message: string, stack: string): boolean {
-    const storageKeywords = [
-      'storage', 'bucket', 'file', 'upload', 'download',
-      's3', 'cloud storage', 'bucket'
-    ];
-    return storageKeywords.some(keyword => 
-      message.includes(keyword) || stack.includes(keyword)
-    );
-  }
-
-  /**
-   * Rate limiting for error processing
+   * Check if error should be processed (rate limiting)
    */
   private static shouldProcessError(): boolean {
     const now = Date.now();
@@ -278,6 +257,81 @@ export class EnhancedErrorHandler {
     
     this.errorTimestamps.push(now);
     return true;
+  }
+
+  /**
+   * Error type detection methods
+   */
+  private static isNetworkError(message: string, stack: string): boolean {
+    return message.includes('network') || 
+           message.includes('connection') || 
+           message.includes('fetch') ||
+           message.includes('timeout') ||
+           stack.includes('fetch') ||
+           stack.includes('XMLHttpRequest');
+  }
+
+  private static isAuthError(message: string, stack: string): boolean {
+    return message.includes('auth') || 
+           message.includes('login') || 
+           message.includes('permission') ||
+           message.includes('unauthorized') ||
+           message.includes('forbidden');
+  }
+
+  private static isRateLimitError(message: string, stack: string): boolean {
+    return message.includes('rate limit') || 
+           message.includes('too many requests') ||
+           message.includes('429') ||
+           message.includes('quota exceeded');
+  }
+
+  private static isAIServiceError(message: string, stack: string): boolean {
+    return message.includes('openai') || 
+           message.includes('gpt') || 
+           message.includes('ai') ||
+           message.includes('model') ||
+           message.includes('generation');
+  }
+
+  private static isDatabaseError(message: string, stack: string): boolean {
+    return message.includes('database') || 
+           message.includes('supabase') || 
+           message.includes('storage') ||
+           message.includes('sql') ||
+           message.includes('postgres');
+  }
+
+  private static isStorageError(message: string, stack: string): boolean {
+    return message.includes('storage') || 
+           message.includes('file') || 
+           message.includes('upload') ||
+           message.includes('download') ||
+           message.includes('bucket');
+  }
+
+  private static isAudioError(message: string, stack: string): boolean {
+    return message.includes('audio') || 
+           message.includes('tts') || 
+           message.includes('elevenlabs') ||
+           message.includes('voice') ||
+           message.includes('narration');
+  }
+
+  private static isImageError(message: string, stack: string): boolean {
+    return message.includes('image') || 
+           message.includes('dall-e') || 
+           message.includes('ovh') ||
+           message.includes('generation') ||
+           message.includes('picture');
+  }
+
+  private static isStoryGenerationError(message: string, stack: string): boolean {
+    return message.includes('story') || 
+           message.includes('text') || 
+           message.includes('content') ||
+           message.includes('narrative') ||
+           message.includes('writing');
   }
 
   /**
@@ -299,12 +353,12 @@ export class EnhancedErrorHandler {
    * Show user-friendly error message
    */
   private static showUserFeedback(report: ErrorReport): void {
-    const { userMessage, severity, retryable } = report;
+    const { userMessage, severity, retryable, suggestedAction } = report;
     
     const toastOptions = {
       duration: severity === 'critical' ? 8000 : 5000,
       action: retryable ? {
-        label: 'Retry',
+        label: suggestedAction || 'Retry',
         onClick: () => window.location.reload()
       } : undefined
     };
@@ -330,14 +384,12 @@ export class EnhancedErrorHandler {
    */
   private static reportToAnalytics(report: ErrorReport): void {
     // TODO: Implement analytics reporting
-    if (process.env.NODE_ENV === 'production') {
-      // Send to error tracking service
-      console.log('📊 Error reported to analytics:', report);
-    }
+    // This could send to Sentry, LogRocket, or other error tracking services
+    console.log('📊 Error reported to analytics:', report);
   }
 
   /**
-   * Retry mechanism for retryable errors
+   * Retry operation with exponential backoff
    */
   static async retryOperation<T>(
     operation: () => Promise<T>,
@@ -346,8 +398,8 @@ export class EnhancedErrorHandler {
     context: Partial<ErrorContext> = {}
   ): Promise<T> {
     let lastError: Error;
-
-    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    
+    for (let attempt = 0; attempt <= maxRetries; attempt++) {
       try {
         return await operation();
       } catch (error) {
@@ -360,14 +412,14 @@ export class EnhancedErrorHandler {
           });
           throw lastError;
         }
-
-        // Wait before retry with exponential backoff
-        await new Promise(resolve => 
-          setTimeout(resolve, delay * Math.pow(2, attempt - 1))
-        );
+        
+        // Exponential backoff
+        const waitTime = delay * Math.pow(2, attempt);
+        console.log(`Retry attempt ${attempt + 1}/${maxRetries + 1}, waiting ${waitTime}ms...`);
+        await this.sleep(waitTime);
       }
     }
-
+    
     throw lastError!;
   }
 
@@ -388,17 +440,17 @@ export class EnhancedErrorHandler {
   }
 
   /**
-   * Create error boundary fallback component
+   * Utility function for sleeping
    */
-  static createErrorFallback(error: Error, context: Partial<ErrorContext> = {}) {
-    this.handleError(error, context);
-    
-    return {
-      title: 'Something went wrong',
-      message: 'We encountered an unexpected error. Please try refreshing the page.',
-      action: 'Refresh Page',
-      onAction: () => window.location.reload()
-    };
+  private static sleep(ms: number): Promise<void> {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+
+  /**
+   * Clear error timestamps (useful for testing)
+   */
+  static clearErrorTimestamps(): void {
+    this.errorTimestamps = [];
   }
 }
 

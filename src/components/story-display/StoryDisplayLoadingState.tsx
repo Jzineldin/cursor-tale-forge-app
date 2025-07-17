@@ -5,14 +5,10 @@ import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 
 interface StoryDisplayLoadingStateProps {
-  apiUsageCount: number;
-  skipImage: boolean;
   onExit: () => void;
 }
 
 const StoryDisplayLoadingState: React.FC<StoryDisplayLoadingStateProps> = ({
-  apiUsageCount,
-  skipImage,
   onExit
 }) => {
   const navigate = useNavigate();
@@ -45,12 +41,12 @@ const StoryDisplayLoadingState: React.FC<StoryDisplayLoadingStateProps> = ({
         backgroundPosition: 'center'
       }}
     >
-      {/* Floating magical particles */}
+      {/* Floating magical particles - reduced for less distraction */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {[...Array(20)].map((_, i) => (
+        {[...Array(8)].map((_, i) => (
           <div
             key={i}
-            className="absolute w-2 h-2 bg-amber-400 rounded-full opacity-60 animate-magical-float"
+            className="absolute w-1 h-1 bg-amber-400 rounded-full opacity-40 animate-magical-float"
             style={{
               left: `${Math.random() * 100}%`,
               top: `${Math.random() * 100}%`,
@@ -59,23 +55,11 @@ const StoryDisplayLoadingState: React.FC<StoryDisplayLoadingStateProps> = ({
             }}
           />
         ))}
-        {[...Array(10)].map((_, i) => (
-          <div
-            key={`sparkle-${i}`}
-            className="absolute w-1 h-1 bg-purple-400 rounded-full opacity-80 animate-magical-float"
-            style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
-              animationDelay: `${Math.random() * 4}s`,
-              animationDuration: `${4 + Math.random() * 3}s`
-            }}
-          />
-        ))}
       </div>
 
-      <div className="container mx-auto px-4 py-4 relative z-10">
+      <div className="container mx-auto px-4 pt-24 pb-4 relative z-10">
         {/* Simple Loading Header */}
-        <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center justify-between mb-8">
           <div className="flex items-center gap-4">
             <Button
               variant="ghost"
@@ -86,20 +70,21 @@ const StoryDisplayLoadingState: React.FC<StoryDisplayLoadingStateProps> = ({
               <ArrowLeft className="h-4 w-4" />
               Back to Home
             </Button>
-            
-            <h1 className="text-2xl font-bold bg-gradient-to-r from-amber-400 to-yellow-400 bg-clip-text text-transparent">
-              Tale Forge
-            </h1>
           </div>
-
+          
           <div className="flex items-center gap-2">
-            <div className="text-sm text-amber-300">
-              API Calls: {apiUsageCount}
-            </div>
+            {/* Removed debug API calls counter for production */}
           </div>
         </div>
         
-        <div className="flex items-center justify-center min-h-[calc(100vh-120px)]">
+        {/* Centered Tale Forge Title */}
+        <div className="text-center mb-8">
+          <h1 className="text-3xl font-bold text-white drop-shadow-lg">
+            Tale Forge
+          </h1>
+        </div>
+        
+        <div className="flex items-center justify-center min-h-[calc(100vh-200px)]">
           <div className="text-center text-white max-w-2xl">
             {/* Magical Progress Indicator */}
             <div className="relative flex justify-center mb-8">

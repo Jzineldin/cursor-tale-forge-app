@@ -1,18 +1,15 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, DollarSign } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 
 interface StoryCreationNavigationProps {
-  apiCallsCount: number;
   gameState: 'not_started' | 'playing' | 'completed';
   onGoHome: () => void;
   onRestart: () => void;
 }
 
 const StoryCreationNavigation: React.FC<StoryCreationNavigationProps> = ({
-  apiCallsCount,
   gameState,
   onGoHome,
   onRestart
@@ -36,10 +33,7 @@ const StoryCreationNavigation: React.FC<StoryCreationNavigationProps> = ({
           </div>
           
           <div className="flex items-center gap-2">
-            <Badge variant="outline" className="text-green-300 border-green-600">
-              <DollarSign className="h-3 w-3 mr-1" />
-              {apiCallsCount} API calls
-            </Badge>
+            {/* Removed debug API calls counter for production */}
             {gameState !== 'not_started' && (
               <Button
                 variant="outline"

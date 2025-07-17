@@ -1,15 +1,20 @@
 
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams, useLocation } from 'react-router-dom';
 import InlineStoryCreation from '@/components/story-creation/InlineStoryCreation';
 
 const StoryCreation: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
+  const location = useLocation();
   const [showInlineCreation] = useState(true);
   
   const prompt = searchParams.get('prompt');
   const mode = searchParams.get('mode') || searchParams.get('genre'); // Accept both mode and genre
+  
+  // Check for resume state from location
+  const resumeStoryId = location.state?.resumeStoryId;
+  const resumeStoryTitle = location.state?.resumeStoryTitle;
 
   const handleExit = () => {
     // Clear URL parameters when exiting to prevent auto-generation on return
@@ -31,17 +36,21 @@ const StoryCreation: React.FC = () => {
     return () => window.removeEventListener('popstate', handlePopState);
   }, [searchParams, setSearchParams]);
 
-  // Redirect to genre selection if no parameters
+  // Redirect to genre selection if no parameters and not resuming
   useEffect(() => {
-    if (!prompt || !mode) {
+    if (!prompt && !mode && !resumeStoryId) {
       navigate('/create/genre', { replace: true });
     }
-  }, [prompt, mode, navigate]);
+  }, [prompt, mode, resumeStoryId, navigate]);
 
-  // If we have prompt and mode, show inline creation
-  if (prompt && mode && showInlineCreation) {
+  // If we have prompt and mode, or are resuming a story, show inline creation
+  if ((prompt && mode) || resumeStoryId) {
     return (
-      <InlineStoryCreation onExit={handleExit} />
+      <InlineStoryCreation 
+        onExit={handleExit} 
+        resumeStoryId={resumeStoryId}
+        resumeStoryTitle={resumeStoryTitle}
+      />
     );
   }
 

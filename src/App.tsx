@@ -5,6 +5,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/context/AuthProvider";
 import { StoryCreationProvider } from "@/context/StoryCreationContext";
 import { HeaderVisibilityProvider } from "@/context/HeaderVisibilityContext";
+import { SlideshowProvider } from "@/context/SlideshowContext";
 import Layout from "@/components/Layout";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import { Suspense, lazy } from "react";
@@ -32,6 +33,8 @@ const Admin = lazy(() => import("./pages/Admin"));
 const Diagnostics = lazy(() => import("./pages/Diagnostics"));
 const About = lazy(() => import("./pages/About"));
 const NotFound = lazy(() => import("./pages/NotFound"));
+const TestAccess = lazy(() => import("./pages/TestAccess"));
+const TestDemoProtection = lazy(() => import("./pages/TestDemoProtection"));
 const ProtectedRoute = lazy(() => import("./components/ProtectedRoute"));
 
 // Loading fallback component
@@ -63,62 +66,66 @@ function App() {
           <AuthProvider>
             <StoryCreationProvider>
               <HeaderVisibilityProvider>
-                <BrowserRouter
-                  future={{
-                    v7_startTransition: true,
-                    v7_relativeSplatPath: true
-                  }}
-                >
-                  <div className="min-h-screen relative">
-                    {/* Apply the astronaut background */}
-                    <div className="scene-bg"></div>
-                    <Layout>
-                      <Suspense fallback={<LoadingFallback />}>
-                        <Routes>
-                          <Route path="/" element={<Index />} />
-                          <Route path="/learning" element={<Learning />} />
-                          <Route path="/about" element={<About />} />
-                          
-                          {/* Authentication Routes */}
-                          <Route path="/auth" element={<Auth />} />
-                          <Route path="/auth/signin" element={<SignIn />} />
-                          <Route path="/auth/signup" element={<SignUp />} />
-                          <Route path="/auth/forgot-password" element={<ForgotPassword />} />
-                          
-                          {/* Story Creation Flow - wrapped with ErrorBoundary */}
-                          <Route path="/create/genre" element={<ErrorBoundary><CreateGenre /></ErrorBoundary>} />
-                          <Route path="/create/prompt" element={<ErrorBoundary><CreatePrompt /></ErrorBoundary>} />
-                          <Route path="/create/starting-point" element={<ErrorBoundary><CreateStartingPoint /></ErrorBoundary>} />
-                          <Route path="/create/customize" element={<ErrorBoundary><CreateCustomize /></ErrorBoundary>} />
-                          <Route path="/story/:id" element={<ErrorBoundary><StoryDisplay /></ErrorBoundary>} />
-                          
-                          {/* Legacy Story Creation - wrapped with ErrorBoundary */}
-                          <Route path="/create-story" element={<ErrorBoundary><StoryCreation /></ErrorBoundary>} />
-                          
-                          <Route 
-                            path="/my-stories" 
-                            element={<MyStories />} 
-                          />
-                          <Route path="/discover" element={<Discover />} />
-                          <Route path="/pricing" element={<Pricing />} />
-                          <Route path="/story-viewer/:id" element={<ErrorBoundary><StoryViewer /></ErrorBoundary>} />
-                          <Route path="/beta" element={<Beta />} />
-                          <Route 
-                            path="/admin" 
-                            element={
-                              <ProtectedRoute>
-                                <Admin />
-                              </ProtectedRoute>
-                            } 
-                          />
-                          <Route path="/diagnostics" element={<Diagnostics />} />
-                          <Route path="*" element={<NotFound />} />
-                        </Routes>
-                      </Suspense>
-                    </Layout>
-                  </div>
-                  <Toaster />
-                </BrowserRouter>
+                <SlideshowProvider>
+                  <BrowserRouter
+                    future={{
+                      v7_startTransition: true,
+                      v7_relativeSplatPath: true
+                    }}
+                  >
+                    <div className="min-h-screen relative">
+                      {/* Apply the astronaut background */}
+                      <div className="scene-bg"></div>
+                      <Layout>
+                        <Suspense fallback={<LoadingFallback />}>
+                          <Routes>
+                            <Route path="/" element={<Index />} />
+                            <Route path="/learning" element={<Learning />} />
+                            <Route path="/about" element={<About />} />
+                            <Route path="/test-access" element={<TestAccess />} />
+                            <Route path="/test-demo-protection" element={<TestDemoProtection />} />
+                            
+                            {/* Authentication Routes */}
+                            <Route path="/auth" element={<Auth />} />
+                            <Route path="/auth/signin" element={<SignIn />} />
+                            <Route path="/auth/signup" element={<SignUp />} />
+                            <Route path="/auth/forgot-password" element={<ForgotPassword />} />
+                            
+                            {/* Story Creation Flow - wrapped with ErrorBoundary */}
+                            <Route path="/create/genre" element={<ErrorBoundary><CreateGenre /></ErrorBoundary>} />
+                            <Route path="/create/prompt" element={<ErrorBoundary><CreatePrompt /></ErrorBoundary>} />
+                            <Route path="/create/starting-point" element={<ErrorBoundary><CreateStartingPoint /></ErrorBoundary>} />
+                            <Route path="/create/customize" element={<ErrorBoundary><CreateCustomize /></ErrorBoundary>} />
+                            <Route path="/story/:id" element={<ErrorBoundary><StoryDisplay /></ErrorBoundary>} />
+                            
+                            {/* Legacy Story Creation - wrapped with ErrorBoundary */}
+                            <Route path="/create-story" element={<ErrorBoundary><StoryCreation /></ErrorBoundary>} />
+                            
+                            <Route 
+                              path="/my-stories" 
+                              element={<MyStories />} 
+                            />
+                            <Route path="/discover" element={<Discover />} />
+                            <Route path="/pricing" element={<Pricing />} />
+                            <Route path="/story-viewer/:id" element={<ErrorBoundary><StoryViewer /></ErrorBoundary>} />
+                            <Route path="/beta" element={<Beta />} />
+                            <Route 
+                              path="/admin" 
+                              element={
+                                <ProtectedRoute>
+                                  <Admin />
+                                </ProtectedRoute>
+                              } 
+                            />
+                            <Route path="/diagnostics" element={<Diagnostics />} />
+                            <Route path="*" element={<NotFound />} />
+                          </Routes>
+                        </Suspense>
+                      </Layout>
+                    </div>
+                    <Toaster />
+                  </BrowserRouter>
+                </SlideshowProvider>
               </HeaderVisibilityProvider>
             </StoryCreationProvider>
           </AuthProvider>

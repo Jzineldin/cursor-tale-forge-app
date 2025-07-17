@@ -35,26 +35,48 @@ const StoryChoicesSection: React.FC<StoryChoicesSectionProps> = ({
         {/* Enhanced choice buttons */}
         <div className="space-y-4">
           {choices.map((choice, index) => (
-            <Button
+            <button
               key={index}
               onClick={() => onChoiceSelect(choice)}
               disabled={isGenerating}
-              variant="outline"
-              className="group w-full text-left justify-start border-2 border-amber-500/40 text-amber-100 hover:bg-gradient-to-r hover:from-amber-500/20 hover:to-amber-600/20 hover:border-amber-400 hover:shadow-xl hover:shadow-amber-500/20 transition-all duration-500 min-h-fit py-6 px-8 text-lg font-medium bg-gradient-to-r from-slate-800/80 to-slate-700/80 disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-[1.02] hover:-translate-y-1"
+              className="
+                group w-full text-left
+                border-2 border-amber-500/40 rounded-lg
+                text-amber-100 hover:bg-gradient-to-r hover:from-amber-500/20 hover:to-amber-600/20 
+                hover:border-amber-400 hover:shadow-xl hover:shadow-amber-500/20 
+                transition-all duration-500 min-h-fit py-6 px-8 
+                text-lg font-medium bg-gradient-to-r from-slate-800/80 to-slate-700/80 
+                disabled:opacity-50 disabled:cursor-not-allowed 
+                transform hover:scale-[1.02] hover:-translate-y-1
+                focus-visible:outline-none focus-visible:ring-2 
+                focus-visible:ring-amber-400 focus-visible:ring-offset-2
+              "
               style={{ fontFamily: 'Cormorant Garamond, serif' }}
             >
-              <div className="flex items-center justify-between w-full">
-                <div className="flex items-start gap-4">
-                  <span className="text-amber-400 font-bold text-xl bg-gradient-to-br from-amber-300 to-amber-600 bg-clip-text text-transparent drop-shadow-sm">
+              <div className="flex items-start justify-between w-full gap-4">
+                <div className="flex items-start gap-4 flex-1 min-w-0">
+                  <span className="
+                    text-amber-400 font-bold text-xl 
+                    bg-gradient-to-br from-amber-300 to-amber-600 bg-clip-text text-transparent 
+                    drop-shadow-sm flex-shrink-0 mt-0.5
+                  ">
                     {index + 1}.
                   </span>
-                  <span className="leading-relaxed text-amber-100 group-hover:text-amber-50 transition-colors duration-300">
+                  <span className="
+                    leading-relaxed text-amber-100 group-hover:text-amber-50 
+                    transition-colors duration-300 flex-1
+                    word-wrap break-words overflow-wrap break-word
+                  ">
                     {choice}
                   </span>
                 </div>
-                <ArrowRight className="h-5 w-5 text-amber-400 opacity-0 group-hover:opacity-100 transition-all duration-300 transform group-hover:translate-x-1" />
+                <ArrowRight className="
+                  h-5 w-5 text-amber-400 opacity-0 group-hover:opacity-100 
+                  transition-all duration-300 transform group-hover:translate-x-1
+                  flex-shrink-0 mt-0.5
+                " />
               </div>
-            </Button>
+            </button>
           ))}
         </div>
 

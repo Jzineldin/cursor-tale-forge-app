@@ -64,10 +64,11 @@ STORY REQUIREMENTS:
 - Generate exactly 120-200 words for rich, detailed storytelling
 - Create exactly 3 meaningful choices that advance both plot and character development
 - Use age-appropriate language that children can understand and enjoy
-- Include detailed, child-friendly image descriptions for visual consistency
+- DO NOT include image descriptions or references to images within the segmentText
 - DO NOT include choice prompts or transitions within the segmentText
 - The segmentText should end naturally as part of the story narrative
 - Weave educational content naturally into the narrative when appropriate
+- Generate a separate imagePrompt field for visual generation (not in story text)
 
 RESPONSE FORMAT (EXACT JSON):
 {

@@ -1,76 +1,188 @@
-import { serve } from "https://deno.land/std@0.224.0/http/server.ts";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-};
+import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
+import { corsHeaders } from '../_shared/cors.ts'
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
 serve(async (req) => {
+  console.log('🎵 Edge function called:', {
+    method: req.method,
+    url: req.url,
+    headers: Object.fromEntries(req.headers.entries())
+  })
+
+  // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
-    return new Response('ok', { headers: corsHeaders });
+    console.log('🎵 Handling CORS preflight request')
+    return new Response('ok', { headers: corsHeaders })
   }
 
   try {
-    const supabaseClient = createClient(
-      Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_ANON_KEY') ?? '',
-    );
-
-    const authHeader = req.headers.get('Authorization')!;
-    const token = authHeader.replace('Bearer ', '');
-    const { data: { user } } = await supabaseClient.auth.getUser(token);
-
-    if (!user) {
-      return new Response('Unauthorized', { status: 401, headers: corsHeaders });
-    }
-
-    const ELEVENLABS_API_KEY = Deno.env.get('ELEVENLABS_API_KEY');
-    if (!ELEVENLABS_API_KEY) {
-      return new Response(
-        JSON.stringify({ error: 'ElevenLabs API key not configured' }),
-        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
-    }
-
-    console.log('Fetching available voices from ElevenLabs...');
-
-    // Fetch all available voices
-    const voicesResponse = await fetch('https://api.elevenlabs.io/v1/voices', {
-      headers: {
-        'Accept': 'application/json',
-        'xi-api-key': ELEVENLABS_API_KEY,
-      },
-    });
-
-    if (!voicesResponse.ok) {
-      const errorText = await voicesResponse.text();
-      console.error('ElevenLabs voices API error:', errorText);
+    // Get authorization header
+    const authHeader = req.headers.get('Authorization')
+    if (!authHeader) {
+      console.error('❌ No authorization header provided')
       return new Response(
         JSON.stringify({ 
-          error: 'Failed to fetch voices', 
-          details: errorText,
-          status: voicesResponse.status 
+          error: 'Authentication required',
+          details: 'Please log in to access voice features'
         }),
-        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
+        { 
+          status: 401, 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+        }
+      )
     }
 
-    const voicesData = await voicesResponse.json();
-    console.log('Available voices:', voicesData);
+    // Extract token from Bearer header
+    const token = authHeader.replace('Bearer ', '')
+    if (!token) {
+      console.error('❌ No token provided in authorization header')
+      return new Response(
+        JSON.stringify({ 
+          error: 'Invalid authorization token',
+          details: 'Please log in to access voice features'
+        }),
+        { 
+          status: 401, 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+        }
+      )
+    }
+
+    // Create Supabase client with the token
+    const supabaseUrl = Deno.env.get('SUPABASE_URL')
+    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')
+    
+    if (!supabaseUrl || !supabaseServiceKey) {
+      console.error('❌ Missing Supabase environment variables')
+      return new Response(
+        JSON.stringify({ 
+          error: 'Server configuration error',
+          details: 'Please contact support'
+        }),
+        { 
+          status: 500, 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+        }
+      )
+    }
+
+    const supabase = createClient(supabaseUrl, supabaseServiceKey)
+
+    // Verify the user token
+    const { data: { user }, error: authError } = await supabase.auth.getUser(token)
+    
+    if (authError || !user) {
+      console.error('❌ Authentication failed:', authError)
+      return new Response(
+        JSON.stringify({ 
+          error: 'Authentication failed',
+          details: 'Please log in to access voice features'
+        }),
+        { 
+          status: 401, 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+        }
+      )
+    }
+
+    console.log('✅ User authenticated:', user.id)
+
+    // Get ElevenLabs API key from environment
+    const elevenlabsApiKey = Deno.env.get('ELEVENLABS_API_KEY')
+    
+    console.log('🎵 Environment check:')
+    console.log('- ELEVENLABS_API_KEY exists:', !!elevenlabsApiKey)
+    console.log('- API key starts with:', elevenlabsApiKey?.substring(0, 10) + '...')
+    console.log('- API key length:', elevenlabsApiKey?.length)
+    
+    if (!elevenlabsApiKey) {
+      console.error('❌ ELEVENLABS_API_KEY not found in environment')
+      return new Response(
+        JSON.stringify({ 
+          error: 'ElevenLabs API key not configured',
+          details: 'Please check your Supabase Edge Function secrets'
+        }),
+        { 
+          status: 500, 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+        }
+      )
+    }
+
+    console.log('🎵 Fetching voices from ElevenLabs API...')
+
+    // Fetch voices from ElevenLabs API
+    const response = await fetch('https://api.elevenlabs.io/v1/voices', {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json',
+        'xi-api-key': elevenlabsApiKey,
+      },
+    })
+
+    console.log('🎵 ElevenLabs API response:', {
+      status: response.status,
+      statusText: response.statusText,
+      ok: response.ok,
+      headers: Object.fromEntries(response.headers.entries())
+    })
+
+    if (!response.ok) {
+      console.error('❌ ElevenLabs API error:', response.status, response.statusText)
+      const errorText = await response.text()
+      console.error('❌ Error details:', errorText)
+      
+      let errorMessage = 'Failed to fetch voices from ElevenLabs'
+      let statusCode = response.status
+      
+      if (response.status === 401) {
+        errorMessage = 'ElevenLabs API key is invalid or expired'
+      } else if (response.status === 429) {
+        errorMessage = 'ElevenLabs API rate limit exceeded'
+      } else if (response.status === 403) {
+        errorMessage = 'ElevenLabs API access forbidden - check account status'
+      }
+      
+      return new Response(
+        JSON.stringify({ 
+          error: errorMessage,
+          status: response.status,
+          details: errorText,
+          timestamp: new Date().toISOString()
+        }),
+        { 
+          status: statusCode, 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+        }
+      )
+    }
+
+    const voicesData = await response.json()
+    console.log('🎵 Successfully fetched voices:', {
+      totalVoices: voicesData.voices?.length || 0,
+      hasVoices: !!voicesData.voices,
+      voicesArray: Array.isArray(voicesData.voices)
+    })
 
     // Also fetch user info to understand account type
+    console.log('🎵 Fetching user info...')
     const userResponse = await fetch('https://api.elevenlabs.io/v1/user', {
       headers: {
         'Accept': 'application/json',
-        'xi-api-key': ELEVENLABS_API_KEY,
+        'xi-api-key': elevenlabsApiKey,
       },
-    });
+    })
 
-    let userInfo = null;
+    let userInfo = null
     if (userResponse.ok) {
-      userInfo = await userResponse.json();
-      console.log('User info:', userInfo);
+      userInfo = await userResponse.json()
+      console.log('🎵 User info fetched successfully:', {
+        subscription: userInfo.subscription?.tier,
+        characterCount: userInfo.subscription?.character_count,
+        characterLimit: userInfo.subscription?.character_limit
+      })
+    } else {
+      console.warn('⚠️ Failed to fetch user info:', userResponse.status)
     }
 
     // Categorize voices by type
@@ -79,13 +191,20 @@ serve(async (req) => {
       cloned: voicesData.voices?.filter((voice: any) => voice.category === 'cloned') || [],
       generated: voicesData.voices?.filter((voice: any) => voice.category === 'generated') || [],
       professional: voicesData.voices?.filter((voice: any) => voice.category === 'professional') || [],
-    };
+    }
+
+    console.log('🎵 Voice categories:', {
+      premade: categorizedVoices.premade.length,
+      cloned: categorizedVoices.cloned.length,
+      generated: categorizedVoices.generated.length,
+      professional: categorizedVoices.professional.length
+    })
 
     // Test a voice to verify API is working
-    let testResult: any = null;
+    let testResult: any = null
     if (voicesData.voices && voicesData.voices.length > 0) {
-      const testVoice = voicesData.voices[0];
-      console.log('Testing voice:', testVoice.name, testVoice.voice_id);
+      const testVoice = voicesData.voices[0]
+      console.log('🎵 Testing voice:', testVoice.name, testVoice.voice_id)
       
       try {
         const testResponse = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${testVoice.voice_id}`, {
@@ -93,7 +212,7 @@ serve(async (req) => {
           headers: {
             'Accept': 'audio/mpeg',
             'Content-Type': 'application/json',
-            'xi-api-key': ELEVENLABS_API_KEY,
+            'xi-api-key': elevenlabsApiKey,
           },
           body: JSON.stringify({
             text: 'Hello! This is a test of the ElevenLabs voice system.',
@@ -105,18 +224,21 @@ serve(async (req) => {
               use_speaker_boost: true
             }
           }),
-        });
+        })
 
         testResult = {
           success: testResponse.ok,
           status: testResponse.status,
           voiceTested: testVoice.name,
           voiceId: testVoice.voice_id,
-        };
+        }
 
         if (!testResponse.ok) {
-          const errorText = await testResponse.text();
-          testResult.error = errorText;
+          const errorText = await testResponse.text()
+          testResult.error = errorText
+          console.error('❌ Voice test failed:', testResult)
+        } else {
+          console.log('✅ Voice test successful')
         }
       } catch (error: any) {
         testResult = {
@@ -124,34 +246,46 @@ serve(async (req) => {
           error: error.message,
           voiceTested: testVoice.name,
           voiceId: testVoice.voice_id,
-        };
+        }
+        console.error('❌ Voice test exception:', error)
       }
     }
-
+    
+    const responseData = {
+      success: true,
+      userInfo,
+      totalVoices: voicesData.voices?.length || 0,
+      categorizedVoices,
+      allVoices: voicesData.voices || [],
+      testResult,
+      timestamp: new Date().toISOString(),
+    }
+    
+    console.log('🎵 Returning successful response with', responseData.totalVoices, 'voices')
+    
     return new Response(
-      JSON.stringify({
-        success: true,
-        userInfo,
-        totalVoices: voicesData.voices?.length || 0,
-        categorizedVoices,
-        allVoices: voicesData.voices || [],
-        testResult,
-        timestamp: new Date().toISOString(),
-      }),
+      JSON.stringify(responseData),
       { 
         status: 200, 
         headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
       }
-    );
+    )
 
   } catch (error) {
-    console.error('Error in test-elevenlabs-voices function:', error);
+    console.error('❌ Edge function error:', error)
+    console.error('❌ Error stack:', error.stack)
+    
     return new Response(
       JSON.stringify({ 
         error: 'Internal server error', 
-        details: error.message 
+        details: error.message,
+        stack: error.stack,
+        timestamp: new Date().toISOString()
       }),
-      { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-    );
+      { 
+        status: 500, 
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+      }
+    )
   }
-}); 
+}) 

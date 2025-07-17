@@ -9,7 +9,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Checkbox } from '@/components/ui/checkbox';
 import { Progress } from '@/components/ui/progress';
 import { toast } from 'sonner';
-import { Eye, EyeOff, Github } from 'lucide-react';
+import { Eye, EyeOff, Github, Mail } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 
 const SignUp = () => {
@@ -26,6 +26,8 @@ const SignUp = () => {
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
   const [githubLoading, setGithubLoading] = useState(false);
+  const [emailSent, setEmailSent] = useState(false);
+  const [resendLoading, setResendLoading] = useState(false);
 
   // Redirect if already authenticated
   React.useEffect(() => {
@@ -72,6 +74,21 @@ const SignUp = () => {
 
     setLoading(true);
     try {
+      // Special handling for demo account
+      if (formData.email === 'demo@tale-forge.app') {
+        // For demo account, we'll try to sign in directly first
+        const { error: signInError } = await supabase.auth.signInWithPassword({
+          email: formData.email,
+          password: formData.password,
+        });
+
+        if (!signInError) {
+          toast.success('Demo account login successful!');
+          navigate('/');
+          return;
+        }
+      }
+
       const { error } = await supabase.auth.signUp({
         email: formData.email,
         password: formData.password,
@@ -85,12 +102,33 @@ const SignUp = () => {
 
       if (error) throw error;
       
+      setEmailSent(true);
       toast.success('Account created! Please check your email to verify your account.');
-      navigate('/auth/signin');
     } catch (error: any) {
       toast.error(error.message || 'Failed to create account');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleResendEmail = async () => {
+    setResendLoading(true);
+    try {
+      const { error } = await supabase.auth.resend({
+        type: 'signup',
+        email: formData.email,
+        options: {
+          emailRedirectTo: `${window.location.origin}/`
+        }
+      });
+
+      if (error) throw error;
+      
+      toast.success('Confirmation email resent! Please check your inbox and spam folder.');
+    } catch (error: any) {
+      toast.error(error.message || 'Failed to resend confirmation email');
+    } finally {
+      setResendLoading(false);
     }
   };
 
@@ -302,6 +340,28 @@ const SignUp = () => {
             >
               {loading ? 'Creating Account...' : 'Create Account'}
             </Button>
+
+            {/* Show resend email button if email was sent */}
+            {emailSent && (
+              <div className="mt-4 p-4 bg-slate-800/50 rounded-lg border border-slate-700">
+                <div className="text-center text-slate-300 mb-3">
+                  <Mail className="h-5 w-5 inline mr-2" />
+                  Didn't receive the email?
+                </div>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={handleResendEmail}
+                  disabled={resendLoading}
+                  className="w-full border-slate-600 text-slate-300 hover:bg-slate-700"
+                >
+                  {resendLoading ? 'Sending...' : 'Resend Confirmation Email'}
+                </Button>
+                <div className="text-xs text-slate-400 mt-2 text-center">
+                  Check your spam/junk folder first
+                </div>
+              </div>
+            )}
           </form>
 
           <div className="text-center text-sm text-slate-400">

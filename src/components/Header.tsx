@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '@/context/AuthProvider';
 import { Home, Clock, PenTool, Crown, Search, Menu, X } from '@/lib/icons';
@@ -10,10 +10,47 @@ import WhatsNewModal from './WhatsNewModal';
 import { Button } from '@/components/ui/button';
 import { FileText, Star } from 'lucide-react';
 
-const Header = () => {
+interface HeaderProps {
+  isSlideshowOpen?: boolean;
+}
+
+const Header: React.FC<HeaderProps> = ({ isSlideshowOpen = false }) => {
   const { user } = useAuth();
   const location = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const mobileMenuRef = useRef<HTMLDivElement>(null);
+
+  // Click outside handler to close mobile menu
+  useEffect(() => {
+    const handleClickOutside = (event: Event) => {
+      if (mobileMenuRef.current && !mobileMenuRef.current.contains(event.target as Node)) {
+        setIsMobileMenuOpen(false);
+      }
+    };
+
+    if (isMobileMenuOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+      document.addEventListener('touchstart', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('touchstart', handleClickOutside);
+    };
+  }, [isMobileMenuOpen]);
+
+  // Manage body class for mobile menu
+  useEffect(() => {
+    if (isMobileMenuOpen) {
+      document.body.classList.add('mobile-menu-open');
+    } else {
+      document.body.classList.remove('mobile-menu-open');
+    }
+    
+    return () => {
+      document.body.classList.remove('mobile-menu-open');
+    };
+  }, [isMobileMenuOpen]);
 
   const isActive = (path: string) => {
     if (path === '/' && (location.pathname === '/' || location.pathname === '/create-story')) {
@@ -25,10 +62,12 @@ const Header = () => {
   const isCreateStoryActive = () => location.pathname === '/create-story';
 
   const toggleMobileMenu = () => {
-    setIsMobileMenuOpen(!isMobileMenuOpen);
+    console.log('Toggle mobile menu clicked, current state:', isMobileMenuOpen);
+    setIsMobileMenuOpen(prev => !prev);
   };
 
   const closeMobileMenu = () => {
+    console.log('Closing mobile menu');
     setIsMobileMenuOpen(false);
   };
 
@@ -37,10 +76,10 @@ const Header = () => {
       <Link 
         to="/" 
         onClick={isMobile ? closeMobileMenu : undefined}
-        className={`flex items-center gap-2 px-3 py-2 rounded-md transition-colors ${
+        className={`flex items-center gap-2 px-3 py-2 rounded-md transition-all duration-300 ${
           isActive('/') 
-            ? 'bg-primary text-primary-foreground' 
-            : 'text-slate-300 hover:text-white hover:bg-slate-800'
+            ? 'bg-gradient-to-r from-amber-500 to-amber-600 text-white shadow-lg' 
+            : 'text-slate-300 hover:text-white hover:bg-slate-800/50'
         } ${isMobile ? 'w-full text-left' : ''}`}
       >
         <Home className="h-4 w-4" />
@@ -48,7 +87,7 @@ const Header = () => {
       </Link>
       
       {isCreateStoryActive() && (
-        <div className="flex items-center gap-2 px-3 py-2 rounded-md bg-primary text-primary-foreground">
+        <div className="flex items-center gap-2 px-3 py-2 rounded-md bg-gradient-to-r from-amber-500 to-amber-600 text-white shadow-lg">
           <PenTool className="h-4 w-4" />
           <span>Creating Story</span>
         </div>
@@ -57,26 +96,26 @@ const Header = () => {
       <Link 
         to="/my-stories" 
         onClick={isMobile ? closeMobileMenu : undefined}
-        className={`flex items-center gap-2 px-3 py-2 rounded-md transition-colors ${
+        className={`flex items-center gap-2 px-3 py-2 rounded-md transition-all duration-300 ${
           isActive('/my-stories') 
-            ? 'bg-primary text-primary-foreground' 
-            : 'text-slate-300 hover:text-white hover:bg-slate-800'
+            ? 'bg-gradient-to-r from-amber-500 to-amber-600 text-white shadow-lg' 
+            : 'text-slate-300 hover:text-white hover:bg-slate-800/50'
         } ${isMobile ? 'w-full text-left' : ''}`}
         title="View your temporary stories (saved locally)"
       >
         <Clock className="h-4 w-4" />
         <span className="hidden lg:inline">My Stories</span>
         <span className="lg:hidden">Stories</span>
-        <span className="text-xs bg-orange-500 text-white px-1 rounded">Local</span>
+        <span className="text-xs bg-amber-500 text-white px-1 rounded">Local</span>
       </Link>
       
       <Link 
         to="/discover" 
         onClick={isMobile ? closeMobileMenu : undefined}
-        className={`flex items-center gap-2 px-3 py-2 rounded-md transition-colors ${
+        className={`flex items-center gap-2 px-3 py-2 rounded-md transition-all duration-300 ${
           isActive('/discover') 
-            ? 'bg-primary text-primary-foreground' 
-            : 'text-slate-300 hover:text-white hover:bg-slate-800'
+            ? 'bg-gradient-to-r from-amber-500 to-amber-600 text-white shadow-lg' 
+            : 'text-slate-300 hover:text-white hover:bg-slate-800/50'
         } ${isMobile ? 'w-full text-left' : ''}`}
       >
         <Search className="h-4 w-4" />
@@ -84,33 +123,36 @@ const Header = () => {
         <span className="lg:hidden">Explore</span>
       </Link>
       
-      <Link 
-        to="/pricing" 
-        onClick={isMobile ? closeMobileMenu : undefined}
-        className={`flex items-center gap-2 px-3 py-2 rounded-md transition-colors ${
-          isActive('/pricing') 
-            ? 'bg-primary text-primary-foreground' 
-            : 'text-slate-300 hover:text-white hover:bg-slate-800'
-        } ${isMobile ? 'w-full text-left' : ''}`}
-      >
-        <Crown className="h-4 w-4" />
-        <span className="hidden lg:inline">Pricing</span>
-        <span className="lg:hidden">Premium</span>
-      </Link>
+      {/* Hide pricing until it's ready */}
+      {false && (
+        <Link 
+          to="/pricing" 
+          onClick={isMobile ? closeMobileMenu : undefined}
+          className={`flex items-center gap-2 px-3 py-2 rounded-md transition-all duration-300 ${
+            isActive('/pricing') 
+              ? 'bg-gradient-to-r from-amber-500 to-amber-600 text-white shadow-lg' 
+              : 'text-slate-300 hover:text-white hover:bg-slate-800/50'
+          } ${isMobile ? 'w-full text-left' : ''}`}
+        >
+          <Crown className="h-4 w-4" />
+          <span className="hidden lg:inline">Pricing</span>
+          <span className="lg:hidden">Premium</span>
+        </Link>
+      )}
     </>
   );
 
   return (
-    <header className="bg-slate-900/95 backdrop-blur-sm border-b border-slate-700/50 sticky top-0 z-50 min-h-[64px] flex items-center">
-      <div className="container mx-auto px-4 w-full">
+    <header className={`header-glassmorphic ${isSlideshowOpen ? 'hidden' : 'block'}`} ref={mobileMenuRef}>
+      <div className="container mx-auto px-6 w-full">
         <div className="flex items-center justify-between">
           {/* Logo/Brand */}
           <Link 
             to="/" 
-            className="text-xl md:text-2xl font-bold text-white hover:text-primary transition-colors cursor-pointer font-heading flex-shrink-0"
+            className="header-brand"
             onClick={closeMobileMenu}
           >
-            Tale Forge
+            📖 Tale Forge
           </Link>
 
           {/* Desktop Navigation & Actions */}
@@ -119,7 +161,7 @@ const Header = () => {
             <div className="flex items-center gap-2 flex-shrink-0">
               <ChangelogModal 
                 trigger={
-                  <Button variant="ghost" size="sm" className="text-amber-200 hover:text-amber-100 hover:bg-amber-600/20">
+                  <Button variant="ghost" size="sm" className="header-action-btn">
                     <FileText className="mr-2 h-4 w-4" />
                     Changelog
                   </Button>
@@ -127,7 +169,7 @@ const Header = () => {
               />
               <WhatsNewModal 
                 trigger={
-                  <Button variant="ghost" size="sm" className="text-amber-200 hover:text-amber-100 hover:bg-amber-600/20">
+                  <Button variant="ghost" size="sm" className="header-action-btn">
                     <Star className="mr-2 h-4 w-4" />
                     What's New?
                   </Button>
@@ -166,14 +208,14 @@ const Header = () => {
             <div className="flex items-center gap-1 flex-shrink-0">
               <ChangelogModal 
                 trigger={
-                  <Button variant="ghost" size="sm" className="text-amber-200 hover:text-amber-100 hover:bg-amber-600/20 p-2">
+                  <Button variant="ghost" size="sm" className="header-action-btn p-2">
                     <FileText className="h-4 w-4" />
                   </Button>
                 }
               />
               <WhatsNewModal 
                 trigger={
-                  <Button variant="ghost" size="sm" className="text-amber-200 hover:text-amber-100 hover:bg-amber-600/20 p-2">
+                  <Button variant="ghost" size="sm" className="header-action-btn p-2">
                     <Star className="h-4 w-4" />
                   </Button>
                 }
@@ -181,8 +223,9 @@ const Header = () => {
             </div>
             <button
               onClick={toggleMobileMenu}
-              className="p-2 rounded-md bg-slate-800/50 hover:bg-slate-700/50 transition-colors flex-shrink-0"
+              className="header-mobile-btn"
               aria-label="Toggle mobile menu"
+              type="button"
             >
               {isMobileMenuOpen ? (
                 <X className="h-5 w-5 text-white" />
@@ -192,26 +235,26 @@ const Header = () => {
             </button>
           </div>
         </div>
-
-        {/* Mobile Menu */}
-        {isMobileMenuOpen && (
-          <div className="md:hidden mt-4 pb-4 border-t border-slate-700/50">
-            <nav className="flex flex-col gap-2 mt-4">
-              <NavigationLinks isMobile={true} />
-              
-              {user ? (
-                <div className="mt-4 pt-4 border-t border-slate-700/50">
-                  <UserMenu />
-                </div>
-              ) : (
-                <div className="mt-4 pt-4 border-t border-slate-700/50">
-                  <AuthButtons />
-                </div>
-              )}
-            </nav>
-          </div>
-        )}
       </div>
+
+      {/* Mobile Menu - Full Width Positioning */}
+      {isMobileMenuOpen && (
+        <div className="md:hidden header-mobile-menu">
+          <nav className="flex flex-col gap-2">
+            <NavigationLinks isMobile={true} />
+            
+            {user ? (
+              <div className="mt-4 pt-4 border-t border-white/10">
+                <UserMenu />
+              </div>
+            ) : (
+              <div className="mt-4 pt-4 border-t border-white/10">
+                <AuthButtons />
+              </div>
+            )}
+          </nav>
+        </div>
+      )}
     </header>
   );
 };

@@ -50,7 +50,12 @@ const StoryViewer = () => {
     }
 
     if (error) {
-        return <div className="text-destructive text-center p-8">Error loading story: {error.message}</div>;
+        return (
+            <div className="text-destructive text-center p-8">
+                <h2 className="text-xl font-semibold mb-2">Unable to Load Story</h2>
+                <p className="text-gray-300">Something went wrong while loading your story. Please try refreshing the page.</p>
+            </div>
+        );
     }
     
     if (!story) {

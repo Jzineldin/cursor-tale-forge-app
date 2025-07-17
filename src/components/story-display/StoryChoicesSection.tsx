@@ -28,18 +28,36 @@ const StoryChoicesSection: React.FC<StoryChoicesSectionProps> = ({
       <CardContent className="space-y-3">
         <div className="grid gap-3">
           {choices.map((choice, index) => (
-            <Button
+            <button
               key={index}
               onClick={() => onChoiceSelect(choice)}
               disabled={isGenerating}
-              variant="outline"
-              className="w-full text-left justify-start border-amber-500/40 text-white hover:bg-amber-500/20 hover:border-amber-400 transition-all duration-300 min-h-fit py-3 md:py-4 px-4 md:px-6 text-sm md:text-base font-medium bg-slate-800/60 hover:shadow-lg hover:shadow-amber-500/10"
+              className="
+                flex items-start gap-3 w-full text-left
+                border border-amber-500/40 rounded-lg
+                bg-slate-800/60 text-white
+                hover:bg-amber-500/20 hover:border-amber-400
+                transition-all duration-300
+                p-4 min-h-fit
+                hover:shadow-lg hover:shadow-amber-500/10
+                focus-visible:outline-none focus-visible:ring-2 
+                focus-visible:ring-amber-400 focus-visible:ring-offset-2
+                disabled:opacity-50 disabled:cursor-not-allowed
+              "
             >
-              <span className="text-amber-400 font-bold mr-3 md:mr-4 text-sm md:text-base">
+              <span className="
+                text-amber-400 font-bold text-sm md:text-base
+                flex-shrink-0 mt-0.5
+              ">
                 {index + 1}.
               </span>
-              <span className="leading-relaxed text-left">{choice}</span>
-            </Button>
+              <span className="
+                leading-relaxed text-left text-sm md:text-base
+                flex-1 word-wrap break-words
+              ">
+                {choice}
+              </span>
+            </button>
           ))}
         </div>
       </CardContent>

@@ -1,6 +1,6 @@
 
 import { useEffect } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, useLocation } from 'react-router-dom';
 import { useStoryState } from './useStoryState';
 import { useStoryActions } from './useStoryActions';
 import { useStoryConfirmation } from './useStoryConfirmation';
@@ -8,6 +8,7 @@ import { useInlineStoryRealtime } from './useInlineStoryRealtime';
 
 export const useInlineStoryGeneration = () => {
   const [searchParams] = useSearchParams();
+  const location = useLocation();
   const storyState = useStoryState();
   const confirmation = useStoryConfirmation();
 
@@ -31,9 +32,28 @@ export const useInlineStoryGeneration = () => {
   const prompt = searchParams.get('prompt') || '';
   const mode = searchParams.get('mode') || searchParams.get('genre') || 'fantasy';
   
+  // Check for resume state
+  const resumeStoryId = location.state?.resumeStoryId;
+  
 
-  // Auto-start story generation with robust duplicate prevention
+  // Auto-start story generation or resume existing story
   useEffect(() => {
+    // Check if we should resume an existing story
+    if (resumeStoryId && 
+        !storyState.generationStartedRef.current && 
+        !storyState.currentSegment && 
+        !storyState.error && 
+        !storyState.isGeneratingStartup && 
+        !storyState.initializedRef.current &&
+        storyState.storyHistory.length === 0) {
+      
+      console.log('🔄 Resuming existing story:', resumeStoryId);
+      storyState.initializedRef.current = true;
+      storyState.generationStartedRef.current = true;
+      storyActions.handleResumeStory(resumeStoryId);
+      return;
+    }
+    
     // Only auto-start if we have a fresh session and haven't already generated content
     const shouldStart = prompt && 
                        !storyState.generationStartedRef.current && 
@@ -49,7 +69,7 @@ export const useInlineStoryGeneration = () => {
       storyState.generationStartedRef.current = true;
       storyActions.handleStartStory(prompt, mode);
     }
-  }, [prompt, mode, storyState.currentSegment, storyState.storyHistory.length, storyState.generationStartedRef, storyState.initializedRef, storyState.error, storyState.isGeneratingStartup, storyActions]);
+  }, [prompt, mode, resumeStoryId, storyState.currentSegment, storyState.storyHistory.length, storyState.generationStartedRef, storyState.initializedRef, storyState.error, storyState.isGeneratingStartup, storyActions]);
 
   // Setup realtime subscription for current segment updates
   const { isSubscribed } = useInlineStoryRealtime({

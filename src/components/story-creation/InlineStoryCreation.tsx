@@ -13,14 +13,19 @@ import StoryChoicesSection from './StoryChoicesSection';
 import StoryEndSection from './StoryEndSection';
 import VoiceGenerationSection from './VoiceGenerationSection';
 import StoryImageSettings from './StoryImageSettings';
+import SaveIndicator from '@/components/ui/SaveIndicator';
 import { useInlineStoryGeneration } from '@/hooks/story-creation/useInlineStoryGeneration';
+import { useSaveStatus } from '@/hooks/useSaveStatus';
 
 interface InlineStoryCreationProps {
   onExit: () => void;
+  resumeStoryId?: string;
+  resumeStoryTitle?: string;
 }
 
-const InlineStoryCreation: React.FC<InlineStoryCreationProps> = ({ onExit }) => {
+const InlineStoryCreation: React.FC<InlineStoryCreationProps> = ({ onExit, resumeStoryId, resumeStoryTitle }) => {
   const navigate = useNavigate();
+  const { saveStatus, saveMessage } = useSaveStatus();
   const {
     currentSegment,
     storyHistory,
@@ -107,8 +112,25 @@ const InlineStoryCreation: React.FC<InlineStoryCreationProps> = ({ onExit }) => 
   // Show story display once we have content
   if (currentSegment) {
     return (
-      <StoryDisplayLayout>
-        <Card className="w-full max-w-4xl mx-auto bg-slate-900/95 border-amber-500/30 backdrop-blur-sm shadow-2xl m-2 sm:m-4 overflow-hidden">
+      <>
+        <SaveIndicator status={saveStatus} message={saveMessage} />
+        <StoryDisplayLayout>
+          {/* Resume Banner */}
+          {resumeStoryId && (
+            <div className="w-full max-w-4xl mx-auto mb-4 p-4 bg-blue-600/20 border border-blue-500/30 rounded-lg backdrop-blur-sm">
+              <div className="flex items-center gap-3 text-blue-300">
+                <div className="p-2 bg-blue-500/20 rounded-full">
+                  <Sparkles className="h-4 w-4" />
+                </div>
+                <div>
+                  <p className="font-medium">Continuing your story</p>
+                  <p className="text-sm text-blue-200/80">{resumeStoryTitle || 'Untitled Story'}</p>
+                </div>
+              </div>
+            </div>
+          )}
+          
+          <Card className="w-full max-w-4xl mx-auto bg-slate-900/95 border-amber-500/30 backdrop-blur-sm shadow-2xl m-2 sm:m-4 overflow-hidden">
           <CardHeader className="text-center pb-3 sm:pb-4 px-4 sm:px-6 overflow-hidden">
             <CardTitle className="text-white text-xl sm:text-2xl font-serif flex items-center justify-center gap-2 overflow-hidden">
               <Sparkles className="h-5 w-5 sm:h-6 sm:w-6 text-amber-400 flex-shrink-0" />
@@ -163,6 +185,7 @@ const InlineStoryCreation: React.FC<InlineStoryCreationProps> = ({ onExit }) => 
           showAudioOption={false}
         />
       </StoryDisplayLayout>
+      </>
     );
   }
 

@@ -1,38 +1,57 @@
-import { Component, ErrorInfo, ReactNode } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import React, { Component, ErrorInfo } from 'react';
 import { Button } from '@/components/ui/button';
-import { AlertTriangle, RefreshCw, Brain, Image, Volume2, Wifi } from 'lucide-react';
-import { performanceMonitor } from '@/lib/performance';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { 
+  AlertTriangle, 
+  RefreshCw, 
+  Home, 
+  Brain, 
+  Image, 
+  Volume2, 
+  Wifi, 
+  Database,
+  FileText,
+  Settings
+} from 'lucide-react';
+// import { performanceMonitor } from '@/utils/performance';
 
 interface Props {
-  children: ReactNode;
-  fallback?: ReactNode;
-  context?: 'story-generation' | 'image-generation' | 'audio-generation' | 'ui' | 'general';
+  children: React.ReactNode;
+  context?: string;
+  fallback?: React.ReactNode;
 }
 
 interface State {
   hasError: boolean;
-  error?: Error;
-  errorInfo?: ErrorInfo;
+  error: Error | null;
+  errorInfo: ErrorInfo | null;
   retryCount: number;
 }
 
 class ErrorBoundary extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
-    this.state = {
-      hasError: false,
+    this.state = { 
+      hasError: false, 
+      error: null, 
+      errorInfo: null,
       retryCount: 0
     };
   }
 
-  public static getDerivedStateFromError(error: Error): Partial<State> {
-    return { hasError: true, error };
+  public static getDerivedStateFromError(error: Error): State {
+    return { 
+      hasError: true, 
+      error, 
+      errorInfo: null,
+      retryCount: 0
+    };
   }
 
   public override componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     // Record error in performance metrics
-    performanceMonitor.recordMetric('error-boundary', 'errorCount', 1);
+    // performanceMonitor.recordMetric('error-boundary', 'errorCount', 1);
     
     console.error('ErrorBoundary caught an error:', {
       error: error.message,
@@ -51,20 +70,34 @@ class ErrorBoundary extends Component<Props, State> {
     } as State));
   };
 
+  private handleGoHome = () => {
+    window.location.href = '/';
+  };
+
+  private handleRefresh = () => {
+    window.location.reload();
+  };
+
   private getErrorContext = () => {
     const { context } = this.props;
     const { error } = this.state;
     
-    if (!error) return { icon: AlertTriangle, title: 'Something went wrong', description: 'An unexpected error occurred.' };
+    if (!error) return { 
+      icon: AlertTriangle, 
+      title: 'Something went wrong', 
+      description: 'An unexpected error occurred.',
+      action: 'retry'
+    };
     
     const errorMessage = error.message.toLowerCase();
     
     // AI Provider Errors
-    if (errorMessage.includes('openai') || errorMessage.includes('gpt')) {
+    if (errorMessage.includes('openai') || errorMessage.includes('gpt') || errorMessage.includes('ai')) {
       return {
         icon: Brain,
         title: 'AI Story Generation Error',
-        description: 'Our storytelling AI is temporarily unavailable. Please try again in a moment.'
+        description: 'Our storytelling AI is temporarily unavailable. Please try again in a moment.',
+        action: 'retry'
       };
     }
     
@@ -72,111 +105,133 @@ class ErrorBoundary extends Component<Props, State> {
       return {
         icon: Image,
         title: 'Image Generation Error',
-        description: 'Unable to create story images right now. You can continue with your story and add images later.'
+        description: 'Unable to create story images right now. You can continue with your story and add images later.',
+        action: 'continue'
       };
     }
     
-    if (errorMessage.includes('audio') || errorMessage.includes('tts')) {
+    if (errorMessage.includes('audio') || errorMessage.includes('tts') || errorMessage.includes('elevenlabs')) {
       return {
         icon: Volume2,
         title: 'Audio Generation Error',
-        description: 'Unable to generate voice narration right now. Your story is still available to read.'
+        description: 'Unable to generate voice narration right now. Your story is still available to read.',
+        action: 'continue'
       };
     }
     
-    if (errorMessage.includes('network') || errorMessage.includes('connection')) {
+    if (errorMessage.includes('network') || errorMessage.includes('connection') || errorMessage.includes('fetch')) {
       return {
         icon: Wifi,
         title: 'Connection Error',
-        description: 'Please check your internet connection and try again.'
+        description: 'Please check your internet connection and try again.',
+        action: 'retry'
       };
     }
     
-    // Context-specific errors
-    switch (context) {
-      case 'story-generation':
-        return {
-          icon: Brain,
-          title: 'Story Generation Failed',
-          description: 'Unable to generate story content. Please try again or start a new story.'
-        };
-      case 'image-generation':
-        return {
-          icon: Image,
-          title: 'Image Creation Failed',
-          description: 'Unable to create story images. You can continue reading without images.'
-        };
-      case 'audio-generation':
-        return {
-          icon: Volume2,
-          title: 'Audio Creation Failed',
-          description: 'Unable to generate voice narration. Your story is still available to read.'
-        };
-      default:
-        return {
-          icon: AlertTriangle,
-          title: 'Something went wrong',
-          description: 'An unexpected error occurred while rendering this component.'
-        };
+    if (errorMessage.includes('database') || errorMessage.includes('supabase') || errorMessage.includes('storage')) {
+      return {
+        icon: Database,
+        title: 'Data Service Error',
+        description: 'Unable to save or load your story data. Please try again.',
+        action: 'retry'
+      };
     }
+    
+    if (errorMessage.includes('auth') || errorMessage.includes('login') || errorMessage.includes('permission')) {
+      return {
+        icon: Settings,
+        title: 'Authentication Error',
+        description: 'Please sign in again to continue.',
+        action: 'home'
+      };
+    }
+    
+    // Default error context
+    return {
+      icon: AlertTriangle,
+      title: 'Unexpected Error',
+      description: 'Something went wrong. Please try refreshing the page.',
+      action: 'retry'
+    };
   };
 
   public override render() {
     if (this.state.hasError) {
-      if (this.props.fallback) {
-        return this.props.fallback;
-      }
-
       const errorContext = this.getErrorContext();
       const IconComponent = errorContext.icon;
-
+      
       return (
-        <div className="min-h-screen bg-gradient-to-br from-slate-900 via-amber-900 to-slate-900 flex items-center justify-center p-4">
-          <Card className="max-w-md w-full bg-slate-800 border-red-600 shadow-2xl">
-            <CardHeader>
-              <CardTitle className="text-white flex items-center gap-2">
-                <IconComponent className="h-5 w-5 text-red-400" />
+        <div className="min-h-screen bg-slate-900 flex items-center justify-center p-4">
+          <Card className="w-full max-w-md bg-slate-800 border-red-500/30">
+            <CardHeader className="text-center">
+              <div className="flex justify-center mb-4">
+                <IconComponent className="h-12 w-12 text-red-400" />
+              </div>
+              <CardTitle className="text-red-300 text-xl">
                 {errorContext.title}
               </CardTitle>
-              <CardDescription className="text-red-200">
+              <CardDescription className="text-slate-300 mt-2">
                 {errorContext.description}
               </CardDescription>
             </CardHeader>
+            
             <CardContent className="space-y-4">
-              {this.state.error && (
-                <div className="p-4 bg-red-900/50 rounded-lg">
-                  <p className="text-red-200 text-sm font-mono">
+              {/* Error Details (only in development) */}
+              {process.env.NODE_ENV === 'development' && this.state.error && (
+                <Alert variant="destructive">
+                  <AlertTriangle className="h-4 w-4" />
+                  <AlertDescription className="text-xs font-mono">
                     {this.state.error.message}
-                  </p>
-                  {this.state.retryCount > 0 && (
-                    <p className="text-red-300 text-xs mt-2">
-                      Retry attempt: {this.state.retryCount}
-                    </p>
-                  )}
-                </div>
+                  </AlertDescription>
+                </Alert>
               )}
-              <div className="flex gap-2">
+              
+              {/* Action Buttons */}
+              <div className="flex flex-col gap-2">
+                {errorContext.action === 'retry' && (
+                  <Button 
+                    onClick={this.handleReset}
+                    className="w-full bg-blue-600 hover:bg-blue-700"
+                  >
+                    <RefreshCw className="h-4 w-4 mr-2" />
+                    Try Again
+                  </Button>
+                )}
+                
+                {errorContext.action === 'continue' && (
+                  <Button 
+                    onClick={this.handleReset}
+                    className="w-full bg-amber-600 hover:bg-amber-700"
+                  >
+                    <FileText className="h-4 w-4 mr-2" />
+                    Continue Without Feature
+                  </Button>
+                )}
+                
                 <Button 
-                  onClick={this.handleReset}
+                  onClick={this.handleGoHome}
                   variant="outline"
-                  className="flex-1 border-red-600 text-red-200 hover:bg-red-600 hover:text-white"
+                  className="w-full border-slate-600 text-slate-300 hover:bg-slate-700"
+                >
+                  <Home className="h-4 w-4 mr-2" />
+                  Go to Home
+                </Button>
+                
+                <Button 
+                  onClick={this.handleRefresh}
+                  variant="ghost"
+                  className="w-full text-slate-400 hover:text-slate-300"
                 >
                   <RefreshCw className="h-4 w-4 mr-2" />
-                  Try Again
-                </Button>
-                <Button 
-                  onClick={() => window.location.reload()}
-                  className="flex-1 bg-red-600 hover:bg-red-700"
-                >
-                  Reload Page
+                  Refresh Page
                 </Button>
               </div>
-              {this.state.retryCount >= 3 && (
-                <div className="text-center">
-                  <p className="text-red-300 text-sm">
-                    Still having issues? Try refreshing the page or contact support.
-                  </p>
-                </div>
+              
+              {/* Retry Counter */}
+              {this.state.retryCount > 0 && (
+                <p className="text-xs text-slate-500 text-center">
+                  Retry attempt: {this.state.retryCount}
+                </p>
               )}
             </CardContent>
           </Card>

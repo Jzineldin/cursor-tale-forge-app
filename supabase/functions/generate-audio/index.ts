@@ -13,6 +13,76 @@ serve(async (req) => {
   }
 
   try {
+    // Create Supabase client
+    const supabaseClient = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_ANON_KEY') ?? '',
+      {
+        global: {
+          headers: { Authorization: req.headers.get('Authorization')! },
+        },
+      }
+    )
+
+    // Check demo limits first
+    const { data: { user } } = await supabaseClient.auth.getUser()
+    
+    if (user?.email === 'demo@tale-forge.app') {
+      // Get client IP from various headers
+      const ip = req.headers.get('x-forwarded-for') || 
+                 req.headers.get('x-real-ip') || 
+                 req.headers.get('cf-connecting-ip') ||
+                 '127.0.0.1'
+
+      const clientIP = ip.split(',')[0].trim()
+      const today = new Date().toISOString().split('T')[0]
+
+      // Check current usage for this IP + feature + date
+      const { data: usage, error } = await supabaseClient
+        .from('demo_usage')
+        .select('usage_count')
+        .eq('ip_address', clientIP)
+        .eq('feature_type', 'voice')
+        .eq('date_created', today)
+        .single()
+
+      const currentUsage = usage?.usage_count || 0
+      const limit = 3 // Demo voice limit
+
+      if (currentUsage >= limit) {
+        return new Response(
+          JSON.stringify({
+            error: `Demo voice limit reached (${limit}/day per IP). Sign up for unlimited access!`,
+            currentUsage,
+            limit,
+            resetTime: 'tomorrow'
+          }),
+          { status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        )
+      }
+
+      // Increment usage for demo account
+      await supabaseClient
+        .from('demo_usage')
+        .upsert({
+          ip_address: clientIP,
+          feature_type: 'voice',
+          date_created: today,
+          usage_count: 1,
+          last_used: new Date().toISOString()
+        }, {
+          onConflict: 'ip_address,feature_type,date_created',
+          ignoreDuplicates: false
+        })
+
+      // If record exists, increment it
+      await supabaseClient.rpc('increment_demo_usage', {
+        p_ip_address: clientIP,
+        p_feature_type: 'voice',
+        p_date: today
+      })
+    }
+
     const { text, voice = 'fable', speed = 1.0, segmentId } = await req.json()
 
     console.log('🔊 Generating audio:', { 

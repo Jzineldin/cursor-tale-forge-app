@@ -24,7 +24,8 @@ export async function generateStoryWithOpenAI(
 REQUIREMENTS:
 - Generate ${minWords}-${maxWords} words for rich, detailed storytelling
 - Create exactly 3 meaningful choices that advance the plot
-- Include detailed image descriptions for visual consistency
+- DO NOT include image descriptions or references to images within the segmentText
+- Generate a separate imagePrompt field for visual generation (not in story text)
 
 Response format (EXACT JSON):
 {

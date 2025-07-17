@@ -1,6 +1,7 @@
 
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800;900&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Cormorant+Garamond:wght@300;400;600&display=swap');
 
 /* Import modular design system files */
 @import "./styles/design-tokens.css";
@@ -60,6 +61,71 @@
   p, button, span, div {
     font-family: 'Inter', sans-serif;
   }
+}
+
+/* CSS Custom Properties for Tale Forge Golden Colors */
+:root {
+  --tale-forge-gold: #F4D03F;
+  --tale-forge-gold-light: #F7DC6F;
+  --tale-forge-gold-dark: #F1C40F;
+  --tale-forge-orange: #FF9500;
+  --tale-forge-orange-hover: #E6851A;
+  --tale-forge-orange-light: #FFB84D;
+}
+
+/* Enhanced golden text effect */
+.golden-title {
+  color: var(--tale-forge-gold);
+  text-shadow: 0 0 20px rgba(244, 208, 63, 0.5), 2px 2px 4px rgba(0,0,0,0.8);
+  filter: drop-shadow(0 0 10px rgba(244, 208, 63, 0.3));
+}
+
+/* Golden button styles */
+.golden-button {
+  background-color: var(--tale-forge-orange);
+  color: #000000;
+  border: none;
+  transition: all 0.2s ease;
+}
+
+.golden-button:hover {
+  background-color: var(--tale-forge-orange-hover);
+}
+
+.golden-button-outline {
+  background-color: transparent;
+  color: var(--tale-forge-orange);
+  border: 2px solid var(--tale-forge-orange);
+}
+
+.golden-button-outline:hover {
+  background-color: var(--tale-forge-orange);
+  color: #000000;
+}
+
+/* Global heading styles for consistency */
+.section-heading {
+  font-family: Georgia, "Times New Roman", Times, serif;
+  color: #F4D03F;
+  text-shadow: 0 0 20px rgba(244, 208, 63, 0.5), 2px 2px 4px rgba(0,0,0,0.8);
+  font-weight: 700;
+}
+
+.section-subheading {
+  font-family: Georgia, "Times New Roman", Times, serif;
+  color: #F7DC6F;
+  font-weight: 400;
+}
+
+.section-body-text {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #ffffff;
+  line-height: 1.6;
+}
+
+@keyframes golden-shimmer {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
 }
 
 /* Tale Forge title styling - Beautiful Gold! */
@@ -132,4 +198,61 @@
 .btn-text {
   font-family: 'Inter', sans-serif !important;
   font-weight: 600;
+}
+
+/* Fantasy Typography System */
+.fantasy-title {
+  font-family: 'Cinzel', serif !important;
+  background: linear-gradient(135deg, #fbbf24, #f59e0b, #d97706);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+}
+
+.fantasy-heading {
+  font-family: 'Cinzel', serif !important;
+  color: #fbbf24 !important;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+}
+
+.fantasy-body {
+  font-family: 'Cormorant Garamond', serif !important;
+  color: #fef3c7 !important;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.6);
+}
+
+.fantasy-subtitle {
+  font-family: 'Cormorant Garamond', serif !important;
+  color: #fde68a !important;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.6);
+}
+
+/* Enhanced readable text with fantasy theme */
+.text-fantasy-readable {
+  color: #fef3c7 !important;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.6);
+  line-height: 1.6 !important;
+}
+
+/* Slideshow fullscreen styles */
+body.slideshow-active {
+  overflow: hidden !important;
+}
+
+/* Hide header completely when slideshow is active */
+body.slideshow-active header,
+body.slideshow-active .header-glassmorphic,
+body.slideshow-active .fixed.top-0,
+body.slideshow-active nav,
+body.slideshow-active .main-header {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+/* Ensure slideshow has highest z-index */
+.slideshow-container {
+  z-index: 9999 !important;
 }

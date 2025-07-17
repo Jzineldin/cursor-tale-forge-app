@@ -179,12 +179,13 @@ CRITICAL NARRATIVE CONSISTENCY REQUIREMENTS:
 REQUIREMENTS:
 - Generate 120-200 words for rich, detailed storytelling
 - Create exactly 3 meaningful choices that advance the plot
-- Include detailed image descriptions for visual consistency
+- DO NOT include image descriptions or references to images within the segmentText
 - DO NOT include choice prompts, transitions, or references to choices within the segmentText
 - The segmentText should end naturally as part of the story narrative
 - Choices will be presented separately as interactive buttons
 - MAINTAIN CONSISTENCY with previous story segments and established characters
 - CONTINUE the narrative flow naturally from the previous context
+- Generate a separate imagePrompt field for visual generation (not in story text)
 
 Response format (EXACT JSON):
 {

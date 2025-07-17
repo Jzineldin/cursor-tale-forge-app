@@ -398,10 +398,12 @@ NARRATIVE CONSISTENCY REQUIREMENTS:
 - FOLLOW the established world rules and genre conventions
 - KEEP the story tone consistent with previous segments
 - BUILD upon existing plot threads rather than starting new unrelated ones
+- DO NOT include image descriptions or references to images within the segmentText
+- The segmentText should be pure narrative storytelling, not visual descriptions
 
 RESPONSE FORMAT (EXACT JSON):
 {
-  "segmentText": "A 120-200 word story segment that follows all genre and safety guidelines",
+  "segmentText": "A 120-200 word story segment that follows all genre and safety guidelines. This should be pure narrative storytelling - NO image descriptions or visual references.",
   "choices": ["Choice 1 that advances plot", "Choice 2 that develops character", "Choice 3 that explores theme"],
   "isEnd": false,
   "imagePrompt": "Child-friendly, colorful, safe image description matching the genre style",

@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Book, Clock, FileText } from 'lucide-react';
@@ -18,8 +18,34 @@ const EnhancedStoryHistorySidebar: React.FC<EnhancedStoryHistorySidebarProps> = 
   onSegmentClick,
   currentChapterIndex = 0
 }) => {
+  const scrollAreaRef = useRef<HTMLDivElement>(null);
+  const currentChapterRef = useRef<HTMLDivElement>(null);
+  
   const totalWords = storySegments.reduce((sum, segment) => sum + (segment.word_count || 0), 0);
   const estimatedReadTime = Math.max(1, Math.ceil(totalWords / 200));
+
+  // Auto-scroll to current chapter when it changes
+  useEffect(() => {
+    if (currentChapterRef.current && scrollAreaRef.current) {
+      const scrollContainer = scrollAreaRef.current.querySelector('[data-radix-scroll-area-viewport]');
+      if (scrollContainer) {
+        const chapterElement = currentChapterRef.current;
+        const containerRect = scrollContainer.getBoundingClientRect();
+        const chapterRect = chapterElement.getBoundingClientRect();
+        
+        // Calculate if the chapter is outside the visible area
+        const isAbove = chapterRect.top < containerRect.top;
+        const isBelow = chapterRect.bottom > containerRect.bottom;
+        
+        if (isAbove || isBelow) {
+          chapterElement.scrollIntoView({
+            behavior: 'smooth',
+            block: 'center'
+          });
+        }
+      }
+    }
+  }, [currentChapterIndex, storySegments.length]);
 
   const handleChapterClick = (index: number) => {
     console.log('Sidebar chapter clicked:', index, 'calling onSegmentClick');
@@ -69,13 +95,14 @@ const EnhancedStoryHistorySidebar: React.FC<EnhancedStoryHistorySidebarProps> = 
           </CardTitle>
         </CardHeader>
         <CardContent className="p-0">
-          <ScrollArea className="h-64 md:h-80">
+          <ScrollArea ref={scrollAreaRef} className="h-64 md:h-80">
             <div className="space-y-2 p-4">
               {storySegments.map((segment, index) => {
                 const isCurrentChapter = index === currentChapterIndex;
                 return (
                   <div
                     key={segment.id}
+                    ref={isCurrentChapter ? currentChapterRef : null}
                     onClick={() => handleChapterClick(index)}
                     className={`p-3 rounded-lg border cursor-pointer transition-all duration-200 hover:border-amber-400 hover:bg-slate-700/50 ${
                       isCurrentChapter 

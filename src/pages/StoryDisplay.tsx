@@ -205,19 +205,13 @@ const StoryDisplay: React.FC = () => {
   if (shouldShowFullLoadingState) {
     return (
       <StoryDisplayLoadingState
-        apiUsageCount={apiUsageCount}
-        skipImage={skipImage}
         onExit={handleExit}
       />
     );
   }
 
   return (
-    <StoryDisplayLayout>        <StoryHeader 
-          onExit={handleExit}
-          onSave={handleSaveStory}
-          apiUsageCount={apiUsageCount}
-        />
+    <StoryDisplayLayout>
 
       {/* Show unified completion interface if story is completed */}
       {storyData?.id && (

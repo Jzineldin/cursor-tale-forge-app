@@ -11,7 +11,6 @@ interface CostConfirmationDialogProps {
   onOpenChange: (open: boolean) => void;
   pendingAction: 'start' | 'choice' | 'finish' | null;
   skipImage: boolean;
-  apiCallsCount: number;
   onSkipImageChange: (checked: CheckedState) => void;
   onConfirm: () => void;
 }
@@ -21,15 +20,13 @@ const CostConfirmationDialog: React.FC<CostConfirmationDialogProps> = ({
   onOpenChange,
   pendingAction,
   skipImage,
-  apiCallsCount,
   onSkipImageChange,
   onConfirm
 }) => {
   console.log('💰 CostConfirmationDialog rendered:', {
     open,
     pendingAction,
-    skipImage,
-    apiCallsCount
+    skipImage
   });
 
   const getCostEstimate = () => {
@@ -44,7 +41,6 @@ const CostConfirmationDialog: React.FC<CostConfirmationDialogProps> = ({
     console.log('📋 Confirmation details:', {
       pendingAction,
       skipImage,
-      apiCallsCount,
       costEstimate: getCostEstimate()
     });
     onConfirm();
@@ -69,7 +65,7 @@ const CostConfirmationDialog: React.FC<CostConfirmationDialogProps> = ({
               <strong>Estimated cost:</strong> {getCostEstimate()}
             </p>
             <p className="text-slate-400 text-xs mt-1">
-              Session total: {apiCallsCount} API calls used
+              {/* Removed debug API calls counter for production */}
             </p>
           </div>
           

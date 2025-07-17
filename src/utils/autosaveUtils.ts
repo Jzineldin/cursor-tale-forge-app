@@ -8,11 +8,30 @@ export interface AutosaveData {
   isEnd?: boolean;
 }
 
+export interface FormAutosaveData {
+  prompt?: string;
+  genre?: string;
+  characterName?: string;
+  storyMode?: string;
+  skipImage?: boolean;
+  skipAudio?: boolean;
+  selectedVoice?: string;
+}
+
+export interface SessionAutosaveData {
+  currentStoryId?: string;
+  currentSegmentId?: string;
+  storyHistory?: any[];
+  gameState?: 'not_started' | 'playing' | 'completed';
+  apiUsageCount?: number;
+  lastActivity?: string;
+}
+
 /**
- * Autosave utility for saving story progress after each segment
- * Handles both authenticated and anonymous users
+ * Enhanced autosave utility for comprehensive data persistence
+ * Handles story progress, form data, and session state
  */
-export const autosaveStoryProgress = async (data: AutosaveData): Promise<void> => {
+export const autosaveStoryProgress = async (data: AutosaveData): Promise<'success' | 'error'> => {
   try {
     console.log('💾 Autosaving story progress:', data);
     
@@ -27,10 +46,122 @@ export const autosaveStoryProgress = async (data: AutosaveData): Promise<void> =
       await autosaveForAnonymousUser(data);
     }
     
+    // Always save to session storage for immediate recovery
+    await autosaveToSessionStorage(data);
+    
     console.log('✅ Autosave completed successfully');
+    return 'success';
   } catch (error) {
     console.error('❌ Autosave failed:', error);
     // Don't show error toast to user - autosave should be silent
+    return 'error';
+  }
+};
+
+/**
+ * Autosave form data to localStorage
+ */
+export const autosaveFormData = (formData: FormAutosaveData): void => {
+  try {
+    const key = 'taleforge_form_autosave';
+    const timestamp = new Date().toISOString();
+    
+    const dataToSave = {
+      ...formData,
+      timestamp,
+      lastSaved: timestamp
+    };
+    
+    localStorage.setItem(key, JSON.stringify(dataToSave));
+    console.log('💾 Form data autosaved:', formData);
+  } catch (error) {
+    console.error('❌ Form autosave failed:', error);
+  }
+};
+
+/**
+ * Restore form data from localStorage
+ */
+export const restoreFormData = (): FormAutosaveData | null => {
+  try {
+    const key = 'taleforge_form_autosave';
+    const saved = localStorage.getItem(key);
+    
+    if (saved) {
+      const data = JSON.parse(saved);
+      const lastSaved = new Date(data.lastSaved);
+      const now = new Date();
+      const hoursSinceLastSave = (now.getTime() - lastSaved.getTime()) / (1000 * 60 * 60);
+      
+      // Only restore if saved within last 24 hours
+      if (hoursSinceLastSave < 24) {
+        console.log('💾 Form data restored:', data);
+        return data;
+      } else {
+        // Clear old data
+        localStorage.removeItem(key);
+      }
+    }
+    
+    return null;
+  } catch (error) {
+    console.error('❌ Form restore failed:', error);
+    return null;
+  }
+};
+
+/**
+ * Autosave session state
+ */
+export const autosaveSessionState = (sessionData: SessionAutosaveData): void => {
+  try {
+    const key = 'taleforge_session_state';
+    const timestamp = new Date().toISOString();
+    
+    const dataToSave = {
+      ...sessionData,
+      timestamp,
+      lastSaved: timestamp
+    };
+    
+    sessionStorage.setItem(key, JSON.stringify(dataToSave));
+    console.log('💾 Session state autosaved');
+  } catch (error) {
+    console.error('❌ Session autosave failed:', error);
+  }
+};
+
+/**
+ * Restore session state
+ */
+export const restoreSessionState = (): SessionAutosaveData | null => {
+  try {
+    const key = 'taleforge_session_state';
+    const saved = sessionStorage.getItem(key);
+    
+    if (saved) {
+      const data = JSON.parse(saved);
+      console.log('💾 Session state restored');
+      return data;
+    }
+    
+    return null;
+  } catch (error) {
+    console.error('❌ Session restore failed:', error);
+    return null;
+  }
+};
+
+/**
+ * Clear all autosaved data
+ */
+export const clearAutosavedData = (): void => {
+  try {
+    localStorage.removeItem('taleforge_form_autosave');
+    sessionStorage.removeItem('taleforge_session_state');
+    console.log('💾 Autosaved data cleared');
+  } catch (error) {
+    console.error('❌ Clear autosave failed:', error);
   }
 };
 
@@ -138,13 +269,59 @@ const autosaveForAnonymousUser = async (data: AutosaveData): Promise<void> => {
 };
 
 /**
- * Hook for using autosave functionality
+ * Autosave to session storage for immediate recovery
+ */
+const autosaveToSessionStorage = async (data: AutosaveData): Promise<void> => {
+  try {
+    const key = `taleforge_story_${data.storyId}`;
+    const timestamp = new Date().toISOString();
+    
+    const sessionData = {
+      ...data,
+      timestamp,
+      lastSaved: timestamp
+    };
+    
+    sessionStorage.setItem(key, JSON.stringify(sessionData));
+  } catch (error) {
+    console.error('Error autosaving to session storage:', error);
+  }
+};
+
+/**
+ * Enhanced hook for using autosave functionality
  */
 export const useAutosave = () => {
-  
-  const autosave = async (data: AutosaveData) => {
-    await autosaveStoryProgress(data);
+  const autosave = async (data: AutosaveData): Promise<'success' | 'error'> => {
+    return await autosaveStoryProgress(data);
   };
   
-  return { autosave };
+  const saveFormData = (formData: FormAutosaveData) => {
+    autosaveFormData(formData);
+  };
+  
+  const saveSessionState = (sessionData: SessionAutosaveData) => {
+    autosaveSessionState(sessionData);
+  };
+  
+  const restoreForm = () => {
+    return restoreFormData();
+  };
+  
+  const restoreSession = () => {
+    return restoreSessionState();
+  };
+  
+  const clearData = () => {
+    clearAutosavedData();
+  };
+  
+  return { 
+    autosave, 
+    saveFormData, 
+    saveSessionState, 
+    restoreForm, 
+    restoreSession, 
+    clearData 
+  };
 }; 

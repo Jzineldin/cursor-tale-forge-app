@@ -1,9 +1,10 @@
 
 import React, { useState } from 'react';
-import { Trash2, Eye, Edit, Calendar, BookOpen, Check, X } from 'lucide-react';
+import { Trash2, Eye, Edit, Calendar, BookOpen, Check, X, Play } from 'lucide-react';
 import { Story } from '@/types/stories';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { useNavigate } from 'react-router-dom';
 
 export interface MagicalStoryCardProps {
   story: Story;
@@ -16,6 +17,7 @@ const MagicalStoryCard: React.FC<MagicalStoryCardProps> = ({
   onSetStoryToDelete,
   viewMode
 }) => {
+  const navigate = useNavigate();
   const [isEditing, setIsEditing] = useState(false);
   const [editTitle, setEditTitle] = useState(story.title || '');
   
@@ -51,6 +53,16 @@ const MagicalStoryCard: React.FC<MagicalStoryCardProps> = ({
 
   const handleDelete = () => {
     onSetStoryToDelete(story.id);
+  };
+
+  const handleContinue = () => {
+    // Navigate to story creation with resume state
+    navigate('/create', { 
+      state: { 
+        resumeStoryId: story.id,
+        resumeStoryTitle: story.title 
+      } 
+    });
   };
 
   if (viewMode === 'list') {
@@ -118,6 +130,15 @@ const MagicalStoryCard: React.FC<MagicalStoryCardProps> = ({
             >
               <Eye className="h-4 w-4" />
             </button>
+            {!story.is_completed && (
+              <button
+                onClick={handleContinue}
+                className="p-2 text-green-400 hover:text-green-300 hover:bg-green-500/20 rounded transition-colors"
+                title="Continue Story"
+              >
+                <Play className="h-4 w-4" />
+              </button>
+            )}
             {!isEditing && (
               <button
                 onClick={handleEdit}
@@ -208,6 +229,14 @@ const MagicalStoryCard: React.FC<MagicalStoryCardProps> = ({
               >
                 View
               </button>
+              {!story.is_completed && (
+                <button
+                  onClick={handleContinue}
+                  className="px-3 py-1 text-xs bg-green-600/20 text-green-300 border border-green-500/30 rounded hover:bg-green-600/30 transition-colors"
+                >
+                  Continue
+                </button>
+              )}
               {!isEditing && (
                 <button
                   onClick={handleEdit}

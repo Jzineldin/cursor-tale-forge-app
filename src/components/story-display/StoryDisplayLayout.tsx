@@ -20,7 +20,7 @@ const StoryDisplayLayout: React.FC<StoryDisplayLayoutProps> = ({ children }) => 
         backgroundAttachment: 'fixed'
       }}
     >
-      <div className="container mx-auto px-2 md:px-4 pb-4 md:pb-8">
+      <div className="container mx-auto px-2 md:px-4 pt-20 pb-4 md:pb-8">
         {children}
       </div>
     </div>
