@@ -31,7 +31,7 @@ h1.multi-line,
 h2.multi-line,
 h3.multi-line {
   white-space: normal !important;
-  line-height: 1.2 !important;
+  line-height: 1.3 !important;
   overflow: visible !important;
 }
 
@@ -85,13 +85,15 @@ input, textarea, select {
   max-width: 100% !important;
 }
 
-/* ===== BASE MOBILE OPTIMIZATIONS ===== */
+/* ===== ENHANCED MOBILE OPTIMIZATIONS ===== */
 @media (max-width: 768px) {
   /* Prevent horizontal scrolling */
   body, html {
     overflow-x: hidden !important;
     -webkit-text-size-adjust: 100% !important;
     -ms-text-size-adjust: 100% !important;
+    /* Modern viewport units for better mobile experience */
+    height: 100dvh !important;
   }
   
   * {
@@ -99,109 +101,127 @@ input, textarea, select {
     box-sizing: border-box !important;
   }
 
-  /* Container optimizations */
+  /* Enhanced container optimizations */
   .container {
     padding-left: 1rem !important;
     padding-right: 1rem !important;
+    max-width: 100vw !important;
   }
 
-  /* Typography optimizations */
+  /* Improved typography for mobile readability */
   h1 {
     font-size: 1.75rem !important;
-    line-height: 1.2 !important;
+    line-height: 1.3 !important;
+    margin-bottom: 1rem !important;
   }
 
   h2 {
     font-size: 1.5rem !important;
-    line-height: 1.3 !important;
+    line-height: 1.4 !important;
+    margin-bottom: 0.75rem !important;
   }
 
   h3 {
     font-size: 1.25rem !important;
     line-height: 1.4 !important;
+    margin-bottom: 0.5rem !important;
   }
 
   p {
     font-size: 0.95rem !important;
     line-height: 1.6 !important;
+    margin-bottom: 0.75rem !important;
   }
 
-  /* Touch-friendly buttons */
-  button, .btn, a[role="button"] {
-    min-height: 44px !important;
-    min-width: 44px !important;
-    padding: 0.75rem 1rem !important;
+  /* Enhanced touch-friendly buttons */
+  button, .btn, a[role="button"], .clickable {
+    min-height: 48px !important; /* Increased from 44px for better touch */
+    min-width: 48px !important;
+    padding: 0.875rem 1.25rem !important; /* Increased padding */
     font-size: 1rem !important;
+    font-weight: 500 !important; /* Better readability */
     touch-action: manipulation !important;
+    border-radius: 0.75rem !important; /* More modern rounded corners */
+    transition: all 0.2s ease !important;
+    cursor: pointer !important;
   }
 
-  /* Form elements */
+  /* Enhanced form elements */
   input, textarea, select {
     font-size: 16px !important; /* Prevents zoom on iOS */
-    padding: 0.75rem !important;
-    min-height: 44px !important;
-    border-radius: 0.5rem !important;
-  }
-
-  /* Card optimizations */
-  .card {
-    margin: 0.5rem !important;
-    padding: 1rem !important;
+    padding: 0.875rem !important; /* Increased padding */
+    min-height: 48px !important; /* Increased height */
     border-radius: 0.75rem !important;
+    border-width: 2px !important; /* More visible borders */
   }
 
-  /* Grid adjustments */
+  /* Enhanced card optimizations */
+  .card {
+    margin: 0.75rem !important; /* Increased margin */
+    padding: 1.25rem !important; /* Increased padding */
+    border-radius: 1rem !important; /* More modern rounded corners */
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
+  }
+
+  /* Enhanced grid adjustments */
   .grid {
-    gap: 1rem !important;
+    gap: 1.25rem !important; /* Increased gap */
   }
 
-  /* Spacing adjustments */
+  /* Enhanced spacing adjustments */
   .space-y-8 > * + * {
-    margin-top: 1.5rem !important;
+    margin-top: 2rem !important;
   }
 
   .space-y-6 > * + * {
-    margin-top: 1rem !important;
+    margin-top: 1.5rem !important;
   }
 
   .space-y-4 > * + * {
-    margin-top: 0.75rem !important;
+    margin-top: 1rem !important;
   }
 
-  /* Modal and dialog improvements */
+  /* Enhanced modal and dialog improvements */
   .dialog-content, [role="dialog"] {
     margin: 1rem !important;
     max-width: calc(100vw - 2rem) !important;
     max-height: calc(100vh - 2rem) !important;
+    border-radius: 1rem !important;
   }
 
-  /* Image optimizations */
+  /* Enhanced image optimizations */
   img {
     max-width: 100% !important;
     height: auto !important;
-    border-radius: 0.5rem !important;
+    border-radius: 0.75rem !important;
+    object-fit: cover !important;
   }
 
-  /* Video background adjustments */
+  /* Enhanced video background adjustments */
   video {
     object-fit: cover !important;
     width: 100% !important;
     height: 100% !important;
+    border-radius: 0.75rem !important;
   }
 
-  /* Navigation improvements */
+  /* Enhanced navigation improvements */
   nav {
-    padding: 0.5rem 1rem !important;
+    padding: 0.75rem 1rem !important;
+    backdrop-filter: blur(10px) !important;
+    background: rgba(0, 0, 0, 0.8) !important;
   }
 
-  /* Header mobile optimization */
+  /* Enhanced header mobile optimization */
   header {
-    padding: 0.5rem 1rem !important;
+    padding: 0.75rem 1rem !important;
+    backdrop-filter: blur(10px) !important;
+    background: rgba(0, 0, 0, 0.8) !important;
   }
 
   /* Story creation containers */
   .story-creation-container {
-    padding: 1rem !important;
+    padding: 1.25rem !important;
     margin: 0 !important;
   }
 
@@ -212,6 +232,132 @@ input, textarea, select {
     overflow-wrap: anywhere !important;
     hyphens: auto !important;
   }
+
+  /* Enhanced mobile navigation */
+  .mobile-nav {
+    position: fixed !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    background: rgba(0, 0, 0, 0.95) !important;
+    backdrop-filter: blur(20px) !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
+    padding: 0.75rem 1rem !important;
+    z-index: 1000 !important;
+  }
+
+  /* Enhanced mobile menu */
+  .mobile-menu {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    background: rgba(0, 0, 0, 0.95) !important;
+    backdrop-filter: blur(20px) !important;
+    z-index: 2000 !important;
+    padding: 2rem 1rem !important;
+  }
+
+  /* Enhanced mobile buttons */
+  .mobile-btn {
+    width: 100% !important;
+    height: 56px !important; /* Larger touch target */
+    font-size: 1.1rem !important;
+    font-weight: 600 !important;
+    border-radius: 1rem !important;
+    margin-bottom: 1rem !important;
+  }
+
+  /* Enhanced mobile cards */
+  .mobile-card {
+    margin: 0.75rem 0 !important;
+    padding: 1.5rem !important;
+    border-radius: 1rem !important;
+    background: rgba(255, 255, 255, 0.05) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  }
+
+  /* Enhanced mobile forms */
+  .mobile-form {
+    padding: 1.5rem !important;
+  }
+
+  .mobile-form input,
+  .mobile-form textarea {
+    margin-bottom: 1rem !important;
+    font-size: 16px !important;
+    padding: 1rem !important;
+    border-radius: 0.75rem !important;
+  }
+
+  /* Enhanced mobile lists */
+  .mobile-list {
+    padding: 0 !important;
+  }
+
+  .mobile-list-item {
+    padding: 1rem !important;
+    margin: 0.5rem 0 !important;
+    border-radius: 0.75rem !important;
+    background: rgba(255, 255, 255, 0.05) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  }
+
+  /* Enhanced mobile modals */
+  .mobile-modal {
+    margin: 1rem !important;
+    border-radius: 1rem !important;
+    max-height: calc(100vh - 2rem) !important;
+    overflow-y: auto !important;
+  }
+
+  /* Enhanced mobile tables */
+  .mobile-table {
+    font-size: 0.875rem !important;
+  }
+
+  .mobile-table th,
+  .mobile-table td {
+    padding: 0.75rem 0.5rem !important;
+  }
+
+  /* Enhanced mobile tooltips */
+  .mobile-tooltip {
+    font-size: 0.875rem !important;
+    padding: 0.5rem 0.75rem !important;
+    border-radius: 0.5rem !important;
+  }
+
+  /* Enhanced mobile loading states */
+  .mobile-loading {
+    padding: 2rem !important;
+    text-align: center !important;
+  }
+
+  .mobile-loading-spinner {
+    width: 48px !important;
+    height: 48px !important;
+    margin: 0 auto 1rem !important;
+  }
+
+  /* Enhanced mobile error states */
+  .mobile-error {
+    padding: 2rem !important;
+    text-align: center !important;
+    border-radius: 1rem !important;
+    background: rgba(239, 68, 68, 0.1) !important;
+    border: 1px solid rgba(239, 68, 68, 0.3) !important;
+  }
+
+  /* Enhanced mobile success states */
+  .mobile-success {
+    padding: 2rem !important;
+    text-align: center !important;
+    border-radius: 1rem !important;
+    background: rgba(34, 197, 94, 0.1) !important;
+    border: 1px solid rgba(34, 197, 94, 0.3) !important;
+  }
 }
 
 /* ===== EXTRA SMALL SCREENS ===== */
@@ -219,18 +365,26 @@ input, textarea, select {
   /* Typography for very small screens */
   h1 {
     font-size: 1.5rem !important;
+    line-height: 1.3 !important;
+    margin-bottom: 0.75rem !important;
   }
 
   h2 {
     font-size: 1.25rem !important;
+    line-height: 1.4 !important;
+    margin-bottom: 0.5rem !important;
   }
 
   h3 {
-    font-size: 1.125rem !important;
+    font-size: 1.1rem !important;
+    line-height: 1.4 !important;
+    margin-bottom: 0.5rem !important;
   }
 
   p {
-    font-size: 0.875rem !important;
+    font-size: 0.9rem !important;
+    line-height: 1.6 !important;
+    margin-bottom: 0.5rem !important;
   }
 
   /* Container padding */
@@ -244,24 +398,52 @@ input, textarea, select {
     width: 100% !important;
     padding: 1rem !important;
     font-size: 1rem !important;
+    height: 56px !important;
   }
 
   /* Card padding */
   .card {
-    padding: 0.75rem !important;
-    margin: 0.25rem !important;
+    padding: 1rem !important;
+    margin: 0.5rem !important;
   }
 
   /* Navigation mobile stack */
   .nav-links {
     flex-direction: column !important;
-    gap: 0.5rem !important;
+    gap: 0.75rem !important;
   }
 
   /* Ensure containers don't overflow */
   .story-container {
     max-width: 100vw !important;
     overflow-x: hidden !important;
+  }
+
+  /* Enhanced mobile navigation for very small screens */
+  .mobile-nav {
+    padding: 0.5rem 0.75rem !important;
+  }
+
+  .mobile-nav button {
+    font-size: 0.875rem !important;
+    padding: 0.75rem 0.5rem !important;
+  }
+
+  /* Enhanced mobile cards for very small screens */
+  .mobile-card {
+    padding: 1rem !important;
+    margin: 0.5rem 0 !important;
+  }
+
+  /* Enhanced mobile forms for very small screens */
+  .mobile-form {
+    padding: 1rem !important;
+  }
+
+  .mobile-form input,
+  .mobile-form textarea {
+    padding: 0.875rem !important;
+    font-size: 16px !important;
   }
 }
 
@@ -274,14 +456,46 @@ input, textarea, select {
 
   h1 {
     font-size: 2rem !important;
+    line-height: 1.3 !important;
+    margin-bottom: 1rem !important;
   }
 
   h2 {
-    font-size: 1.75rem !important;
+    font-size: 1.5rem !important;
+    line-height: 1.4 !important;
+    margin-bottom: 0.75rem !important;
   }
 
   .card {
-    padding: 1.25rem !important;
+    padding: 1.5rem !important;
+    margin: 1rem !important;
+  }
+
+  /* Enhanced tablet navigation */
+  .tablet-nav {
+    padding: 1rem 1.5rem !important;
+  }
+
+  .tablet-nav button {
+    padding: 0.875rem 1.25rem !important;
+    font-size: 1rem !important;
+  }
+
+  /* Enhanced tablet cards */
+  .tablet-card {
+    padding: 1.75rem !important;
+    margin: 1rem !important;
+  }
+
+  /* Enhanced tablet forms */
+  .tablet-form {
+    padding: 1.75rem !important;
+  }
+
+  .tablet-form input,
+  .tablet-form textarea {
+    padding: 1rem !important;
+    font-size: 16px !important;
   }
 }
 
@@ -293,15 +507,57 @@ input, textarea, select {
   }
 
   h1 {
-    font-size: 2.25rem !important;
+    font-size: 2.5rem !important;
+    line-height: 1.3 !important;
+    margin-bottom: 1.25rem !important;
   }
 
   h2 {
-    font-size: 1.875rem !important;
+    font-size: 2rem !important;
+    line-height: 1.4 !important;
+    margin-bottom: 1rem !important;
   }
 
-  .card {
-    padding: 1.5rem !important;
+  h3 {
+    font-size: 1.5rem !important;
+    line-height: 1.4 !important;
+    margin-bottom: 0.75rem !important;
+  }
+
+  /* Desktop hover effects */
+  .hover\\:scale-105:hover {
+    transform: scale(1.05) !important;
+  }
+
+  .hover\\:shadow-lg:hover {
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05) !important;
+  }
+
+  /* Enhanced desktop navigation */
+  .desktop-nav {
+    padding: 1.5rem 2rem !important;
+  }
+
+  .desktop-nav button {
+    padding: 1.125rem 1.75rem !important;
+    font-size: 1.1rem !important;
+  }
+
+  /* Enhanced desktop cards */
+  .desktop-card {
+    padding: 2.5rem !important;
+    margin: 1.5rem !important;
+  }
+
+  /* Enhanced desktop forms */
+  .desktop-form {
+    padding: 2.5rem !important;
+  }
+
+  .desktop-form input,
+  .desktop-form textarea {
+    padding: 1.25rem !important;
+    font-size: 16px !important;
   }
 }
 
@@ -315,15 +571,20 @@ input, textarea, select {
   }
 
   h1 {
-    font-size: 2.5rem !important;
+    font-size: 3.5rem !important;
+    line-height: 1.3 !important;
+    margin-bottom: 1.75rem !important;
   }
 
   h2 {
-    font-size: 2rem !important;
+    font-size: 2.5rem !important;
+    line-height: 1.4 !important;
+    margin-bottom: 1.5rem !important;
   }
 
   h3 {
     font-size: 1.5rem !important;
+    line-height: 1.3 !important;
   }
 
   /* Desktop hover effects */
@@ -333,6 +594,33 @@ input, textarea, select {
 
   .hover\\:shadow-lg:hover {
     box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05) !important;
+  }
+
+  /* Enhanced desktop navigation */
+  .desktop-nav {
+    padding: 1.5rem 2rem !important;
+  }
+
+  .desktop-nav button {
+    padding: 1.125rem 1.75rem !important;
+    font-size: 1.1rem !important;
+  }
+
+  /* Enhanced desktop cards */
+  .desktop-card {
+    padding: 2.5rem !important;
+    margin: 1.5rem !important;
+  }
+
+  /* Enhanced desktop forms */
+  .desktop-form {
+    padding: 2.5rem !important;
+  }
+
+  .desktop-form input,
+  .desktop-form textarea {
+    padding: 1.25rem !important;
+    font-size: 16px !important;
   }
 }
 
@@ -344,10 +632,41 @@ input, textarea, select {
 
   h1 {
     font-size: 3rem !important;
+    line-height: 1.3 !important;
+    margin-bottom: 1.5rem !important;
   }
 
   h2 {
-    font-size: 2.5rem !important;
+    font-size: 2.25rem !important;
+    line-height: 1.4 !important;
+    margin-bottom: 1.25rem !important;
+  }
+
+  /* Enhanced large desktop navigation */
+  .large-desktop-nav {
+    padding: 2rem 2.5rem !important;
+  }
+
+  .large-desktop-nav button {
+    padding: 1.25rem 2rem !important;
+    font-size: 1.2rem !important;
+  }
+
+  /* Enhanced large desktop cards */
+  .large-desktop-card {
+    padding: 3rem !important;
+    margin: 2rem !important;
+  }
+
+  /* Enhanced large desktop forms */
+  .large-desktop-form {
+    padding: 3rem !important;
+  }
+
+  .large-desktop-form input,
+  .large-desktop-form textarea {
+    padding: 1.5rem !important;
+    font-size: 16px !important;
   }
 }
 
@@ -368,6 +687,33 @@ input, textarea, select {
   header {
     padding: 0.25rem 1rem !important;
   }
+
+  /* Enhanced landscape mobile navigation */
+  .landscape-mobile-nav {
+    padding: 0.5rem 1rem !important;
+  }
+
+  .landscape-mobile-nav button {
+    padding: 0.5rem 0.75rem !important;
+    font-size: 0.875rem !important;
+  }
+
+  /* Enhanced landscape mobile cards */
+  .landscape-mobile-card {
+    padding: 1rem !important;
+    margin: 0.5rem !important;
+  }
+
+  /* Enhanced landscape mobile forms */
+  .landscape-mobile-form {
+    padding: 1rem !important;
+  }
+
+  .landscape-mobile-form input,
+  .landscape-mobile-form textarea {
+    padding: 0.75rem !important;
+    font-size: 16px !important;
+  }
 }
 
 /* ===== TOUCH DEVICE OPTIMIZATIONS ===== */
@@ -383,8 +729,8 @@ input, textarea, select {
 
   /* Increase tap targets */
   a, button, input, select, textarea {
-    min-height: 44px !important;
-    min-width: 44px !important;
+    min-height: 48px !important;
+    min-width: 48px !important;
   }
 
   /* Improve touch feedback */
@@ -397,6 +743,36 @@ input, textarea, select {
   .overflow-y-auto {
     -webkit-overflow-scrolling: touch !important;
   }
+
+  /* Enhanced touch device navigation */
+  .touch-nav {
+    padding: 1rem !important;
+  }
+
+  .touch-nav button {
+    padding: 1rem 1.5rem !important;
+    font-size: 1.1rem !important;
+    border-radius: 1rem !important;
+  }
+
+  /* Enhanced touch device cards */
+  .touch-card {
+    padding: 1.5rem !important;
+    margin: 1rem !important;
+    border-radius: 1rem !important;
+  }
+
+  /* Enhanced touch device forms */
+  .touch-form {
+    padding: 1.5rem !important;
+  }
+
+  .touch-form input,
+  .touch-form textarea {
+    padding: 1rem !important;
+    font-size: 16px !important;
+    border-radius: 0.75rem !important;
+  }
 }
 
 /* ===== HIGH DPI DISPLAYS (RETINA) ===== */
@@ -404,6 +780,33 @@ input, textarea, select {
   /* Optimize images for high DPI */
   img {
     image-rendering: -webkit-optimize-contrast !important;
+  }
+
+  /* Enhanced high DPI navigation */
+  .retina-nav {
+    padding: 1.25rem !important;
+  }
+
+  .retina-nav button {
+    padding: 1.125rem 1.75rem !important;
+    font-size: 1.1rem !important;
+  }
+
+  /* Enhanced high DPI cards */
+  .retina-card {
+    padding: 2rem !important;
+    margin: 1.25rem !important;
+  }
+
+  /* Enhanced high DPI forms */
+  .retina-form {
+    padding: 2rem !important;
+  }
+
+  .retina-form input,
+  .retina-form textarea {
+    padding: 1.125rem !important;
+    font-size: 16px !important;
   }
 }
 
@@ -429,59 +832,111 @@ input, textarea, select {
   .text-slate-500 {
     color: #64748b !important;
   }
+
+  /* Enhanced accessibility navigation */
+  .accessibility-nav {
+    padding: 1rem !important;
+  }
+
+  .accessibility-nav button {
+    padding: 1rem 1.5rem !important;
+    font-size: 1.1rem !important;
+    border-radius: 0.75rem !important;
+  }
+
+  /* Enhanced accessibility cards */
+  .accessibility-card {
+    padding: 1.5rem !important;
+    margin: 1rem !important;
+    border-radius: 0.75rem !important;
+  }
+
+  /* Enhanced accessibility forms */
+  .accessibility-form {
+    padding: 1.5rem !important;
+  }
+
+  .accessibility-form input,
+  .accessibility-form textarea {
+    padding: 1rem !important;
+    font-size: 16px !important;
+    border-radius: 0.75rem !important;
+  }
 }
 
 /* ===== SLIDESHOW MOBILE OPTIMIZATIONS ===== */
 @media (max-width: 768px) {
   .story-slideshow-mobile {
-    padding: 0.5rem !important;
+    padding: 0.75rem !important;
   }
 
   .story-slideshow-mobile .card-content {
-    padding: 1rem !important;
+    padding: 1.25rem !important;
   }
 
   /* Slideshow container mobile */
   .slideshow-container {
-    margin: 0.5rem !important;
+    margin: 0.75rem !important;
     max-height: calc(100vh - 2rem) !important;
+    border-radius: 1rem !important;
   }
 
   /* Slideshow controls mobile */
   .slideshow-controls {
-    padding: 0.75rem !important;
-    gap: 0.5rem !important;
+    padding: 1rem !important;
+    gap: 0.75rem !important;
   }
 
   /* Slideshow progress bar mobile */
   .slideshow-progress {
     width: 100% !important;
-    max-width: 200px !important;
+    max-width: 250px !important;
+    height: 8px !important;
+    border-radius: 4px !important;
   }
 
   /* Slideshow text mobile */
   .slideshow-text {
-    font-size: 0.9rem !important;
-    line-height: 1.5 !important;
-    padding: 0.75rem !important;
+    font-size: 1rem !important;
+    line-height: 1.6 !important;
+    padding: 1rem !important;
+  }
+
+  /* Enhanced mobile slideshow navigation */
+  .mobile-slideshow-nav {
+    padding: 1rem !important;
+  }
+
+  .mobile-slideshow-nav button {
+    padding: 1rem 1.5rem !important;
+    font-size: 1.1rem !important;
+    border-radius: 0.75rem !important;
+  }
+
+  /* Enhanced mobile slideshow cards */
+  .mobile-slideshow-card {
+    padding: 1.5rem !important;
+    margin: 1rem !important;
+    border-radius: 1rem !important;
   }
 }
 
 /* ===== STORY CREATION MOBILE OPTIMIZATIONS ===== */
 @media (max-width: 768px) {
   .story-creation-text {
-    font-size: 0.9rem !important;
-    line-height: 1.5 !important;
-    padding: 0.75rem !important;
+    font-size: 1rem !important;
+    line-height: 1.6 !important;
+    padding: 1rem !important;
   }
 
   .story-creation-form {
-    padding: 1rem !important;
+    padding: 1.25rem !important;
   }
 
   .story-creation-input {
     font-size: 16px !important;
-    padding: 0.75rem !important;
+    padding: 1rem !important;
+    border-radius: 0.75rem !important;
   }
 
   /* Story creation cards mobile optimization */
@@ -490,6 +945,8 @@ input, textarea, select {
     overflow: hidden !important;
     word-break: break-word !important;
     overflow-wrap: anywhere !important;
+    border-radius: 1rem !important;
+    padding: 1.25rem !important;
   }
 
   /* Typography styles for genre cards now handled by components.css */
@@ -498,8 +955,8 @@ input, textarea, select {
   /* Typography styles for story cards now handled by story-card-shared.css */
   .genre-card p,
   .genre-card .card-description {
-    font-size: 0.75rem !important;
-    line-height: 1.4 !important;
+    font-size: 0.875rem !important;
+    line-height: 1.5 !important;
     overflow: hidden !important;
     word-break: break-word !important;
     overflow-wrap: anywhere !important;
@@ -511,15 +968,47 @@ input, textarea, select {
     overflow: hidden !important;
     word-break: break-word !important;
     overflow-wrap: anywhere !important;
+    border-radius: 1rem !important;
+    padding: 1.25rem !important;
   }
 
   .story-suggestion-card p {
-    font-size: 0.875rem !important;
-    line-height: 1.5 !important;
+    font-size: 0.95rem !important;
+    line-height: 1.6 !important;
     overflow: hidden !important;
     word-break: break-word !important;
     overflow-wrap: anywhere !important;
     hyphens: auto !important;
+  }
+
+  /* Enhanced mobile story creation navigation */
+  .mobile-story-creation-nav {
+    padding: 1rem !important;
+  }
+
+  .mobile-story-creation-nav button {
+    padding: 1rem 1.5rem !important;
+    font-size: 1.1rem !important;
+    border-radius: 0.75rem !important;
+  }
+
+  /* Enhanced mobile story creation cards */
+  .mobile-story-creation-card {
+    padding: 1.5rem !important;
+    margin: 1rem !important;
+    border-radius: 1rem !important;
+  }
+
+  /* Enhanced mobile story creation forms */
+  .mobile-story-creation-form {
+    padding: 1.5rem !important;
+  }
+
+  .mobile-story-creation-form input,
+  .mobile-story-creation-form textarea {
+    padding: 1rem !important;
+    font-size: 16px !important;
+    border-radius: 0.75rem !important;
   }
 }
 
@@ -527,25 +1016,43 @@ input, textarea, select {
 @media (max-width: 768px) {
   /* Mobile header layout */
   .header-mobile {
-    padding: 0.5rem 1rem !important;
+    padding: 0.75rem 1rem !important;
+    backdrop-filter: blur(20px) !important;
+    background: rgba(0, 0, 0, 0.9) !important;
   }
 
   /* Mobile navigation */
   .nav-mobile {
     flex-direction: column !important;
-    gap: 0.5rem !important;
+    gap: 0.75rem !important;
   }
 
   /* Mobile logo */
   .logo-mobile {
-    font-size: 1.5rem !important;
+    font-size: 1.75rem !important;
+    font-weight: 700 !important;
   }
 
   /* Mobile menu button */
   .menu-button {
-    padding: 0.5rem !important;
-    min-width: 44px !important;
-    min-height: 44px !important;
+    padding: 0.75rem !important;
+    min-width: 48px !important;
+    min-height: 48px !important;
+    border-radius: 0.75rem !important;
+  }
+
+  /* Enhanced mobile header navigation */
+  .enhanced-mobile-header {
+    padding: 1rem !important;
+    backdrop-filter: blur(20px) !important;
+    background: rgba(0, 0, 0, 0.95) !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+  }
+
+  .enhanced-mobile-header button {
+    padding: 0.875rem 1.25rem !important;
+    font-size: 1rem !important;
+    border-radius: 0.75rem !important;
   }
 }
 
@@ -565,6 +1072,38 @@ input, textarea, select {
   .shadow-lg {
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important;
   }
+
+  /* Enhanced mobile performance navigation */
+  .performance-mobile-nav {
+    padding: 0.75rem 1rem !important;
+    backdrop-filter: blur(10px) !important;
+    background: rgba(0, 0, 0, 0.8) !important;
+  }
+
+  .performance-mobile-nav button {
+    padding: 0.75rem 1rem !important;
+    font-size: 1rem !important;
+    border-radius: 0.5rem !important;
+  }
+
+  /* Enhanced mobile performance cards */
+  .performance-mobile-card {
+    padding: 1rem !important;
+    margin: 0.75rem !important;
+    border-radius: 0.75rem !important;
+  }
+
+  /* Enhanced mobile performance forms */
+  .performance-mobile-form {
+    padding: 1rem !important;
+  }
+
+  .performance-mobile-form input,
+  .performance-mobile-form textarea {
+    padding: 0.875rem !important;
+    font-size: 16px !important;
+    border-radius: 0.5rem !important;
+  }
 }
 
 /* ===== PRINT STYLES ===== */
@@ -583,5 +1122,28 @@ input, textarea, select {
   /* Ensure good contrast for printing */
   .text-slate-400 {
     color: #000 !important;
+  }
+
+  /* Enhanced print navigation */
+  .print-nav {
+    display: none !important;
+  }
+
+  /* Enhanced print cards */
+  .print-card {
+    border: 1px solid #000 !important;
+    padding: 1rem !important;
+    margin: 0.5rem 0 !important;
+  }
+
+  /* Enhanced print forms */
+  .print-form {
+    padding: 1rem !important;
+  }
+
+  .print-form input,
+  .print-form textarea {
+    border: 1px solid #000 !important;
+    padding: 0.5rem !important;
   }
 }

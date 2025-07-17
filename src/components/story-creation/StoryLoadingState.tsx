@@ -91,22 +91,9 @@ const StoryLoadingState: React.FC<StoryLoadingStateProps> = ({
 
             {/* Central magical animation */}
             <div className="relative flex items-center justify-center py-8">
-              {/* Outer rotating ring */}
-              <div className="absolute w-32 h-32 border-2 border-amber-400/30 rounded-full animate-magical-spin-slow">
-                <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-2">
-                  <Sparkles className="h-4 w-4 text-amber-400 animate-pulse" />
-                </div>
-                <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-2">
-                  <Stars className="h-4 w-4 text-purple-400 animate-pulse" />
-                </div>
-              </div>
-              
-              {/* Middle spinning circle */}
-              <div className="absolute w-20 h-20 border-3 border-purple-400/50 border-t-purple-400 rounded-full animate-spin"></div>
-              
-              {/* Center icon */}
+              {/* Main circular loading spinner */}
               <div className="relative z-10 bg-slate-800 rounded-full p-6 border-2 border-amber-400/50 shadow-lg">
-                <CurrentIcon className="h-10 w-10 text-amber-400 animate-bounce" />
+                <div className="w-16 h-16 border-4 border-amber-400/30 border-t-amber-400 rounded-full animate-spin"></div>
               </div>
               
               {/* Pulsing glow */}

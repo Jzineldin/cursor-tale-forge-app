@@ -140,7 +140,7 @@ const SignUp = () => {
         <CardHeader className="text-center">
           <CardTitle className="text-2xl text-white">Create Your Account</CardTitle>
           <CardDescription className="text-purple-200">
-            Join TaleForge and start your storytelling journey
+            Join Tale Forge and start your storytelling journey
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">

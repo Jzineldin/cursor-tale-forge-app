@@ -72,7 +72,7 @@ const Beta: React.FC = () => {
             Beta Dashboard
           </Badge>
           <h1 className="text-4xl md:text-6xl font-bold text-white mb-4 font-serif">
-            Welcome to <span className="text-amber-400">TaleForge Beta</span>
+            Welcome to <span className="text-amber-400">Tale Forge Beta</span>
           </h1>
           <p className="text-xl text-gray-300 max-w-2xl mx-auto">
             You're part of an exclusive group shaping the future of interactive storytelling

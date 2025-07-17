@@ -381,6 +381,7 @@ const Discover: React.FC = () => {
               src={story.thumbnail_url} 
               alt={story.title}
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+              loading="lazy"
             />
           </div>
         )}
@@ -512,10 +513,10 @@ const Discover: React.FC = () => {
     >
       <div className="container mx-auto px-4 pb-16">
         {/* Enhanced Page Header */}
-        <div className="mb-8 pt-8">
+        <div className="mb-8 pt-4">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
-              <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-amber-300 to-orange-400 bg-clip-text text-transparent mb-2">
+              <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">
                 Discover Amazing Stories
               </h1>
               <p className="text-gray-400 text-lg">

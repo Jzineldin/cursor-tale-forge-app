@@ -39,6 +39,21 @@ const CreatePrompt: React.FC = () => {
     };
   }, []);
 
+  // Hide global scene-bg when this component mounts
+  useEffect(() => {
+    const sceneBg = document.querySelector('.scene-bg') as HTMLElement;
+    if (sceneBg) {
+      sceneBg.style.display = 'none';
+    }
+
+    // Show it again when component unmounts
+    return () => {
+      if (sceneBg) {
+        sceneBg.style.display = 'block';
+      }
+    };
+  }, []);
+
   const genrePrompts: Record<string, string[]> = {
     'bedtime-stories': [
       'You find a magical crayon that brings everything you draw to life in your backyard.',
@@ -150,7 +165,7 @@ const CreatePrompt: React.FC = () => {
 
   const genreDisplayNames: Record<string, string> = {
     'bedtime-stories': '🌙 Bedtime Stories',
-    'fantasy-magic': '🏰 Fantasy & Magic Adventures',
+    'fantasy-magic': '🏰 Fantasy & Magic',
     'adventure-exploration': '🗺️ Adventure & Exploration',
     'mystery-detective': '🕵️ Mystery & Detective',
     'science-space': '🚀 Science Fiction & Space',
@@ -172,41 +187,41 @@ const CreatePrompt: React.FC = () => {
       className="prompt-page-container fixed top-0 left-0 w-full h-full overflow-y-auto z-50"
       style={{
         background: `
-          linear-gradient(rgba(15, 23, 42, 0.85), rgba(30, 41, 59, 0.90)),
-          radial-gradient(circle at 20% 80%, rgba(245, 158, 11, 0.15) 0%, transparent 50%),
-          radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.08) 0%, transparent 50%),
+          linear-gradient(rgba(15, 23, 42, 0.2), rgba(30, 41, 59, 0.3)),
           url('/images/Flux_Dev_Lonely_astronaut_sitting_on_a_pile_of_books_in_space__0.jpg')
         `,
-        backgroundSize: 'auto, auto, auto, cover',
-        backgroundPosition: 'center, center, center, center',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat',
         backgroundAttachment: 'fixed'
       }}
     >
       <div className="prompt-content relative z-10 min-h-full">
-        <div className="container mx-auto px-4 pb-16">
+        <div className="container mx-auto px-4 pb-16" style={{ marginTop: '80px' }}>
           {/* Header */}
-          <div className="text-center mb-12 relative">
-            <Button
-              variant="ghost"
-              onClick={() => navigate('/create/genre')}
-              className="!absolute top-2 left-4 !text-white !bg-slate-800/60 hover:!bg-amber-500/20 !border !border-amber-500/30 !backdrop-blur-sm"
-            >
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              Back
-            </Button>
+          <div className="text-center mb-12 relative px-4">
+            <div className="flex justify-between items-center mb-8">
+              <Button
+                variant="ghost"
+                onClick={() => navigate('/create/genre')}
+                className="!text-white !bg-slate-800/60 hover:!bg-amber-500/20 !border !border-amber-500/30 !backdrop-blur-sm"
+              >
+                <ArrowLeft className="mr-2 h-4 w-4" />
+                Back
+              </Button>
+              
+              <Button
+                variant="ghost"
+                onClick={() => navigate('/')}
+                className="!text-white !bg-slate-800/60 hover:!bg-amber-500/20 !border !border-amber-500/30 !backdrop-blur-sm flex items-center gap-2"
+              >
+                <Home className="h-4 w-4" />
+                Home
+              </Button>
+            </div>
             
-            <Button
-              variant="ghost"
-              onClick={() => navigate('/')}
-              className="!absolute top-2 left-32 !text-white !bg-slate-800/60 hover:!bg-amber-500/20 !border !border-amber-500/30 !backdrop-blur-sm flex items-center gap-2"
-            >
-              <Home className="h-4 w-4" />
-              Home
-            </Button>
-            
-            <div className="pt-20 md:pt-24">
-              <h1 className="text-4xl md:text-6xl font-bold !text-white mb-6 font-serif drop-shadow-2xl">
+            <div className="pt-8 md:pt-12">
+              <h1 className="text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-bold !text-white mb-6 font-serif drop-shadow-2xl leading-tight break-words">
                 Your <span className="!text-amber-400 drop-shadow-lg">✨{genreDisplayNames[selectedGenre]}</span> Adventure
               </h1>
               <p className="text-xl !text-gray-200 max-w-2xl mx-auto drop-shadow-lg">
@@ -240,29 +255,31 @@ const CreatePrompt: React.FC = () => {
 
           {/* Story Suggestions */}
           <div className="max-w-4xl mx-auto mb-12">
-            <div className="flex items-center justify-center gap-4 mb-6">
-              <h3 className="text-2xl font-bold !text-white font-serif drop-shadow-lg flex items-center gap-2">
+            <div className="text-center mb-6">
+              <h3 className="text-2xl font-bold !text-white font-serif drop-shadow-lg flex items-center justify-center gap-2">
                 <div className="h-1.5 w-1.5 bg-amber-400 rounded-full animate-pulse"></div>
                 Need Inspiration?
                 <div className="h-1.5 w-1.5 bg-amber-400 rounded-full animate-pulse"></div>
               </h3>
-              <Button
-                onClick={handleGenerateNewPrompts}
-                disabled={isGenerating}
-                variant="outline"
-                size="sm"
-                className="!bg-amber-500/20 hover:!bg-amber-500/30 !border-amber-400/50 !text-amber-200 hover:!text-amber-100 !backdrop-blur-sm"
-              >
-                {isGenerating ? (
-                  <svg className="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                  </svg>
-                ) : (
-                  <Sparkles className="h-4 w-4" />
-                )}
-                {isGenerating ? 'Generating...' : 'Generate New'}
-              </Button>
+              {/* Temporarily hidden - will be re-enabled later */}
+              {/* <div className="mt-4">
+                <Button
+                  onClick={handleGenerateNewPrompts}
+                  disabled={isGenerating}
+                  variant="outline"
+                  className="!text-amber-300 !border-amber-500/50 hover:!bg-amber-500/20 !backdrop-blur-sm"
+                >
+                  {isGenerating ? (
+                    <svg className="animate-spin h-4 w-4 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                  ) : (
+                    <Sparkles className="h-4 w-4 mr-2" />
+                  )}
+                  {isGenerating ? 'Generating...' : 'Generate New Prompts'}
+                </Button>
+              </div> */}
             </div>
             <div className="grid gap-4">
               {currentPrompts.map((suggestion, index) => (
@@ -286,7 +303,7 @@ const CreatePrompt: React.FC = () => {
           </div>
 
           {/* Begin Adventure Button */}
-          <div className="text-center">
+          <div className="text-center mb-8">
             <Button
               onClick={handleBeginAdventure}
               disabled={!prompt.trim() || isCreating}

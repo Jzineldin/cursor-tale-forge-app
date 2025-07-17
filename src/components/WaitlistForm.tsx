@@ -65,7 +65,7 @@ const WaitlistForm: React.FC = () => {
           </div>
           <h3 className="text-xl font-bold text-white mb-2">You're on the list!</h3>
           <p className="text-gray-300 mb-4">
-            Thank you for joining our waitlist. We'll notify you when TaleForge is ready for you to explore.
+            Thank you for joining our waitlist. We'll notify you when Tale Forge is ready for you to explore.
           </p>
           <div className="flex items-center justify-center gap-2 text-amber-400">
             <Users className="h-4 w-4" />
@@ -119,7 +119,7 @@ const WaitlistForm: React.FC = () => {
               htmlFor="marketing"
               className="text-sm text-gray-300 cursor-pointer"
             >
-              I'd like to receive updates about TaleForge features and news
+              I'd like to receive updates about Tale Forge features and news
             </label>
           </div>
 

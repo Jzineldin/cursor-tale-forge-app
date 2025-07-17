@@ -21,7 +21,7 @@ const CreateGenre: React.FC = () => {
       setBackgroundLoaded(true);
       document.body.classList.add('loaded');
     };
-    bgImage.src = '/images/astronaut-background-genre.jpg';
+    bgImage.src = '/images/Flux_Dev_Lonely_astronaut_sitting_on_a_pile_of_books_in_space__0.jpg';
     
     // Cleanup on unmount
     return () => {

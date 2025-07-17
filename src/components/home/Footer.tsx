@@ -61,10 +61,39 @@ const Footer: React.FC = () => {
 
         {/* Bottom Bar */}
         <div className="border-t border-white/10 pt-6">
-          <div className="flex items-center justify-center gap-2 text-sm text-gray-400">
-            <span>© {currentYear} Tale Forge. Made with</span>
-            <Heart className="h-4 w-4 text-red-400 fill-red-400" />
-            <span>by storytellers, for storytellers.</span>
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+            {/* Legal Links */}
+            <div className="flex items-center gap-6 text-sm">
+              <a 
+                href="/privacy-policy.html" 
+                className="text-gray-400 hover:text-white transition-colors"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Privacy Policy
+              </a>
+              <a 
+                href="/terms-of-service.html" 
+                className="text-gray-400 hover:text-white transition-colors"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Terms of Service
+              </a>
+              <a 
+                href="mailto:info@tale-forge.app" 
+                className="text-gray-400 hover:text-white transition-colors"
+              >
+                Contact
+              </a>
+            </div>
+            
+            {/* Copyright */}
+            <div className="flex items-center gap-2 text-sm text-gray-400">
+              <span>© {currentYear} Tale Forge. Made with</span>
+              <Heart className="h-4 w-4 text-red-400 fill-red-400" />
+              <span>by storytellers, for storytellers.</span>
+            </div>
           </div>
         </div>
       </div>

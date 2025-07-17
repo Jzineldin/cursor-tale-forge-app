@@ -151,7 +151,7 @@ const CreateStartingPoint: React.FC = () => {
             Home
           </Button>
           
-          <div className="pt-20 md:pt-24">
+          <div className="pt-8 md:pt-12">
             <h1 className="text-4xl md:text-6xl font-bold text-white mb-6 font-serif">
               Choose Your <span className="text-amber-400">Starting Point</span>
             </h1>

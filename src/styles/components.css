@@ -332,8 +332,8 @@ body[data-route="/create/genre"] {
   margin-bottom: 0.5rem !important;
   
   /* Smart text wrapping for cutoff fix */
-  line-height: 1.2 !important;
-  max-height: 2.4em !important;
+  line-height: 1.3 !important;
+  max-height: 2.6em !important;
   overflow: hidden !important;
   display: -webkit-box !important;
   -webkit-line-clamp: 2 !important;
@@ -345,6 +345,7 @@ body[data-route="/create/genre"] {
   overflow-wrap: anywhere !important;
   white-space: normal !important;
   padding: 0 0.25rem !important;
+  padding-bottom: 0.5rem !important;
   
   /* Responsive font sizing for desktop */
 }
@@ -518,7 +519,6 @@ body[data-route="/create/genre"] {
 
 /* Prompt Page Layout Fix - Critical Bug Resolution */
 .prompt-page-container {
-  background: #1a1f3a !important; /* fallback */
   min-height: 100vh !important;
   min-height: 100dvh !important;
   position: fixed !important;
@@ -545,6 +545,74 @@ body[data-route="/create/genre"] {
   -webkit-backdrop-filter: blur(1px) !important;
 }
 
+/* Fixed header spacing and button layout */
+.prompt-page-container .container {
+  margin-top: 80px !important;
+  padding-top: 20px !important;
+}
+
+.prompt-page-container .text-center {
+  position: relative !important;
+}
+
+/* Navigation buttons - now properly positioned */
+.prompt-page-container .flex.justify-between {
+  position: relative !important;
+  z-index: 10 !important;
+  margin-bottom: 2rem !important;
+}
+
+.prompt-page-container .flex.justify-between button {
+  position: relative !important;
+  z-index: 10 !important;
+}
+
+/* Ensure title doesn't overlap with buttons */
+.prompt-page-container h1 {
+  margin-top: 2rem !important;
+  word-wrap: break-word !important;
+  overflow-wrap: break-word !important;
+  hyphens: auto !important;
+}
+
+/* Primary action button styling */
+.prompt-page-container .text-center.mb-8 {
+  margin-top: 2rem !important;
+  margin-bottom: 2rem !important;
+}
+
+.prompt-page-container .text-center.mb-8 button {
+  position: relative !important;
+  z-index: 10 !important;
+  min-height: 60px !important;
+  font-size: 1.125rem !important;
+  font-weight: 600 !important;
+}
+
+@media (max-width: 640px) {
+  .prompt-page-container .container {
+    margin-top: 60px !important;
+    padding-top: 16px !important;
+  }
+  
+  .prompt-page-container h1 {
+    font-size: 1.5rem !important;
+    line-height: 1.3 !important;
+    margin-top: 1.5rem !important;
+  }
+  
+  .prompt-page-container .flex.justify-between button {
+    font-size: 0.875rem !important;
+    padding: 0.5rem 0.75rem !important;
+  }
+  
+  .prompt-page-container .text-center.mb-8 button {
+    min-height: 50px !important;
+    font-size: 1rem !important;
+    padding: 0.75rem 1rem !important;
+  }
+}
+
 /* Hide landing/home page when on prompt page */
 body[data-route^='/create/prompt'] .landing-page,
 body[data-route^='/create/prompt'] .home-page {
@@ -554,4 +622,185 @@ body[data-route^='/create/prompt'] .home-page {
 }
 body[data-route^='/create/prompt'] {
   overflow-x: hidden !important;
+}
+
+/* Mobile-optimized glassmorphism */
+@media (max-width: 768px) {
+  .glass-container {
+    background: rgba(0, 0, 0, 0.3) !important;
+    backdrop-filter: blur(8px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.05) !important;
+  }
+  
+  .glass-container:hover {
+    background: rgba(0, 0, 0, 0.4) !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+  }
+}
+
+/* Enhanced text shadows for better readability */
+.text-shadow-sm {
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+}
+
+.text-shadow-md {
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4), 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.text-shadow-lg {
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4), 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* Enhanced glassmorphism containers - REVERTED TO DARKER STYLE */
+.glass-enhanced {
+  background: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  transition: all 0.3s ease;
+}
+
+.glass-enhanced:hover {
+  background: rgba(0, 0, 0, 0.4);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+/* Hero glassmorphism - REVERTED TO DARKER STYLE */
+.glass-hero {
+  background: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+/* Form inputs with glassmorphism */
+.glass-input {
+  background: rgba(0, 0, 0, 0.3) !important;
+  border: 2px solid rgba(255, 255, 255, 0.2) !important;
+  backdrop-filter: blur(8px) !important;
+  color: white !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4) !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2) !important;
+}
+
+.glass-input::placeholder {
+  color: rgba(255, 255, 255, 0.7) !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3) !important;
+}
+
+.glass-input:focus {
+  background: rgba(0, 0, 0, 0.4) !important;
+  border-color: rgba(251, 191, 36, 0.6) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3), 0 0 0 3px rgba(251, 191, 36, 0.1) !important;
+}
+
+/* Performance optimizations for mobile */
+@media (max-width: 768px) {
+  .glass-enhanced {
+    background: rgba(0, 0, 0, 0.4) !important;
+    backdrop-filter: blur(8px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  }
+  
+  .glass-hero {
+    background: rgba(0, 0, 0, 0.4) !important;
+    backdrop-filter: blur(8px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  }
+  
+  .glass-input {
+    background: rgba(0, 0, 0, 0.4) !important;
+    backdrop-filter: blur(6px) !important;
+  }
+}
+
+/* Reduced motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .glass-enhanced,
+  .glass-hero {
+    transition: none !important;
+  }
+  
+  .glass-enhanced:hover {
+    transform: none !important;
+  }
+}
+
+/* Magical loading animations */
+@keyframes magical-float {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+    opacity: 0.7;
+  }
+  50% {
+    transform: translateY(-20px) rotate(180deg);
+    opacity: 1;
+  }
+}
+
+@keyframes magical-spin-slow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes magical-fade-in {
+  0% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes sparkle-trail {
+  0% {
+    transform: translateX(-100%) scale(0);
+    opacity: 0;
+  }
+  50% {
+    transform: translateX(0%) scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(100%) scale(0);
+    opacity: 0;
+  }
+}
+
+@keyframes glow-pulse {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(251, 191, 36, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 40px rgba(251, 191, 36, 0.6);
+  }
+}
+
+.animate-magical-float {
+  animation: magical-float 3s ease-in-out infinite;
+}
+
+.animate-magical-spin-slow {
+  animation: magical-spin-slow 8s linear infinite;
+}
+
+.animate-magical-fade-in {
+  animation: magical-fade-in 2s ease-out;
+}
+
+.animate-sparkle-trail {
+  animation: sparkle-trail 2s ease-in-out infinite;
+}
+
+.animate-glow-pulse {
+  animation: glow-pulse 2s ease-in-out infinite;
 }

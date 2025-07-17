@@ -9,6 +9,7 @@ import { z } from 'zod';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { Mail, Users, CheckCircle, Loader2, Star } from 'lucide-react';
+import { trackWaitlistSignup } from '@/utils/analytics';
 
 const waitlistSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters'),
@@ -57,6 +58,7 @@ const WaitlistSignup: React.FC<WaitlistSignupProps> = ({ variant = 'card', class
       }
 
       setIsSubmitted(true);
+      trackWaitlistSignup(data.email);
       toast.success('Welcome to the waitlist! We\'ll keep you updated on new features.');
     } catch (error) {
       console.error('Error joining waitlist:', error);
@@ -104,8 +106,9 @@ const WaitlistSignup: React.FC<WaitlistSignupProps> = ({ variant = 'card', class
               <FormControl>
                 <Input
                   placeholder="Your name"
-                  className="bg-black/70 border-amber-500/60 focus:ring-amber-400 focus:border-amber-400 text-white placeholder-gray-400 backdrop-blur-sm transition-all duration-300 focus:bg-black/80"
+                  className="bg-black/70 border-amber-500/60 focus:ring-amber-400 focus:border-amber-400 text-white placeholder-gray-400 backdrop-blur-sm transition-all duration-300 focus:bg-black/80 min-h-[48px] text-base"
                   {...field}
+                  aria-label="Your name"
                 />
               </FormControl>
               <FormMessage className="text-red-300" />
@@ -123,8 +126,9 @@ const WaitlistSignup: React.FC<WaitlistSignupProps> = ({ variant = 'card', class
                 <Input
                   type="email"
                   placeholder="your.email@example.com"
-                  className="bg-black/70 border-amber-500/60 focus:ring-amber-400 focus:border-amber-400 text-white placeholder-gray-400 backdrop-blur-sm transition-all duration-300 focus:bg-black/80"
+                  className="bg-black/70 border-amber-500/60 focus:ring-amber-400 focus:border-amber-400 text-white placeholder-gray-400 backdrop-blur-sm transition-all duration-300 focus:bg-black/80 min-h-[48px] text-base"
                   {...field}
+                  aria-label="Email address"
                 />
               </FormControl>
               <FormMessage className="text-red-300" />

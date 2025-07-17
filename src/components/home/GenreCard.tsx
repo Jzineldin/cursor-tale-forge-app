@@ -69,6 +69,7 @@ const GenreCard: React.FC<GenreCardProps> = ({
           `}
           onLoad={handleImageLoad}
           onError={handleImageError}
+          loading="lazy"
         />
       )}
 

@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Page Not Found - Tale Forge</title>
+  <style>
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      text-align: center;
+    }
+    .error-page {
+      max-width: 600px;
+      padding: 40px 20px;
+    }
+    .error-content h1 {
+      font-size: 3rem;
+      margin-bottom: 20px;
+      font-weight: 700;
+    }
+    .error-content p {
+      font-size: 1.2rem;
+      margin-bottom: 40px;
+      opacity: 0.9;
+      line-height: 1.6;
+    }
+    .error-actions {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .btn-primary, .btn-secondary {
+      padding: 15px 30px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      display: inline-block;
+      min-width: 140px;
+    }
+    .btn-primary {
+      background: white;
+      color: #667eea;
+    }
+    .btn-secondary {
+      background: transparent;
+      color: white;
+      border: 2px solid white;
+    }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+    }
+    .btn-secondary:hover {
+      background: white;
+      color: #667eea;
+    }
+    .magic-sparkle {
+      font-size: 4rem;
+      margin-bottom: 20px;
+      animation: sparkle 2s ease-in-out infinite;
+    }
+    @keyframes sparkle {
+      0%, 100% { transform: scale(1) rotate(0deg); }
+      50% { transform: scale(1.1) rotate(180deg); }
+    }
+    @media (max-width: 768px) {
+      .error-content h1 {
+        font-size: 2.5rem;
+      }
+      .error-content p {
+        font-size: 1.1rem;
+      }
+      .error-actions {
+        flex-direction: column;
+        align-items: center;
+      }
+      .btn-primary, .btn-secondary {
+        width: 100%;
+        max-width: 300px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="error-page">
+    <div class="error-content">
+      <div class="magic-sparkle">📚✨</div>
+      <h1>Oops! This Story Doesn't Exist</h1>
+      <p>The page you're looking for seems to have wandered off into another tale. Don't worry - there are plenty of magical stories waiting for you!</p>
+      <div class="error-actions">
+        <a href="/" class="btn-primary">Return Home</a>
+        <a href="mailto:info@tale-forge.app" class="btn-secondary">Get Help</a>
+      </div>
+    </div>
+  </div>
+</body>
+</html> 

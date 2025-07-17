@@ -50,7 +50,7 @@ const StoryCreationLoadingState: React.FC<StoryCreationLoadingStateProps> = () =
         
         {/* Enhanced Messages */}
         <h2 className="text-3xl font-serif mb-4 text-amber-100 drop-shadow-lg">
-          The TaleForge is Writing...
+          The Tale Forge is Writing...
         </h2>
         <p className="text-amber-200/90 text-lg mb-8 font-medium drop-shadow-sm">
           Weaving the threads of your destiny into an enchanted tale

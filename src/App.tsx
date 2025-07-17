@@ -39,7 +39,7 @@ const LoadingFallback = () => (
   <div className="min-h-screen flex items-center justify-center bg-slate-900">
     <div className="text-center">
       <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-amber-400 mx-auto"></div>
-      <p className="text-white mt-4">Loading TaleForge...</p>
+      <p className="text-white mt-4">Loading Tale Forge...</p>
     </div>
   </div>
 );
