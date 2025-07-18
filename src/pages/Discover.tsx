@@ -507,7 +507,7 @@ const Discover: React.FC = () => {
       <div className="magical-content">
         <div className="container mx-auto px-4 py-16">
           {/* Enhanced Page Header */}
-          <div className="mb-8 pt-4 animate-magical-fade-in">
+          <div className="mb-12 pt-4 animate-magical-fade-in">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
               <div>
                 <h1 className="fantasy-heading text-3xl md:text-4xl font-bold text-white mb-2">
@@ -669,35 +669,37 @@ const Discover: React.FC = () => {
                   </div>
                 </div>
               ) : (
-                <div className={viewMode === 'grid' ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6' : 'space-y-4'}>
+                <div className={viewMode === 'grid' ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 px-6' : 'space-y-4'}>
                   {stories.map((story) => (
-                    <div key={story.id} className="story-card">
-                      {story.thumbnail_url && (
-                        <img 
-                          src={story.thumbnail_url} 
-                          alt={story.title}
-                          className="story-card-image"
-                          onError={(e) => {
-                            const target = e.target as HTMLImageElement;
-                            target.style.display = 'none';
-                          }}
-                        />
-                      )}
-                      <h3 className="story-card-title line-clamp-2">{story.title}</h3>
-                      <p className="story-card-description line-clamp-3">{story.description}</p>
-                      <div className="story-card-meta">
-                        <div className="flex items-center gap-2">
-                          <span className="text-xs">{getGenreEmoji(story.story_mode)} {getGenreLabel(story.story_mode)}</span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <BookOpen className="h-3 w-3" />
-                          <span className="text-xs">{story.segment_count}</span>
-                        </div>
+                    <div key={story.id} className="h-96 bg-white/10 backdrop-blur-xl rounded-xl overflow-hidden shadow-2xl border border-white/20 hover:bg-white/15 hover:scale-105 transition-all duration-300 flex flex-col">
+                      <div className="h-40 overflow-hidden">
+                        {story.thumbnail_url && (
+                          <img 
+                            src={story.thumbnail_url} 
+                            alt={story.title}
+                            className="w-full h-full object-cover"
+                            onError={(e) => {
+                              const target = e.target as HTMLImageElement;
+                              target.style.display = 'none';
+                            }}
+                          />
+                        )}
                       </div>
-                      <div className="mt-4">
+                      <div className="p-6 flex flex-col flex-grow">
+                        <h3 className="text-white font-bold text-lg mb-3 line-clamp-2 fantasy-heading">{story.title}</h3>
+                        <p className="text-gray-300 text-sm mb-4 line-clamp-3 flex-grow">{story.description}</p>
+                        <div className="flex items-center justify-between text-xs text-gray-400 mb-4">
+                          <div className="flex items-center gap-2">
+                            <span>{getGenreEmoji(story.story_mode)} {getGenreLabel(story.story_mode)}</span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <BookOpen className="h-3 w-3" />
+                            <span>{story.segment_count}</span>
+                          </div>
+                        </div>
                         <button 
                           onClick={() => navigate(`/story/${story.id}`)}
-                          className="w-full btn-magical text-sm py-2 flex items-center justify-center gap-2"
+                          className="bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 flex items-center justify-center gap-2 whitespace-nowrap mt-auto"
                         >
                           <Eye className="h-4 w-4" />
                           <span>Read Story</span>
