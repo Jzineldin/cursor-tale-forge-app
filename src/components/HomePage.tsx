@@ -76,7 +76,7 @@ const HomePage: React.FC = () => {
   }, [isPaused, testimonials.length]);
 
   const handleCreateStory = () => {
-    navigate('/create/genre');
+    navigate('/create/age');
   };
 
   const nextTestimonial = () => {

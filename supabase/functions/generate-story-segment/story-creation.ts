@@ -6,7 +6,8 @@ export async function createStoryIfNeeded(
   storyId: string | undefined,
   prompt: string | undefined,
   genre: string | undefined,
-  storyMode: string | undefined
+  storyMode: string | undefined,
+  targetAge: string | undefined
 ): Promise<string> {
   let finalStoryId = storyId;
   
@@ -18,6 +19,7 @@ export async function createStoryIfNeeded(
         title: prompt.substring(0, 100) + (prompt.length > 100 ? '...' : ''),
         description: prompt,
         story_mode: genre || storyMode || 'fantasy',
+        target_age: targetAge || '7-9',
         user_id: null
       })
       .select()

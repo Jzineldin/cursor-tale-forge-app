@@ -8,6 +8,50 @@
 import { generateEnhancedPromptWithContinuity, validateStoryContinuity } from './enhanced-prompts.ts';
 import { applySafetyFilter, validateUserInput, validateImagePrompt } from './content-safety.ts';
 
+/**
+ * Get age-appropriate content guidelines for story generation
+ */
+function getAgeAppropriateGuidelines(targetAge: '4-6' | '7-9' | '10-12'): string {
+  switch (targetAge) {
+    case '4-6':
+      return `AGE 4-6 GUIDELINES:
+- Use simple, clear language with short sentences (5-8 words max)
+- Focus on basic concepts: colors, numbers, shapes, animals, family
+- Include gentle, positive themes: friendship, sharing, helping others
+- Use repetitive patterns and familiar scenarios
+- Keep stories under 100 words per segment
+- Avoid complex emotions or abstract concepts
+- Include simple moral lessons with clear right and wrong
+- Use familiar settings: home, school, park, farm
+- Gentle conflicts with quick, reassuring resolutions
+- NO violence, scary content, or complex emotions`;
+    case '7-9':
+      return `AGE 7-9 GUIDELINES:
+- Use clear, engaging language with varied sentence structure
+- Include educational elements: science, history, geography concepts
+- Focus on problem-solving and critical thinking
+- Include character development and emotional growth
+- Keep stories 100-150 words per segment
+- Introduce mild challenges that are resolved through cooperation
+- Include positive role models and teamwork themes
+- Use imaginative settings with some educational value
+- Gentle adventure with learning opportunities
+- Mild challenges only, no violence or scary content`;
+    case '10-12':
+      return `AGE 10-12 GUIDELINES:
+- Use more sophisticated language and complex sentence structures
+- Include deeper character development and emotional complexity
+- Focus on themes of identity, responsibility, and personal growth
+- Include educational content woven naturally into the story
+- Keep stories 150-200 words per segment
+- Include more complex problem-solving and decision-making
+- Explore themes of justice, fairness, and social responsibility
+- Use diverse settings and cultural elements
+- Adventure with meaningful challenges and character growth
+- Age-appropriate challenges, no graphic content or mature themes`;
+  }
+}
+
 export interface OVHTextRequest {
   model: string;
   messages: Array<{role: string; content: string}>;
@@ -33,7 +77,10 @@ export async function generateStoryWithOVH(
   previousSegments: string[] = [],
   storyContext?: any
 ): Promise<{
-  text: string;
+  segmentText: string;
+  choices: string[];
+  isEnd: boolean;
+  imagePrompt: string;
   continuityValidation?: {
     isValid: boolean;
     issues: string[];
@@ -43,13 +90,17 @@ export async function generateStoryWithOVH(
   try {
     console.log(`[OVH Text Service] Generating story for genre: ${genre}`);
     
-    // Generate enhanced prompt with narrative continuity
+    // Get age-appropriate guidelines
+    const targetAge = storyContext?.targetAge || '7-9';
+    const ageGuidelines = getAgeAppropriateGuidelines(targetAge);
+    
+    // Generate enhanced prompt with narrative continuity and age guidelines
     const enhancedPrompt = generateEnhancedPromptWithContinuity(
       genre,
       prompt,
       storyContext,
       previousSegments
-    );
+    ) + `\n\n${ageGuidelines}`;
 
     console.log(`[OVH Text Service] Enhanced prompt generated with continuity checks`);
 
@@ -114,10 +165,16 @@ export async function generateStoryWithOVH(
     // Apply content safety validation using existing safety filter
     const safetyResult = applySafetyFilter({ segmentText: generatedText });
     
+    // Parse the generated text to extract story elements
+    const storyElements = parseStoryResponse(generatedText);
+    
     if (safetyResult.segmentText !== generatedText) {
       console.log('[OVH Text Service] Content was sanitized by safety filter');
       return {
-        text: safetyResult.segmentText,
+        segmentText: safetyResult.segmentText,
+        choices: storyElements.choices,
+        isEnd: storyElements.isEnd,
+        imagePrompt: storyElements.imagePrompt,
         continuityValidation
       };
     }
@@ -125,7 +182,10 @@ export async function generateStoryWithOVH(
     console.log(`[OVH Text Service] Story generation completed successfully`);
     
     return {
-      text: generatedText,
+      segmentText: generatedText,
+      choices: storyElements.choices,
+      isEnd: storyElements.isEnd,
+      imagePrompt: storyElements.imagePrompt,
       continuityValidation
     };
 
@@ -142,11 +202,45 @@ export async function generateStoryWithOVH(
   }
 }
 
+/**
+ * Parse story response to extract structured elements
+ */
+function parseStoryResponse(text: string): {
+  segmentText: string;
+  choices: string[];
+  isEnd: boolean;
+  imagePrompt: string;
+} {
+  // Try to parse as JSON first
+  try {
+    const parsed = JSON.parse(text);
+    return {
+      segmentText: parsed.segmentText || text,
+      choices: parsed.choices || ['Continue the story', 'Explore more', 'Help the characters'],
+      isEnd: parsed.isEnd || false,
+      imagePrompt: parsed.imagePrompt || 'A colorful, child-friendly scene from the story'
+    };
+  } catch {
+    // If not JSON, treat as plain text
+    return {
+      segmentText: text,
+      choices: ['Continue the story', 'Explore more', 'Help the characters'],
+      isEnd: false,
+      imagePrompt: 'A colorful, child-friendly scene from the story'
+    };
+  }
+}
+
 // Fallback basic generation without continuity features
 async function generateBasicStoryWithOVH(
   prompt: string,
   genre: string
-): Promise<{ text: string }> {
+): Promise<{
+  segmentText: string;
+  choices: string[];
+  isEnd: boolean;
+  imagePrompt: string;
+}> {
   // Original generation logic as fallback
   const basePrompt = getGenrePrompt(genre);
   
@@ -180,7 +274,8 @@ async function generateBasicStoryWithOVH(
   }
 
   const data = await response.json();
-  return { text: data.choices[0].message.content.trim() };
+  const generatedText = data.choices[0].message.content.trim();
+  return parseStoryResponse(generatedText);
 }
 
 // Enhanced genre-specific prompts for continuity (keeping existing ones as fallback)

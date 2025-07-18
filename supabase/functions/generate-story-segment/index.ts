@@ -23,7 +23,7 @@ serve(async (req) => {
 
   try {
     const requestBody = await req.json();
-    const { prompt, genre, storyId, parentSegmentId, choiceText, skipImage, skipAudio, storyMode, voice } = validateRequest(requestBody);
+    const { prompt, genre, storyId, parentSegmentId, choiceText, skipImage, skipAudio, storyMode, voice, targetAge } = validateRequest(requestBody);
 
     const supabaseClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
@@ -51,7 +51,7 @@ serve(async (req) => {
     }
 
     // Create story or get existing story ID
-    const finalStoryId = await createStoryIfNeeded(supabaseClient, storyId, prompt, genre, storyMode);
+    const finalStoryId = await createStoryIfNeeded(supabaseClient, storyId, prompt, genre, storyMode, targetAge);
 
     // Fetch previous segments for context
     const previousSegments = await fetchPreviousSegments(supabaseClient, finalStoryId);
@@ -72,7 +72,7 @@ serve(async (req) => {
       plotThreads: narrativeContext.plotThreads.map(t => t.description).join(', ')
     };
     
-    const storyResult = await generateStoryContent(prompt, choiceText, visualContext, narrativeContext, genre || storyMode || 'fantasy', supabaseClient)
+    const storyResult = await generateStoryContent(prompt, choiceText, visualContext, narrativeContext, genre || storyMode || 'fantasy', supabaseClient, targetAge || '7-9')
     console.log('✅ Text generation completed')
 
     // Handle audio generation

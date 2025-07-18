@@ -1,6 +1,72 @@
 
-import { generateStoryWithQwen } from './ovh-text-service.ts';
+import { generateStoryWithOVH } from './ovh-text-service.ts';
 import { SupabaseClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { validateContentSafety, applySafetyFilter } from './content-safety.ts';
+
+/**
+ * Get age-appropriate content guidelines for story generation
+ */
+function getAgeAppropriateGuidelines(targetAge: '4-6' | '7-9' | '10-12'): {
+  guidelines: string;
+  wordCount: string;
+  vocabulary: string;
+  themes: string;
+  safety: string;
+} {
+  switch (targetAge) {
+    case '4-6':
+      return {
+        guidelines: `AGE 4-6 GUIDELINES:
+- Use simple, clear language with short sentences (5-8 words max)
+- Focus on basic concepts: colors, numbers, shapes, animals, family
+- Include gentle, positive themes: friendship, sharing, helping others
+- Use repetitive patterns and familiar scenarios
+- Keep stories under 100 words per segment
+- Avoid complex emotions or abstract concepts
+- Include simple moral lessons with clear right and wrong
+- Use familiar settings: home, school, park, farm
+- Gentle conflicts with quick, reassuring resolutions`,
+        wordCount: '50-100',
+        vocabulary: 'Simple words, basic concepts, familiar objects',
+        themes: 'Friendship, sharing, helping, learning basic skills',
+        safety: 'No violence, scary content, or complex emotions'
+      };
+    case '7-9':
+      return {
+        guidelines: `AGE 7-9 GUIDELINES:
+- Use clear, engaging language with varied sentence structure
+- Include educational elements: science, history, geography concepts
+- Focus on problem-solving and critical thinking
+- Include character development and emotional growth
+- Keep stories 100-150 words per segment
+- Introduce mild challenges that are resolved through cooperation
+- Include positive role models and teamwork themes
+- Use imaginative settings with some educational value
+- Gentle adventure with learning opportunities`,
+        wordCount: '100-150',
+        vocabulary: 'Expanded vocabulary, educational terms, descriptive language',
+        themes: 'Adventure, discovery, teamwork, learning, friendship',
+        safety: 'Mild challenges only, no violence or scary content'
+      };
+    case '10-12':
+      return {
+        guidelines: `AGE 10-12 GUIDELINES:
+- Use more sophisticated language and complex sentence structures
+- Include deeper character development and emotional complexity
+- Focus on themes of identity, responsibility, and personal growth
+- Include educational content woven naturally into the story
+- Keep stories 150-200 words per segment
+- Include more complex problem-solving and decision-making
+- Explore themes of justice, fairness, and social responsibility
+- Use diverse settings and cultural elements
+- Adventure with meaningful challenges and character growth`,
+        wordCount: '150-200',
+        vocabulary: 'Rich vocabulary, complex concepts, descriptive language',
+        themes: 'Identity, responsibility, justice, personal growth, adventure',
+        safety: 'Age-appropriate challenges, no graphic content or mature themes'
+      };
+  }
+}
 
 /**
  * Generates story content using OVH Qwen2.5 (primary) or OpenAI GPT-4o-mini (fallback).
@@ -39,20 +105,19 @@ async function generateStoryContent(
   visualContext?: any,
   narrativeContext?: any,
   storyMode?: string,
-  supabaseClient?: SupabaseClient
+  supabaseClient?: SupabaseClient,
+  targetAge: '4-6' | '7-9' | '10-12' = '7-9'
 ) {
   console.log('🔧 Loading text provider settings...');
   
   // Try OVH Qwen2.5 first (primary provider for cost savings and educational features)
   try {
     console.log('🚀 Attempting OVH Qwen2.5 text generation...');
-    const result = await generateStoryWithQwen(
-      initialPrompt,
-      choiceText,
-      visualContext,
-      narrativeContext,
-      storyMode,
-      supabaseClient
+    const result = await generateStoryWithOVH(
+      initialPrompt || choiceText || '',
+      storyMode || 'fantasy',
+      narrativeContext?.previousSegments || [],
+      { visualContext, narrativeContext, targetAge }
     );
     
     console.log('✅ OVH Qwen2.5 generation successful');
@@ -78,7 +143,8 @@ async function generateStoryContent(
         choiceText,
         visualContext,
         narrativeContext,
-        storyMode
+        storyMode,
+        targetAge
       );
     } catch (openaiError) {
       console.error('❌ OpenAI fallback also failed:', openaiError);
@@ -103,7 +169,8 @@ async function generateStoryWithOpenAI(
   choiceText?: string,
   visualContext?: any,
   narrativeContext?: any,
-  storyMode?: string
+  storyMode?: string,
+  targetAge: '4-6' | '7-9' | '10-12' = '7-9'
 ) {
   const openAIApiKey = Deno.env.get('OPENAI_API_KEY');
   if (!openAIApiKey) {
@@ -163,7 +230,13 @@ CRITICAL CONSISTENCY RULES:
 ${consistencyWarnings ? `CONSISTENCY WARNINGS:\n${consistencyWarnings}\n\nIMPORTANT: Address these warnings by maintaining narrative consistency.` : ''}`;
   }
 
-  const systemPrompt = `You are a master storyteller AI. Generate immersive story segments in JSON format.
+  // Age-appropriate content guidelines
+  const ageGuidelines = getAgeAppropriateGuidelines(targetAge);
+  
+  const systemPrompt = `You are a master storyteller AI specializing in age-appropriate content for children. Generate immersive story segments in JSON format.
+
+TARGET AGE GROUP: ${targetAge} years old
+${ageGuidelines}
 
 CRITICAL NARRATIVE CONSISTENCY REQUIREMENTS:
 - ALWAYS maintain the established setting and location throughout each segment
@@ -177,7 +250,7 @@ CRITICAL NARRATIVE CONSISTENCY REQUIREMENTS:
 - Maintain logical continuity with the previous story segments
 
 REQUIREMENTS:
-- Generate 120-200 words for rich, detailed storytelling
+- Generate ${ageGuidelines.wordCount} words for age-appropriate storytelling
 - Create exactly 3 meaningful choices that advance the plot
 - DO NOT include image descriptions or references to images within the segmentText
 - DO NOT include choice prompts, transitions, or references to choices within the segmentText
@@ -244,8 +317,23 @@ Response format (EXACT JSON):
       throw new Error('OpenAI response missing required fields');
     }
     
-    console.log('✅ OpenAI fallback generation successful');
-    return parsedResponse;
+    // Apply content safety filtering
+    console.log('🛡️ Applying content safety filter...');
+    const safeResponse = applySafetyFilter(parsedResponse);
+    
+    // Additional age-specific safety check
+    if (targetAge === '4-6') {
+      const emergencyCheck = validateContentSafety(safeResponse.segmentText);
+      if (!emergencyCheck.isSafe) {
+        console.warn('⚠️ Content not safe for ages 4-6, regenerating...');
+        // For ages 4-6, we need to be extra careful
+        safeResponse.segmentText = emergencyCheck.sanitizedText || 
+          'The friendly dragon felt a little tired and decided to take a nice nap. It was a peaceful day in the forest.';
+      }
+    }
+    
+    console.log('✅ OpenAI fallback generation successful with safety filtering');
+    return safeResponse;
     
   } catch (error) {
     console.error('❌ OpenAI fallback generation failed:', error);
