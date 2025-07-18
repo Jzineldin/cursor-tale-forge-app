@@ -78,10 +78,10 @@ const StoryLoadingState: React.FC<StoryLoadingStateProps> = ({
             {/* Main title with magical effect */}
             <div className="space-y-6">
               <div className="relative inline-block">
-                <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-400 bg-clip-text text-transparent animate-pulse">
-                  ✨ Crafting Your Tale ✨
+                <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-400 bg-clip-text text-transparent">
+                  Crafting Your Tale
                 </h1>
-                <div className="absolute -inset-1 bg-gradient-to-r from-amber-400/20 to-yellow-400/20 blur-lg animate-pulse"></div>
+                <div className="absolute -inset-1 bg-gradient-to-r from-amber-400/20 to-yellow-400/20 blur-lg"></div>
               </div>
               
               <p className="text-xl text-gray-300 font-medium animate-magical-fade-in">

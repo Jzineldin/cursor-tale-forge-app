@@ -683,16 +683,25 @@ const Discover: React.FC = () => {
                           }}
                         />
                       )}
-                      <h3 className="story-card-title">{story.title}</h3>
-                      <p className="story-card-description">{story.description}</p>
+                      <h3 className="story-card-title line-clamp-2">{story.title}</h3>
+                      <p className="story-card-description line-clamp-3">{story.description}</p>
                       <div className="story-card-meta">
                         <div className="flex items-center gap-2">
-                          <span>{getGenreEmoji(story.story_mode)} {getGenreLabel(story.story_mode)}</span>
+                          <span className="text-xs">{getGenreEmoji(story.story_mode)} {getGenreLabel(story.story_mode)}</span>
                         </div>
                         <div className="flex items-center gap-2">
                           <BookOpen className="h-3 w-3" />
-                          <span>{story.segment_count}</span>
+                          <span className="text-xs">{story.segment_count}</span>
                         </div>
+                      </div>
+                      <div className="mt-4">
+                        <button 
+                          onClick={() => navigate(`/story/${story.id}`)}
+                          className="w-full btn-magical text-sm py-2 flex items-center justify-center gap-2"
+                        >
+                          <Eye className="h-4 w-4" />
+                          <span>Read Story</span>
+                        </button>
                       </div>
                     </div>
                   ))}

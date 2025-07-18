@@ -109,7 +109,7 @@ const StoryDisplayLoadingState: React.FC<StoryDisplayLoadingStateProps> = ({
                   textShadow: '0 4px 8px rgba(0,0,0,0.5)'
                 }}
               >
-                ✨ Crafting Your Tale ✨
+                Crafting Your Tale
               </h2>
               
               {/* Rotating magical message */}

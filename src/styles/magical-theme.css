@@ -220,7 +220,7 @@
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 16px;
   padding: 20px;
-  height: 320px; /* Fixed height for consistency */
+  height: 380px; /* Increased height for better content display */
   display: flex;
   flex-direction: column;
   transition: all 0.3s ease;
@@ -255,7 +255,7 @@
 
 .story-card-image {
   width: 100%;
-  height: 120px;
+  height: 140px;
   object-fit: cover;
   border-radius: 8px;
   margin-bottom: 12px;
@@ -296,6 +296,7 @@
   font-size: 0.8rem;
   color: rgba(255, 255, 255, 0.6);
   margin-top: auto;
+  margin-bottom: 12px;
 }
 
 /* Age Selection Cards */
@@ -571,7 +572,22 @@
 
 /* Fix for header gap issues */
 .magical-content {
-  padding-top: 100px; /* Increased padding to prevent header overlap */
+  padding-top: 120px; /* Increased padding to prevent header overlap */
+}
+
+/* Line clamp utilities for text overflow */
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 /* Ensure proper contrast for accessibility */

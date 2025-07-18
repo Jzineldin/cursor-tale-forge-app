@@ -174,14 +174,14 @@ const CreatePrompt: React.FC = () => {
   };
 
   const genreDisplayNames: Record<string, string> = {
-    'bedtime-stories': '🌙 Bedtime Stories',
-    'fantasy-magic': '🏰 Fantasy & Magic',
-    'adventure-exploration': '🗺️ Adventure & Exploration',
-    'mystery-detective': '🕵️ Mystery & Detective',
-    'science-space': '🚀 Science Fiction & Space',
-    'educational-stories': '📚 Educational Stories',
-    'values-lessons': '❤️ Values & Life Lessons',
-    'silly-humor': '😂 Silly & Humorous Stories'
+    'bedtime-stories': 'Bedtime Stories',
+    'fantasy-magic': 'Fantasy & Magic',
+    'adventure-exploration': 'Adventure & Exploration',
+    'mystery-detective': 'Mystery & Detective',
+    'science-space': 'Science Fiction & Space',
+    'educational-stories': 'Educational Stories',
+    'values-lessons': 'Values & Life Lessons',
+    'silly-humor': 'Silly & Humorous Stories'
   };
 
   if (!selectedGenre) {
@@ -218,7 +218,7 @@ const CreatePrompt: React.FC = () => {
             
             <div className="pt-8 md:pt-12 animate-magical-fade-in">
               <h1 className="fantasy-heading text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight break-words">
-                Your <span className="text-amber-400">✨{genreDisplayNames[selectedGenre]}</span> Adventure
+                Your <span className="text-amber-400">{genreDisplayNames[selectedGenre]}</span> Adventure
               </h1>
               <p className="fantasy-subtitle text-xl text-gray-200 max-w-2xl mx-auto">
                 Describe your story idea or choose from our suggestions below
@@ -250,10 +250,8 @@ const CreatePrompt: React.FC = () => {
           {/* Story Suggestions */}
           <div className="max-w-4xl mx-auto mb-12">
             <div className="text-center mb-6">
-              <h3 className="fantasy-title text-2xl font-bold text-white flex items-center justify-center gap-2">
-                <div className="h-1.5 w-1.5 bg-amber-400 rounded-full animate-pulse"></div>
+              <h3 className="fantasy-title text-2xl font-bold text-white">
                 Need Inspiration?
-                <div className="h-1.5 w-1.5 bg-amber-400 rounded-full animate-pulse"></div>
               </h3>
             </div>
             <div className="grid gap-4">
@@ -276,7 +274,7 @@ const CreatePrompt: React.FC = () => {
             <button
               onClick={handleBeginAdventure}
               disabled={!prompt.trim() || isCreating}
-              className="btn-magical px-12 py-4 text-xl font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+              className="btn-magical px-12 py-4 text-xl font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 whitespace-nowrap mx-auto"
             >
               {isCreating ? (
                 <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -284,10 +282,10 @@ const CreatePrompt: React.FC = () => {
                   <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                 </svg>
               ) : (
-                <Wand2 className="mr-2 h-5 w-5" />
+                <Wand2 className="h-5 w-5" />
               )}
-              {isCreating ? 'Creating Adventure...' : `Begin My ${genreDisplayNames[selectedGenre] ? genreDisplayNames[selectedGenre].split(' ').slice(1).join(' ') : 'Story'} Adventure`}
-              <ArrowRight className="ml-2 h-5 w-5" />
+              <span>{isCreating ? 'Creating Adventure...' : `Begin My ${genreDisplayNames[selectedGenre] ? genreDisplayNames[selectedGenre].split(' ').slice(1).join(' ') : 'Story'} Adventure`}</span>
+              <ArrowRight className="h-5 w-5" />
             </button>
           </div>
         </div>
