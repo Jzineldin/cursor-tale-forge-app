@@ -104,6 +104,7 @@ const StoryViewer = () => {
                     segments={segments}
                     fullStoryAudioUrl={story.full_story_audio_url || ''}
                     audioGenerationStatus={story.audio_generation_status || 'not_started'}
+                    isPublic={story.is_public || false}
                     storyTitle={story.title || 'Untitled Story'}
                     story={story}
                 />

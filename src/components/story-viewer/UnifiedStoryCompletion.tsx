@@ -1,17 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { useGenerateFullStoryAudio } from '@/hooks/useGenerateFullStoryAudio';
-// import { usePublishStory } from '@/hooks/usePublishStory';
+import { usePublishStory } from '@/hooks/usePublishStory';
 import { StorySegmentRow } from '@/types/stories';
-// import { supabase } from '@/integrations/supabase/client';
-// import { toast } from 'sonner';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
 import EnhancedSlideshow from './EnhancedSlideshow';
 import VoiceSelectorSection from './VoiceSelectorSection';
 import DemoUsageIndicator from '@/components/DemoUsageIndicator';
+import PublishStorySection from './completion/PublishStorySection';
 // import StoryCompletionHeader from './completion/StoryCompletionHeader';
 // import StoryContentPreview from './completion/StoryContentPreview';
 // import VoiceGenerationSection from './completion/VoiceGenerationSection';
 // import { VideoCompilationSection } from './completion/VideoCompilationSection';
-// import PublishStorySection from './completion/PublishStorySection';
 // import WatchStorySection from './completion/WatchStorySection';
 // import DownloadStorySection from './completion/DownloadStorySection';
 
@@ -42,7 +42,7 @@ const UnifiedStoryCompletion: React.FC<UnifiedStoryCompletionProps> = ({
     // const [missingImageFixed, setMissingImageFixed] = useState(false);
     
     const generateAudioMutation = useGenerateFullStoryAudio();
-    // const publishStoryMutation = usePublishStory();
+    const publishStoryMutation = usePublishStory();
 
     // Calculate story stats
     const totalWords = segments.reduce((acc, segment) => acc + (segment.segment_text?.split(' ').length || 0), 0);
@@ -61,6 +61,10 @@ const UnifiedStoryCompletion: React.FC<UnifiedStoryCompletionProps> = ({
 
     const handleSlideshowClose = () => {
         setShowSlideshow(false);
+    };
+
+    const handlePublishStory = () => {
+        publishStoryMutation.mutate(storyId);
     };
 
     // Debug: Log segments to check image URLs
@@ -237,6 +241,13 @@ const UnifiedStoryCompletion: React.FC<UnifiedStoryCompletionProps> = ({
                             Export includes all chapters, images, and formatting
                         </p>
                     </div>
+
+                    {/* Publish to Discover Section */}
+                    <PublishStorySection
+                        isPublic={isPublic}
+                        isPublishing={publishStoryMutation.isPending}
+                        onPublishStory={handlePublishStory}
+                    />
 
                     {/* Simple CTA for new story */}
                     <div className="text-center">
