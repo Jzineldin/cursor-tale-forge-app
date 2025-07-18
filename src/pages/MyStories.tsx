@@ -8,8 +8,9 @@ import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 
-import { Search, Filter, BookOpen, Clock, CheckCircle, Grid, List, PenTool, Eye } from 'lucide-react';
+import { Search, Filter, BookOpen, Clock, CheckCircle, Grid, List, PenTool, Eye, Edit, Check, X } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
+import { supabase } from '@/integrations/supabase/client';
 
 // Performance and error handling enhancements
 import { usePerformanceMonitor, useDebounce as useDebouncePerf, useMemoizedCallback, useMobileOptimization } from '@/utils/performanceOptimizations';
@@ -42,6 +43,8 @@ const MyStories: React.FC = () => {
   const [viewMode, setViewMode] = useState<ViewMode>('grid');
   const [showFilters, setShowFilters] = useState(false);
   const [selectedGenre, setSelectedGenre] = useState<string>('');
+  const [editingStoryId, setEditingStoryId] = useState<string | null>(null);
+  const [editTitle, setEditTitle] = useState<string>('');
 
   const navigate = useNavigate();
 
@@ -129,6 +132,19 @@ const MyStories: React.FC = () => {
     return { total, completed, inProgress, publicStories, totalSegments };
   }, [stories]);
 
+  // Group stories by progress status
+  const storyGroups = useMemo(() => {
+    const completedStories = filteredAndSortedStories.filter(story => story.is_completed);
+    const inProgressStories = filteredAndSortedStories.filter(story => !story.is_completed && story.segment_count > 0);
+    const newStories = filteredAndSortedStories.filter(story => !story.is_completed && story.segment_count === 0);
+    
+    return {
+      completed: { stories: completedStories, title: "📚 Completed Stories", description: "Stories that have been finished" },
+      inProgress: { stories: inProgressStories, title: "✍️ Stories in Progress", description: "Stories you're currently working on" },
+      new: { stories: newStories, title: "🆕 New Stories", description: "Stories ready to begin" }
+    };
+  }, [filteredAndSortedStories]);
+
   // Memoized handlers
   const handleSetStoryToDelete = useMemoizedCallback((storyId: string) => {
     const story = stories.find(s => s.id === storyId);
@@ -154,6 +170,135 @@ const MyStories: React.FC = () => {
   const handleStoryUpdate = useMemoizedCallback(() => {
     handleRefresh();
   }, [handleRefresh]);
+
+  // Title editing functions
+  const handleStartEdit = useMemoizedCallback((storyId: string, currentTitle: string) => {
+    setEditingStoryId(storyId);
+    setEditTitle(currentTitle ?? '');
+  }, []);
+
+  const handleSaveTitle = useMemoizedCallback(async (storyId: string) => {
+    if (!editTitle.trim()) return;
+    
+    withErrorHandling(async () => {
+      // Update the story title in the database
+      const { error } = await supabase
+        .from('stories')
+        .update({ title: editTitle.trim() })
+        .eq('id', storyId);
+      
+      if (error) throw error;
+      
+      // Refresh stories to get updated data
+      handleRefresh();
+      setEditingStoryId(null);
+      setEditTitle('');
+    }, { action: 'updateStoryTitle' });
+  }, [editTitle, handleRefresh, withErrorHandling]);
+
+  const handleCancelEdit = useMemoizedCallback(() => {
+    setEditingStoryId(null);
+    setEditTitle('');
+  }, []);
+
+  // Helper function to render story cards
+  const renderStoryCard = (story: any) => {
+    const isEditing = editingStoryId === story.id;
+    
+    return (
+      <div key={story.id} className="h-96 bg-white/10 backdrop-blur-xl rounded-xl overflow-hidden shadow-2xl border border-white/20 hover:bg-white/15 hover:scale-105 transition-all duration-300 flex flex-col group">
+        <div className="h-40 overflow-hidden">
+          {story.thumbnail_url && (
+            <img 
+              src={story.thumbnail_url} 
+              alt={story.title ?? 'Story thumbnail'}
+              className="w-full h-full object-cover"
+              onError={(e) => {
+                const target = e.target as HTMLImageElement;
+                target.style.display = 'none';
+              }}
+            />
+          )}
+        </div>
+        <div className="p-6 flex flex-col flex-grow">
+          {/* Title with edit functionality */}
+          <div className="mb-3">
+            {isEditing ? (
+              <div className="flex items-center gap-2">
+                <input
+                  type="text"
+                  value={editTitle}
+                  onChange={(e) => setEditTitle(e.target.value)}
+                  className="flex-1 bg-slate-700/50 border border-amber-500/30 rounded px-2 py-1 text-amber-200 focus:outline-none focus:border-amber-400 text-lg font-bold"
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') handleSaveTitle(story.id);
+                    if (e.key === 'Escape') handleCancelEdit();
+                  }}
+                  autoFocus
+                />
+                <button
+                  onClick={() => handleSaveTitle(story.id)}
+                  className="p-1 text-green-400 hover:text-green-300"
+                  title="Save"
+                >
+                  <Check className="h-4 w-4" />
+                </button>
+                <button
+                  onClick={handleCancelEdit}
+                  className="p-1 text-red-400 hover:text-red-300"
+                  title="Cancel"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              </div>
+            ) : (
+              <div className="flex items-center gap-2">
+                <h3 className="text-white font-bold text-lg line-clamp-2 fantasy-heading flex-1">
+                  {story.title ?? 'Untitled Story'}
+                </h3>
+                <button
+                  onClick={() => handleStartEdit(story.id, story.title ?? '')}
+                  className="p-1 text-amber-400 hover:text-amber-300 opacity-0 group-hover:opacity-100 transition-opacity"
+                  title="Edit Title"
+                >
+                  <Edit className="h-4 w-4" />
+                </button>
+              </div>
+            )}
+          </div>
+          
+          <p className="text-gray-300 text-sm mb-4 line-clamp-3 flex-grow">{story.description ?? 'No description available'}</p>
+          <div className="flex items-center justify-between text-xs text-gray-400 mb-4">
+            <div className="flex items-center gap-2">
+              <span>{story.story_mode || 'Unknown Genre'}</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <BookOpen className="h-3 w-3" />
+              <span>{story.segment_count || 0}</span>
+            </div>
+          </div>
+          <div className="flex items-center gap-2 mt-auto">
+            <button 
+              onClick={() => navigate(`/story/${story.id}`)}
+              className="bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 flex items-center justify-center gap-2 whitespace-nowrap flex-1"
+            >
+              <Eye className="h-4 w-4" />
+              <span>{story.is_completed ? 'Read Story' : 'Continue'}</span>
+            </button>
+            <button
+              onClick={() => handleSetStoryToDelete(story.id)}
+              className="p-2 text-red-400 hover:text-red-300 hover:bg-red-500/20 rounded transition-colors"
+              title="Delete Story"
+            >
+              <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  };
 
   // Performance log
   React.useEffect(() => {
@@ -333,79 +478,63 @@ const MyStories: React.FC = () => {
                 </div>
               </div>
             </div>
-          ) : filteredAndSortedStories.length === 0 ? (
-            <div className="text-center py-20">
-              <div className="glass-enhanced max-w-lg mx-auto">
-                <div className="p-8">
-                  <Search className="h-16 w-16 text-amber-400 mx-auto mb-6" />
-                  <h3 className="fantasy-title text-2xl font-bold text-white mb-4">No Stories Found</h3>
-                  <p className="text-gray-300 mb-6">
-                    Try adjusting your search terms or filters to find your stories.
-                  </p>
-                  <button
-                    onClick={() => {
-                      setSearchTerm('');
-                      setFilterBy('all');
-                      setSelectedGenre('');
-                    }}
-                    className="btn-magical"
-                  >
-                    Clear Filters
-                  </button>
-                </div>
-              </div>
-            </div>
           ) : (
-            <div className={viewMode === 'grid' ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 px-6' : 'space-y-4'}>
-              {filteredAndSortedStories.map((story) => (
-                <div key={story.id} className="h-96 bg-white/10 backdrop-blur-xl rounded-xl overflow-hidden shadow-2xl border border-white/20 hover:bg-white/15 hover:scale-105 transition-all duration-300 flex flex-col">
-                  <div className="h-40 overflow-hidden">
-                    {story.thumbnail_url && (
-                      <img 
-                        src={story.thumbnail_url} 
-                        alt={story.title ?? 'Story thumbnail'}
-                        className="w-full h-full object-cover"
-                        onError={(e) => {
-                          const target = e.target as HTMLImageElement;
-                          target.style.display = 'none';
-                        }}
-                      />
-                    )}
-                  </div>
-                  <div className="p-6 flex flex-col flex-grow">
-                    <h3 className="text-white font-bold text-lg mb-3 line-clamp-2 fantasy-heading">{story.title ?? 'Untitled Story'}</h3>
-                    <p className="text-gray-300 text-sm mb-4 line-clamp-3 flex-grow">{story.description ?? 'No description available'}</p>
-                    <div className="flex items-center justify-between text-xs text-gray-400 mb-4">
-                      <div className="flex items-center gap-2">
-                        <span>{story.story_mode || 'Unknown Genre'}</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <BookOpen className="h-3 w-3" />
-                        <span>{story.segment_count || 0}</span>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-2 mt-auto">
-                      <button 
-                        onClick={() => navigate(`/story/${story.id}`)}
-                        className="bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 flex items-center justify-center gap-2 whitespace-nowrap flex-1"
-                      >
-                        <Eye className="h-4 w-4" />
-                        <span>{story.is_completed ? 'Read Story' : 'Continue'}</span>
-                      </button>
+            <>
+              {filteredAndSortedStories.length === 0 ? (
+                <div className="text-center py-20">
+                  <div className="glass-enhanced max-w-lg mx-auto">
+                    <div className="p-8">
+                      <Search className="h-16 w-16 text-amber-400 mx-auto mb-6" />
+                      <h3 className="fantasy-title text-2xl font-bold text-white mb-4">No Stories Found</h3>
+                      <p className="text-gray-300 mb-6">
+                        Try adjusting your search terms or filters to find your stories.
+                      </p>
                       <button
-                        onClick={() => handleSetStoryToDelete(story.id)}
-                        className="p-2 text-red-400 hover:text-red-300 hover:bg-red-500/20 rounded transition-colors"
-                        title="Delete Story"
+                        onClick={() => {
+                          setSearchTerm('');
+                          setFilterBy('all');
+                          setSelectedGenre('');
+                        }}
+                        className="btn-magical"
                       >
-                        <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                        </svg>
+                        Clear Filters
                       </button>
                     </div>
                   </div>
                 </div>
-              ))}
-            </div>
+              ) : (
+                <div className="space-y-12">
+                  {Object.entries(storyGroups).map(([key, group]) => {
+                    if (group.stories.length === 0) return null;
+                    
+                    return (
+                      <div key={key} className="animate-magical-fade-in">
+                        {/* Group Header */}
+                        <div className="mb-8 text-center">
+                          <h2 className="fantasy-heading text-2xl md:text-3xl font-bold text-white mb-2">
+                            {group.title}
+                          </h2>
+                          <p className="fantasy-subtitle text-gray-400 text-lg mb-4">
+                            {group.description}
+                          </p>
+                          <div className="flex items-center justify-center gap-4 text-amber-300/80">
+                            <div className="flex items-center gap-2">
+                              <BookOpen className="h-4 w-4" />
+                              <span>{group.stories.length} {group.stories.length === 1 ? 'story' : 'stories'}</span>
+                            </div>
+                          </div>
+                        </div>
+                        
+                        {/* Stories Grid */}
+                        <div className={viewMode === 'grid' ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 px-6' : 'space-y-4'}>
+                          {group.stories.map((story) => renderStoryCard(story))}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </>
           )}
         </div>
       </div>
