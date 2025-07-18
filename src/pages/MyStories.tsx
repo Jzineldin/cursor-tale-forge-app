@@ -8,8 +8,8 @@ import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 
-import { Search, Filter, BookOpen, Clock, CheckCircle, Grid, List, PenTool } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Search, Filter, BookOpen, Clock, CheckCircle, Grid, List, PenTool, Eye } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
 
 // Performance and error handling enhancements
 import { usePerformanceMonitor, useDebounce as useDebouncePerf, useMemoizedCallback, useMobileOptimization } from '@/utils/performanceOptimizations';
@@ -42,6 +42,8 @@ const MyStories: React.FC = () => {
   const [viewMode, setViewMode] = useState<ViewMode>('grid');
   const [showFilters, setShowFilters] = useState(false);
   const [selectedGenre, setSelectedGenre] = useState<string>('');
+
+  const navigate = useNavigate();
 
   // Use performance debounce
   const debouncedSearchTermPerf = useDebouncePerf(searchTerm, 500);
@@ -354,15 +356,56 @@ const MyStories: React.FC = () => {
               </div>
             </div>
           ) : (
-            <MagicalLibraryLayout
-              stories={filteredAndSortedStories}
-              onSetStoryToDelete={handleSetStoryToDelete}
-              onStoryUpdate={handleStoryUpdate}
-              onRefresh={handleRefresh}
-              isLoading={isLoading}
-              showRefresh={false}
-              viewMode={viewMode}
-            />
+            <div className={viewMode === 'grid' ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 px-6' : 'space-y-4'}>
+              {filteredAndSortedStories.map((story) => (
+                <div key={story.id} className="h-96 bg-white/10 backdrop-blur-xl rounded-xl overflow-hidden shadow-2xl border border-white/20 hover:bg-white/15 hover:scale-105 transition-all duration-300 flex flex-col">
+                  <div className="h-40 overflow-hidden">
+                    {story.thumbnail_url && (
+                      <img 
+                        src={story.thumbnail_url} 
+                        alt={story.title ?? 'Story thumbnail'}
+                        className="w-full h-full object-cover"
+                        onError={(e) => {
+                          const target = e.target as HTMLImageElement;
+                          target.style.display = 'none';
+                        }}
+                      />
+                    )}
+                  </div>
+                  <div className="p-6 flex flex-col flex-grow">
+                    <h3 className="text-white font-bold text-lg mb-3 line-clamp-2 fantasy-heading">{story.title ?? 'Untitled Story'}</h3>
+                    <p className="text-gray-300 text-sm mb-4 line-clamp-3 flex-grow">{story.description ?? 'No description available'}</p>
+                    <div className="flex items-center justify-between text-xs text-gray-400 mb-4">
+                      <div className="flex items-center gap-2">
+                        <span>{story.story_mode || 'Unknown Genre'}</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <BookOpen className="h-3 w-3" />
+                        <span>{story.segment_count || 0}</span>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2 mt-auto">
+                      <button 
+                        onClick={() => navigate(`/story/${story.id}`)}
+                        className="bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 flex items-center justify-center gap-2 whitespace-nowrap flex-1"
+                      >
+                        <Eye className="h-4 w-4" />
+                        <span>{story.is_completed ? 'Read Story' : 'Continue'}</span>
+                      </button>
+                      <button
+                        onClick={() => handleSetStoryToDelete(story.id)}
+                        className="p-2 text-red-400 hover:text-red-300 hover:bg-red-500/20 rounded transition-colors"
+                        title="Delete Story"
+                      >
+                        <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
           )}
         </div>
       </div>
