@@ -267,7 +267,9 @@ const MyStories: React.FC = () => {
             )}
           </div>
           
-          <p className="text-gray-300 text-sm mb-4 line-clamp-3 flex-grow">{story.description ?? 'No description available'}</p>
+          <p className="text-gray-300 text-sm mb-4 line-clamp-3 flex-grow">
+            {story.description || 'No description available'}
+          </p>
           <div className="flex items-center justify-between text-xs text-gray-400 mb-4">
             <div className="flex items-center gap-2">
               <span>{story.story_mode || 'Unknown Genre'}</span>
