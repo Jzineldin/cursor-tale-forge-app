@@ -15,6 +15,9 @@ export default defineConfig(({ mode }) => ({
       ignored: ["**/node_modules/**", "**/.git/**", "**/supabase/**"],
     },
   },
+  preview: {
+    port: 8080,
+  },
   build: {
     rollupOptions: {
       output: {
