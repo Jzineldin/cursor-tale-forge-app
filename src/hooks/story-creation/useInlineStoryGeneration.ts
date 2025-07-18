@@ -31,6 +31,7 @@ export const useInlineStoryGeneration = () => {
   // Get parameters from URL
   const prompt = searchParams.get('prompt') || '';
   const mode = searchParams.get('mode') || searchParams.get('genre') || 'fantasy';
+  const targetAge = (searchParams.get('age') as '4-6' | '7-9' | '10-12') || '7-9';
   
   // Check for resume state
   const resumeStoryId = location.state?.resumeStoryId;
@@ -67,7 +68,7 @@ export const useInlineStoryGeneration = () => {
       console.log('🚀 Auto-starting story generation (effect triggered)');
       storyState.initializedRef.current = true;
       storyState.generationStartedRef.current = true;
-      storyActions.handleStartStory(prompt, mode);
+      storyActions.handleStartStory(prompt, mode, targetAge);
     }
   }, [prompt, mode, resumeStoryId, storyState.currentSegment, storyState.storyHistory.length, storyState.generationStartedRef, storyState.initializedRef, storyState.error, storyState.isGeneratingStartup, storyActions]);
 

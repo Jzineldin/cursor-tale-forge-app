@@ -45,7 +45,7 @@ export const useStoryActions = ({
   const generateAudioMutation = useGenerateFullStoryAudio();
   const finishStoryMutation = useFinishStoryInline();
 
-  const handleStartStory = async (prompt: string, mode: string) => {
+  const handleStartStory = async (prompt: string, mode: string, targetAge: '4-6' | '7-9' | '10-12' = '7-9') => {
     if (generationStartedRef.current && currentSegment) {
       console.log('⚠️ Story generation already in progress or completed');
       return;
@@ -74,7 +74,8 @@ export const useStoryActions = ({
         genre: validatedGenre,
         skipImage,
         skipAudio: false,
-        voice: selectedVoice
+        voice: selectedVoice,
+        targetAge
       });
 
       console.log('✅ Story generation successful:', data);
@@ -134,13 +135,18 @@ export const useStoryActions = ({
       setIsGeneratingChoice(true);
       setApiCallsCount(prev => prev + 1);
       
+      // Get targetAge from URL or use default
+      const urlParams = new URLSearchParams(window.location.search);
+      const targetAge = (urlParams.get('age') as '4-6' | '7-9' | '10-12') || '7-9';
+      
       const data = await generateSegment({
         storyId: currentSegment.storyId,
         parentSegmentId: currentSegment.segmentId,
         choiceText: choice,
         skipImage,
         skipAudio: false,
-        voice: selectedVoice
+        voice: selectedVoice,
+        targetAge
       });
 
       const segmentData: StorySegment = {

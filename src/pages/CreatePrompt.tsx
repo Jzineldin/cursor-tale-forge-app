@@ -23,10 +23,18 @@ const CreatePrompt: React.FC = () => {
 
   useEffect(() => {
     const genre = searchParams.get('genre');
+    const age = searchParams.get('age');
+    
     if (!genre) {
       navigate('/create/genre');
       return;
     }
+    
+    if (!age) {
+      navigate('/create/age');
+      return;
+    }
+    
     setSelectedGenre(genre);
     // Initialize with default prompts for the genre
     setCurrentPrompts(genrePrompts[genre] || []);
@@ -129,6 +137,7 @@ const CreatePrompt: React.FC = () => {
           title: prompt.slice(0, 100) + (prompt.length > 100 ? '...' : ''), // Use first 100 chars as title
           description: prompt,
           story_mode: selectedGenre || 'fantasy',
+          target_age: searchParams.get('age'), // Store the selected age
           user_id: user?.id || null // Associate with user if authenticated, otherwise anonymous
         })
         .select()
@@ -149,7 +158,8 @@ const CreatePrompt: React.FC = () => {
       const params = new URLSearchParams({
         genre: selectedGenre || 'fantasy',
         prompt: prompt.trim(),
-        mode: 'create'
+        mode: 'create',
+        age: searchParams.get('age') || ''
       });
       
       navigate(`/story/${story.id}?${params.toString()}`, { replace: true });

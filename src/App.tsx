@@ -22,6 +22,7 @@ const MyStories = lazy(() => import("./pages/MyStories"));
 const Discover = lazy(() => import("./pages/Discover"));
 const StoryViewer = lazy(() => import("./pages/StoryViewer"));
 const StoryCreation = lazy(() => import("./pages/StoryCreation"));
+const CreateAge = lazy(() => import("./pages/CreateAge"));
 const CreateGenre = lazy(() => import("./pages/CreateGenre"));
 const CreatePrompt = lazy(() => import("./pages/CreatePrompt"));
 const CreateStartingPoint = lazy(() => import("./pages/CreateStartingPoint"));
@@ -92,6 +93,7 @@ function App() {
                             <Route path="/auth/forgot-password" element={<ForgotPassword />} />
                             
                             {/* Story Creation Flow - wrapped with ErrorBoundary */}
+                            <Route path="/create/age" element={<ErrorBoundary><CreateAge /></ErrorBoundary>} />
                             <Route path="/create/genre" element={<ErrorBoundary><CreateGenre /></ErrorBoundary>} />
                             <Route path="/create/prompt" element={<ErrorBoundary><CreatePrompt /></ErrorBoundary>} />
                             <Route path="/create/starting-point" element={<ErrorBoundary><CreateStartingPoint /></ErrorBoundary>} />

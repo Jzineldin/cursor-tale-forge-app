@@ -13,6 +13,7 @@ interface GenerateStoryParams {
   skipImage?: boolean;
   skipAudio?: boolean;
   voice?: string;
+  targetAge?: '4-6' | '7-9' | '10-12';
 }
 
 export const useStoryGeneration = () => {

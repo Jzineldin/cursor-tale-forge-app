@@ -19,8 +19,9 @@ export interface StoryContext {
 /**
  * Builds enhanced system prompt with genre-specific safety and style guidelines
  */
-export function buildSystemPrompt(genre: string, context: StoryContext = {}): string {
+export function buildSystemPrompt(genre: string, context: StoryContext = {}, targetAge: '4-6' | '7-9' | '10-12' = '7-9'): string {
   const genreInstructions = getGenreInstructions(genre);
+  const ageInstructions = getAgeSpecificInstructions(targetAge);
   
   // Build context prompt
   let contextPrompt = '';
@@ -39,7 +40,11 @@ export function buildSystemPrompt(genre: string, context: StoryContext = {}): st
     contextPrompt += `\n\nSETTING: ${context.setting}`;
   }
 
-  return `You are TaleForge's advanced AI storyteller creating safe, educational, age-appropriate stories for children ages 4-14.
+  return `You are TaleForge's advanced AI storyteller creating safe, educational, age-appropriate stories for children ages 4-12.
+
+TARGET AGE GROUP: ${targetAge} years old
+
+${ageInstructions}
 
 ${genreInstructions}
 
@@ -51,6 +56,8 @@ CRITICAL CONTENT SAFETY REQUIREMENTS:
 - NO dangerous situations or risky behaviors children might imitate
 - ALL content must be positive, uplifting, and promote good values
 - ALL problems must be solved through kindness, cooperation, and creativity
+- NO "scary", "dangerous", "menacing", "threatening", "evil", "monster", "beast" or similar frightening terms
+- REPLACE any potentially scary content with "mysterious but friendly", "playful", "challenging", "friendly creature"
 
 NARRATIVE CONSISTENCY REQUIREMENTS:
 - ALWAYS maintain the established setting and location throughout each segment
@@ -61,7 +68,7 @@ NARRATIVE CONSISTENCY REQUIREMENTS:
 - BUILD upon existing plot threads rather than starting new unrelated ones
 
 STORY REQUIREMENTS:
-- Generate exactly 120-200 words for rich, detailed storytelling
+- Generate exactly ${getAgeAppropriateWordCount(targetAge)} words for age-appropriate storytelling
 - Create exactly 3 meaningful choices that advance both plot and character development
 - Use age-appropriate language that children can understand and enjoy
 - DO NOT include image descriptions or references to images within the segmentText
@@ -72,15 +79,15 @@ STORY REQUIREMENTS:
 
 RESPONSE FORMAT (EXACT JSON):
 {
-  "segmentText": "A 120-200 word story segment following all safety and genre guidelines",
+  "segmentText": "A ${getAgeAppropriateWordCount(targetAge)} word story segment following all safety and genre guidelines",
   "choices": ["Choice 1 that advances plot", "Choice 2 that develops character", "Choice 3 that explores theme"],
   "isEnd": false,
   "imagePrompt": "Child-friendly, colorful, safe image description with positive descriptors",
   "visualContext": {"style": "children's book illustration", "characters": {"name": "description"}, "setting": "current location"},
   "narrativeContext": {"summary": "updated story summary", "currentObjective": "next goal", "arcStage": "current stage"},
   "educationalElements": ["learning objective if applicable"],
-  "ageAppropriateness": "4-6|7-9|10-12",
-  "readingLevel": "beginner|intermediate|advanced"
+  "ageAppropriateness": "${targetAge}",
+  "readingLevel": "${getAgeReadingLevel(targetAge)}"
 }${contextPrompt}`;
 }
 
@@ -198,6 +205,75 @@ function getGenreImageEnhancements(genre: string): string {
   };
 
   return enhancements[genre as keyof typeof enhancements] || enhancements['fantasy-magic'];
+}
+
+/**
+ * Gets age-specific instructions for content generation
+ */
+function getAgeSpecificInstructions(targetAge: '4-6' | '7-9' | '10-12'): string {
+  const instructions = {
+    '4-6': `AGE 4-6 SPECIFIC REQUIREMENTS:
+- Use very simple vocabulary with 3-8 words per sentence maximum
+- Keep total story length between 50-200 words
+- Use repetitive patterns and familiar concepts
+- Focus on basic emotions: happy, sad, scared, excited
+- Include bright colors, friendly animals, and familiar objects
+- Use simple cause-and-effect relationships
+- Avoid complex concepts or abstract thinking
+- Include gentle humor and positive reinforcement
+- Use short, clear sentences with basic punctuation
+- Focus on comfort, security, and simple problem-solving`,
+
+    '7-9': `AGE 7-9 SPECIFIC REQUIREMENTS:
+- Use elementary vocabulary with 5-12 words per sentence
+- Keep total story length between 150-400 words
+- Include basic problem-solving and friendship themes
+- Introduce simple scientific concepts and curiosity
+- Use descriptive language but keep it accessible
+- Include character development and moral lessons
+- Balance adventure with safety and positive outcomes
+- Use dialogue to advance the story and show character
+- Include educational elements naturally woven into plot
+- Focus on cooperation, empathy, and learning`,
+
+    '10-12': `AGE 10-12 SPECIFIC REQUIREMENTS:
+- Use intermediate vocabulary with 8-15 words per sentence
+- Keep total story length between 300-600 words
+- Include more complex plots and character development
+- Introduce STEM concepts and critical thinking
+- Use varied sentence structures and descriptive language
+- Include moral complexity and ethical decision-making
+- Balance excitement with age-appropriate challenges
+- Use sophisticated dialogue and character interactions
+- Include educational content that challenges and engages
+- Focus on personal growth, leadership, and social skills`
+  };
+
+  return instructions[targetAge];
+}
+
+/**
+ * Gets age-appropriate word count for story segments
+ */
+function getAgeAppropriateWordCount(targetAge: '4-6' | '7-9' | '10-12'): string {
+  const wordCounts = {
+    '4-6': '50-150',
+    '7-9': '150-300',
+    '10-12': '300-500'
+  };
+  return wordCounts[targetAge];
+}
+
+/**
+ * Gets age-appropriate reading level
+ */
+function getAgeReadingLevel(targetAge: '4-6' | '7-9' | '10-12'): string {
+  const readingLevels = {
+    '4-6': 'beginner',
+    '7-9': 'intermediate',
+    '10-12': 'advanced'
+  };
+  return readingLevels[targetAge];
 }
 
 /**
