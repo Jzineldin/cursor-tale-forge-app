@@ -17,10 +17,10 @@ const StoryImageSection: React.FC<StoryImageSectionProps> = ({
   onRetry
 }) => {
   const hasRealImage = imageUrl && 
-                      imageUrl !== '/placeholder.svg' && 
-                      imageGenerationStatus === 'completed';
+                      imageUrl.startsWith('http') && 
+                      imageUrl !== '/placeholder.svg';
 
-  const isImageGenerating = imageGenerationStatus === 'pending' || imageGenerationStatus === 'in_progress';
+  const isImageGenerating = hasRealImage ? false : imageGenerationStatus === 'pending' || imageGenerationStatus === 'in_progress';
   const isImageFailed = imageGenerationStatus === 'failed' || imageGenerationStatus === 'CURRENT_TASK_ERROR';
 
   return (

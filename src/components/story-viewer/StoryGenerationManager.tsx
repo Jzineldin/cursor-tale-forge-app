@@ -7,6 +7,7 @@ import { useGenerateFullStoryAudio } from '@/hooks/useGenerateFullStoryAudio';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Loader2, Mic } from 'lucide-react';
 
+import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 interface StoryGenerationManagerProps {
     story: Story;
 }
@@ -48,7 +49,7 @@ const StoryGenerationManager: React.FC<StoryGenerationManagerProps> = ({ story }
                         className="w-full"
                         size="lg"
                     >
-                        {generateAudioMutation.isPending ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Generating Audio...</> : 'Generate Audio Narration'}
+                        {generateAudioMutation.isPending ? <><LoadingSpinner size="sm" className="mr-2 h-4 w-4 " /> Generating Audio...</> : 'Generate Audio Narration'}
                     </Button>
                 </div>
             </CardContent>

@@ -26,9 +26,20 @@
 /* Import mobile responsive styles */
 @import "./styles/mobile-responsive.css";
 
+/* Import story player styles */
+@import "./styles/storyPlayer.css";
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Mobile-crack: Safe-scoped CSS layer - one rule kills x-axis overflow globally */
+html, body, #root { 
+  width: 100vw; 
+  overflow-x: hidden; 
+}
+
+/* Color hygiene: Removed to preserve landing page orange/yellow buttons */
 
 /* Custom gradient utilities */
 @layer utilities {

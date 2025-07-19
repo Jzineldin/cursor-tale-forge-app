@@ -124,7 +124,7 @@ const HomePage: React.FC = () => {
         <div className="fixed bottom-4 left-4 right-4 z-50 md:hidden">
           <Button
             onClick={handleCreateStory}
-            className="w-full bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-400 hover:to-yellow-400 text-black font-bold py-4 text-lg shadow-2xl transition-all duration-300 rounded-lg"
+            className="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-4 text-lg shadow-2xl transition-all duration-300 rounded-lg"
             style={{ minHeight: '56px' }}
           >
             <Sparkles className="mr-2 h-5 w-5" />
@@ -161,7 +161,7 @@ const HomePage: React.FC = () => {
                 {/* Secondary Action */}
                 <button 
                   onClick={handleDemoLogin}
-                  className="w-full sm:w-auto bg-orange-400 hover:bg-orange-500 text-white font-bold py-3 sm:py-4 px-6 sm:px-8 rounded-lg text-base sm:text-lg transition-all duration-200 shadow-lg hover:shadow-xl"
+                  className="w-full sm:w-auto bg-amber-500 hover:bg-amber-600 text-white font-bold py-3 sm:py-4 px-6 sm:px-8 rounded-lg text-base sm:text-lg transition-all duration-200 shadow-lg hover:shadow-xl"
                 >
                   Use Demo Account
                 </button>
@@ -173,7 +173,7 @@ const HomePage: React.FC = () => {
                       waitlistSection.scrollIntoView({ behavior: 'smooth' });
                     }
                   }}
-                  className="w-full sm:w-auto bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 sm:py-4 px-6 sm:px-8 rounded-lg text-base sm:text-lg transition-all duration-200 shadow-lg hover:shadow-xl border-2 border-purple-400"
+                  className="w-full sm:w-auto bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-3 sm:py-4 px-6 sm:px-8 rounded-lg text-base sm:text-lg transition-all duration-200 shadow-lg hover:shadow-xl"
                 >
                   Join Waitlist
                 </button>

@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { ImageStatusDisplay } from './imageStatusHelper';
 import ImageDebugInfo from './ImageDebugInfo';
 
+import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 interface ImageOverlayProps {
     status: ImageStatusDisplay;
     onRetry: () => void;
@@ -53,7 +54,7 @@ const ImageOverlay: React.FC<ImageOverlayProps> = ({
                         onClick={onRetry}
                         className="mt-2"
                     >
-                        <RefreshCw className="h-3 w-3 mr-1" />
+                        <LoadingSpinner size="sm" className="h-3 w-3 mr-1" />
                         Retry
                     </Button>
                 )}

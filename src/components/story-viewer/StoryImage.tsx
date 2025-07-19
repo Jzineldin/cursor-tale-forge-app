@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
+import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 interface StoryImageProps {
     imageUrl?: string | null;
     imageGenerationStatus?: string;
@@ -114,7 +115,12 @@ const StoryImage: React.FC<StoryImageProps> = ({
     };
 
     // Determine what to show based on the current state
-    const isValidImageUrl = imageUrl && imageUrl !== '/placeholder.svg' && imageUrl.trim() !== '';
+    const isPlaceholderUrl = imageUrl && (
+        imageUrl.includes('via.placeholder.com') || 
+        imageUrl.includes('sugarcane-dog-19.deno.dev') ||
+        imageUrl === '/placeholder.svg'
+    );
+    const isValidImageUrl = imageUrl && imageUrl.startsWith('http') && !isPlaceholderUrl;
     const isGenerating = imageGenerationStatus === 'pending' || imageGenerationStatus === 'in_progress';
     const isCompleted = imageGenerationStatus === 'completed';
     const isFailed = imageGenerationStatus === 'failed' || imageGenerationStatus === 'CURRENT_TASK_ERROR';
@@ -131,12 +137,12 @@ const StoryImage: React.FC<StoryImageProps> = ({
         shouldShowPlaceholder: !isGenerating && !isValidImageUrl && !isFailed && !imageError
     });
 
-    // Show spinner when generating and no valid image
-    if (isGenerating && !isValidImageUrl && !isRetrying) {
+    // Show spinner when generating or when we have a placeholder URL
+    if ((isGenerating || isPlaceholderUrl) && !isRetrying) {
         return (
             <div className={`relative flex items-center justify-center bg-muted/50 border-2 border-dashed border-muted-foreground/20 aspect-square w-full ${className}`}>
                 <div className="flex flex-col items-center space-y-2 text-muted-foreground">
-                    <Loader2 className="h-8 w-8 animate-spin" />
+                    <LoadingSpinner size="md" className="h-8 w-8 " />
                     <p className="text-sm">Generating image...</p>
                     <p className="text-xs text-amber-400">This may take 30-60 seconds</p>
                 </div>
@@ -173,7 +179,7 @@ const StoryImage: React.FC<StoryImageProps> = ({
                     >
                         {isRetrying ? (
                             <>
-                                <Loader2 className="h-3 w-3 mr-1 animate-spin" />
+                                <LoadingSpinner size="sm" className="h-3 w-3 mr-1 " />
                                 Retrying...
                             </>
                         ) : (
@@ -193,7 +199,7 @@ const StoryImage: React.FC<StoryImageProps> = ({
         return (
             <div className={`relative flex items-center justify-center bg-muted/50 border-2 border-dashed border-muted-foreground/20 aspect-square w-full ${className}`}>
                 <div className="flex flex-col items-center space-y-2 text-muted-foreground">
-                    <Loader2 className="h-8 w-8 animate-spin" />
+                    <LoadingSpinner size="md" className="h-8 w-8 " />
                     <p className="text-sm">Retrying image generation...</p>
                     <p className="text-xs text-amber-400">Please wait...</p>
                 </div>

@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { StorySegmentRow } from '@/types/stories';
 import { useSlideshow } from '@/context/SlideshowContext';
+import { actionBtn } from '@/lib/theme';
 
 interface EnhancedSlideshowProps {
   segments: StorySegmentRow[];
@@ -232,12 +233,12 @@ const EnhancedSlideshow: React.FC<EnhancedSlideshowProps> = ({
           </div>
 
           {/* Chapter Text */}
-          <div className="bg-black/40 backdrop-blur-md rounded-lg p-6 border border-gray-600/50">
-            <h3 className="text-xl font-semibold text-white mb-3">
+          <div className="bg-white/70 dark:bg-slate-800/70 backdrop-blur-md rounded-lg p-6 border border-slate-300/20 dark:border-slate-700/20">
+            <h3 className="text-xl font-semibold text-slate-800 dark:text-slate-100 mb-3">
               Chapter {currentChapter + 1}
             </h3>
             <div 
-              className="text-lg leading-relaxed text-gray-100 overflow-y-auto scrollbar-thin scrollbar-track-gray-700 scrollbar-thumb-amber-500"
+              className="text-base leading-relaxed text-slate-700 dark:text-slate-300 overflow-y-auto scrollbar-thin scrollbar-track-gray-700 scrollbar-thumb-indigo-500"
               style={{ 
                 height: '300px',
                 maxHeight: '300px',
@@ -260,7 +261,7 @@ const EnhancedSlideshow: React.FC<EnhancedSlideshowProps> = ({
           <button 
             onClick={() => handleChapterJump(currentChapter - 1)}
             disabled={currentChapter === 0}
-            className="flex items-center space-x-2 px-4 py-2 bg-white bg-opacity-20 rounded-lg hover:bg-opacity-30 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+            className={`fantasy-heading min-w-11 min-h-11 ${actionBtn} disabled:opacity-50 disabled:cursor-not-allowed`}
           >
             <span>←</span>
             <span>Previous</span>
@@ -274,7 +275,7 @@ const EnhancedSlideshow: React.FC<EnhancedSlideshowProps> = ({
                 onClick={() => handleChapterJump(index)}
                 className={`w-3 h-3 rounded-full transition-all ${
                   index === currentChapter 
-                    ? 'bg-orange-500 scale-125' 
+                    ? 'bg-indigo-500 scale-125' 
                     : 'bg-gray-600 hover:bg-gray-500'
                 }`}
                 title={`Go to Chapter ${index + 1}`}
@@ -286,7 +287,7 @@ const EnhancedSlideshow: React.FC<EnhancedSlideshowProps> = ({
           <button 
             onClick={() => handleChapterJump(currentChapter + 1)}
             disabled={currentChapter === segments.length - 1}
-            className="flex items-center space-x-2 px-4 py-2 bg-white bg-opacity-20 rounded-lg hover:bg-opacity-30 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+            className={`fantasy-heading min-w-11 min-h-11 ${actionBtn} disabled:opacity-50 disabled:cursor-not-allowed`}
           >
             <span>Next</span>
             <span>→</span>
@@ -297,7 +298,7 @@ const EnhancedSlideshow: React.FC<EnhancedSlideshowProps> = ({
         <div className="mt-4 max-w-7xl mx-auto">
           <div className="w-full bg-gray-700 rounded-full h-2">
             <div 
-              className="bg-orange-500 h-2 rounded-full transition-all duration-300"
+              className="bg-indigo-500 h-2 rounded-full transition-all duration-300"
               style={{ 
                 width: `${((currentChapter + 1) / segments.length) * 100}%` 
               }}

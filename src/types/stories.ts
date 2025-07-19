@@ -23,6 +23,7 @@ export interface Story {
   is_public: boolean;
   is_completed: boolean;
   story_mode: string | null;
+  target_age?: string | null;
   thumbnail_url: string | null;
   segment_count: number;
   published_at?: string | null;

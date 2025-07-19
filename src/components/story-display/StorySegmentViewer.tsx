@@ -13,7 +13,9 @@ interface StorySegmentViewerProps {
   isStoryComplete: boolean;
   showChoices: boolean;
   isGenerating: boolean;
-  onChoiceSelect: (choice: string) => void;
+  onChoiceSelect: (choice: string, skipImage?: boolean) => void;
+  skipImage?: boolean;
+  onSkipImageChange?: ((skipImage: boolean) => void) | undefined;
 }
 
 const StorySegmentViewer: React.FC<StorySegmentViewerProps> = ({
@@ -23,10 +25,19 @@ const StorySegmentViewer: React.FC<StorySegmentViewerProps> = ({
   onToggleAudio,
   showChoices,
   isGenerating,
-  onChoiceSelect
+  onChoiceSelect,
+  skipImage = false,
+  onSkipImageChange
 }) => {
   return (
-    <div className="space-y-6 md:space-y-8">
+    <div className="bg-gradient-to-br from-slate-900/95 via-slate-800/95 to-slate-900/95 border-2 border-amber-500/40 backdrop-blur-lg shadow-2xl rounded-2xl p-4 space-y-4">
+      {/* Chapter Header */}
+      <div className="text-center pb-3 border-b border-amber-500/30">
+        <h2 className="fantasy-heading text-xl md:text-2xl font-bold text-amber-400">
+          Chapter {chapterNumber}
+        </h2>
+      </div>
+
       <StoryTextSection
         segmentText={segment.segment_text}
         segmentCount={chapterNumber}
@@ -46,6 +57,8 @@ const StorySegmentViewer: React.FC<StorySegmentViewerProps> = ({
           choices={segment.choices}
           isGenerating={isGenerating}
           onChoiceSelect={onChoiceSelect}
+          skipImage={skipImage}
+          onSkipImageChange={onSkipImageChange}
         />
       )}
     </div>

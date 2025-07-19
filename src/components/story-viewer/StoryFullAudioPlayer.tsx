@@ -4,6 +4,7 @@ import { StoryWithSegments } from '@/types/stories';
 import AudioPlayer from '@/components/AudioPlayer';
 import { Loader2 } from 'lucide-react';
 
+import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 interface StoryFullAudioPlayerProps {
     story: StoryWithSegments;
 }
@@ -18,7 +19,7 @@ const StoryFullAudioPlayer: React.FC<StoryFullAudioPlayerProps> = ({ story }) =>
     if (story.audio_generation_status === 'in_progress') {
         return (
             <div className="my-6 p-4 border rounded-lg flex items-center justify-center gap-3 bg-secondary/50 animate-pulse">
-                <Loader2 className="h-5 w-5 animate-spin" />
+                <LoadingSpinner size="sm" className="h-5 w-5 " />
                 <span className="text-muted-foreground">The full story audio is being generated... It will appear here when ready.</span>
             </div>
         );

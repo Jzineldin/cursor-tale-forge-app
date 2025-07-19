@@ -36,10 +36,10 @@ const ErrorDisplay: React.FC<ErrorDisplayProps> = ({
             {typeof error === 'string' ? error : 'Something went wrong while creating your story. Please try again.'}
           </p>
           <div className="flex gap-4 justify-center">
-            <Button onClick={onRetry} className="bg-purple-600 hover:bg-purple-700">
+            <Button onClick={onRetry} className="fantasy-heading bg-purple-600 hover:bg-purple-700 text-white">
               Try Again
             </Button>
-            <Button onClick={onExit} variant="outline" className="border-gray-600 text-gray-300">
+            <Button onClick={onExit} variant="outline" className="fantasy-heading border-gray-600 text-gray-300">
               Go Home
             </Button>
           </div>

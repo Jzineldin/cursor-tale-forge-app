@@ -20,7 +20,7 @@ const AdminHeader: React.FC = () => {
         <span className="px-3 py-1 bg-green-600 text-white text-sm rounded-full">
           System Logs
         </span>
-        <span className="px-3 py-1 bg-orange-600 text-white text-sm rounded-full">
+        <span className="px-3 py-1 bg-brand-indigo text-white text-sm rounded-full">
           Cost Tracking
         </span>
         <span className="px-3 py-1 bg-red-600 text-white text-sm rounded-full">

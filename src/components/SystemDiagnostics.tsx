@@ -7,6 +7,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { RefreshCw, Image, AlertCircle, CheckCircle, Clock, Wand2 } from 'lucide-react';
 import { toast } from 'sonner';
 
+import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 interface StorySegment {
   id: string;
   segment_text: string;
@@ -127,7 +128,7 @@ const SystemDiagnostics: React.FC = () => {
     switch (status) {
       case 'completed': return <CheckCircle className="h-4 w-4 text-green-500" />;
       case 'in_progress': return <Wand2 className="h-4 w-4 text-blue-500" />;
-      case 'pending': return <Clock className="h-4 w-4 text-yellow-500" />;
+              case 'pending': return <Clock className="h-4 w-4 text-white" />;
       case 'failed': return <AlertCircle className="h-4 w-4 text-red-500" />;
       default: return <Image className="h-4 w-4 text-gray-500" />;
     }
@@ -137,7 +138,7 @@ const SystemDiagnostics: React.FC = () => {
     switch (status) {
       case 'completed': return 'bg-green-100 text-green-800';
       case 'in_progress': return 'bg-blue-100 text-blue-800';
-      case 'pending': return 'bg-yellow-100 text-yellow-800';
+              case 'pending': return 'bg-indigo-100 text-indigo-800';
       case 'failed': return 'bg-red-100 text-red-800';
       default: return 'bg-gray-100 text-gray-800';
     }
@@ -211,7 +212,7 @@ const SystemDiagnostics: React.FC = () => {
                       onClick={() => refreshSegment(segment.id)}
                       className="flex items-center gap-1"
                     >
-                      <RefreshCw className="h-3 w-3" />
+                      <LoadingSpinner size="sm" className="h-3 w-3" />
                       Refresh
                     </Button>
                   </div>

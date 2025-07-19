@@ -10,6 +10,7 @@ import { useAuth } from '@/context/AuthProvider';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 
+import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 interface Voice {
   voice_id: string;
   name: string;
@@ -201,7 +202,7 @@ const VoiceSelectorInner: React.FC<VoiceSelectorProps> = ({
   const getStatusIcon = () => {
     switch (apiStatus) {
       case 'loading':
-        return <RefreshCw className="h-4 w-4 animate-spin text-blue-500" />;
+        return <LoadingSpinner size="sm" className="h-4 w-4  text-blue-500" />;
       case 'success':
         return <CheckCircle className="h-4 w-4 text-green-500" />;
       case 'error':
@@ -360,7 +361,7 @@ const VoiceSelectorInner: React.FC<VoiceSelectorProps> = ({
             disabled={loadingVoices}
             className="mt-2 text-red-600 border-red-300 hover:bg-red-50"
           >
-            <RefreshCw className="h-3 w-3 mr-1" />
+            <LoadingSpinner size="sm" className="h-3 w-3 mr-1" />
             Retry
           </Button>
         </div>

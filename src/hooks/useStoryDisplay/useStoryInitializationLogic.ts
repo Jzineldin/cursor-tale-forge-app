@@ -78,10 +78,10 @@ export const useStoryInitializationLogic = ({
       const loaded = await loadExistingStoryWithCallback(id);
       if (id) await fetchStoryData(id);
       
-      // If no existing story was loaded but we have a prompt, start generation
+      // If no existing story was loaded but we have a prompt, don't auto-start generation
       if (!loaded && isInitialLoad && prompt && !currentStorySegment) {
-        console.log('🚀 No existing story found, starting initial generation for prompt:', prompt);
-        showConfirmation('start');
+        console.log('🚀 No existing story found, waiting for user to start generation for prompt:', prompt);
+        // Don't auto-start generation - let user choose when to start
       }
       
       // Mark initial load as complete
@@ -89,9 +89,8 @@ export const useStoryInitializationLogic = ({
         setIsInitialLoad(false);
       }
     } else if (isInitialLoad && prompt && !currentStorySegment) {
-      // Fallback for invalid IDs with prompts
-      console.log('🚀 Starting initial story generation for prompt:', prompt);
-      showConfirmation('start');
+      // Fallback for invalid IDs with prompts - don't auto-start
+      console.log('🚀 Waiting for user to start story generation for prompt:', prompt);
       setIsInitialLoad(false);
     }
   }, [id, isInitialLoad, prompt, currentStorySegment, storyLoaded, loadExistingStoryWithCallback, fetchStoryData, showConfirmation, setIsInitialLoad]);

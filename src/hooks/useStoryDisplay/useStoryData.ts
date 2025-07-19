@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { isProperUUID, isValidUUID } from './utils';
+import { assert } from '@/utils/testPipeline';
 
 export interface StoryData {
   id: string;
@@ -13,6 +15,7 @@ export interface StoryData {
 
 export const useStoryData = (storyId?: string) => {
   const [storyData, setStoryData] = useState<StoryData | null>(null);
+  const location = useLocation();
 
   // Fetch story data including full audio URL
   const fetchStoryData = async (id: string) => {
@@ -41,6 +44,15 @@ export const useStoryData = (storyId?: string) => {
           hasAudio: !!story.full_story_audio_url,
           audioStatus: story.audio_generation_status 
         });
+        
+        // Pipeline verification: Check story data matches URL parameters
+        // TODO: Add verification once target_age column is available in database
+        const urlParams = new URLSearchParams(location.search);
+        const urlAge = urlParams.get('age');
+        const urlGenre = urlParams.get('genre');
+        
+        console.log('🔍 Pipeline verification - URL params:', { urlAge, urlGenre });
+        
         setStoryData({
           id: story.id,
           title: story.title || '',

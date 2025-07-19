@@ -8,3 +8,9 @@ verify_jwt = true
 
 [functions.stripe-check-subscription]
 verify_jwt = true
+
+[functions.generate-inspiration-prompts]
+verify_jwt = false
+
+[functions.generate-story-segment]
+verify_jwt = false

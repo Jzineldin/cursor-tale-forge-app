@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { CheckCircle, ImageIcon, Loader2, ChevronDown, ChevronUp } from 'lucide-react';
 import { StorySegmentRow } from '@/types/stories';
 
+import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 interface StoryContentPreviewProps {
   segments: StorySegmentRow[];
   isGeneratingMissingImage: boolean;
@@ -85,7 +86,7 @@ const StoryContentPreview: React.FC<StoryContentPreviewProps> = ({
                   ) : (
                     <div className="w-full h-full bg-slate-700 rounded flex items-center justify-center border border-amber-500/30">
                       {index === segments.length - 1 && isGeneratingMissingImage ? (
-                        <Loader2 className="h-4 w-4 animate-spin text-amber-600" />
+                        <LoadingSpinner size="sm" className="h-4 w-4  text-amber-600" />
                       ) : (
                         <ImageIcon className="h-4 w-4 text-slate-500" />
                       )}

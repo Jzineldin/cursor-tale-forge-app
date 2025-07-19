@@ -1,117 +1,158 @@
 
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowRight, ArrowLeft, Wand2, Home, Sparkles } from 'lucide-react';
+import { useNavigate, useSearchParams, Link } from 'react-router-dom';
+import { ChevronLeft, Image, Sparkles } from 'lucide-react';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/context/AuthProvider';
 import { useGenerateInspiration } from '@/hooks/useGenerateInspiration';
+import { probe, assert } from '@/utils/testPipeline';
+import { useMobile } from '@/hooks/useResize';
 
 const CreatePrompt: React.FC = () => {
-  const [prompt, setPrompt] = useState('');
-  const [selectedGenre, setSelectedGenre] = useState('');
-  const [currentPrompts, setCurrentPrompts] = useState<string[]>([]);
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+  const [prompt, setPrompt] = useState(searchParams.get('preseed') || '');
+  const [currentPrompts, setCurrentPrompts] = useState<string[]>([]);
   const { user } = useAuth();
   
   const [isCreating, setIsCreating] = useState(false);
   const { generateNewPrompts, isGenerating, error } = useGenerateInspiration();
+  const [skipImage, setSkipImage] = useState(false);
+  const [isLoadingPrompts, setIsLoadingPrompts] = useState(false);
+  
+  const selectedGenre = searchParams.get('genre');
+  const selectedAge = searchParams.get('age');
+  const mobile = useMobile();
+  
+  console.log('CreatePrompt - selectedGenre:', selectedGenre);
+  console.log('CreatePrompt - selectedAge:', selectedAge);
 
   useEffect(() => {
-    const genre = searchParams.get('genre');
-    const age = searchParams.get('age');
-    
-    if (!genre) {
+    if (!selectedGenre) {
       navigate('/create/genre');
       return;
     }
     
-    if (!age) {
-      navigate('/create/age');
-      return;
-    }
-    
-    setSelectedGenre(genre);
-    // Initialize with default prompts for the genre
-    setCurrentPrompts(genrePrompts[genre] || []);
-  }, [searchParams, navigate]);
+    console.log('Loading fallback prompts for genre:', selectedGenre);
+    // Load fallback prompts on load instead of auto-generating AI prompts
+    const fallbackPrompts = getFallbackPrompts(selectedGenre!);
+    console.log('Fallback prompts loaded:', fallbackPrompts);
+    setCurrentPrompts(fallbackPrompts);
+    setIsLoadingPrompts(false);
+  }, [selectedGenre, selectedAge, navigate]);
 
+  // Mobile-crack: Viewport-safe margins on mobile keyboards
   useEffect(() => {
-    document.body.setAttribute('data-route', '/create/prompt');
-    return () => {
-      document.body.removeAttribute('data-route');
-    };
-  }, []);
-
-  // Hide global scene-bg when this component mounts
-  useEffect(() => {
-    const sceneBg = document.querySelector('.scene-bg') as HTMLElement;
-    if (sceneBg) {
-      sceneBg.style.display = 'none';
-    }
-
-    // Show it again when component unmounts
-    return () => {
-      if (sceneBg) {
-        sceneBg.style.display = 'block';
+    const handleViewportChange = () => {
+      if (window.visualViewport && window.visualViewport.height) {
+        document.body.style.paddingTop = `${window.visualViewport.height - 200}px`;
       }
     };
+
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener('resize', handleViewportChange);
+      return () => window.visualViewport?.removeEventListener('resize', handleViewportChange);
+    }
   }, []);
 
-  const genrePrompts: Record<string, string[]> = {
-    'bedtime-stories': [
-      'You find a magical crayon that brings everything you draw to life in your backyard.',
-      'A friendly dragon visits your school and needs help finding its way home.',
-      'You discover that your pet hamster can actually talk, but only to you.'
-    ],
-    'fantasy-magic': [
-      'You discover you are the last heir to a magical kingdom hidden beneath your city.',
-      'An ancient dragon awakens and claims you are the chosen one mentioned in an old prophecy.',
-      'You find a magical sword in your grandmother\'s attic that transports you to a realm under siege.'
-    ],
-    'adventure-exploration': [
-      'You find a treasure map hidden in the pages of an old library book.',
-      'Your grandfather\'s compass doesn\'t point north—it points to adventure.',
-      'You receive an invitation to join a secret society of modern-day explorers.'
-    ],
-    'mystery-detective': [
-      'You inherit your detective grandfather\'s office and find his unsolved case files.',
-      'Every book you check out from the library contains a hidden message meant just for you.',
-      'You notice that everyone in your small town disappears for exactly one hour every Tuesday.'
-    ],
-    'science-space': [
-      'You wake up on a space station with no memory of how you got there, and the AI seems hostile.',
-      'Your new smartphone starts receiving messages from your future self warning of danger.',
-      'You discover that your dreams are actually glimpses into parallel universes.'
-    ],
-    'educational-stories': [
-      'You time travel to ancient Egypt and must help build the pyramids using mathematical principles.',
-      'A mysterious scientist shrinks you down to explore the human body from the inside.',
-      'You become the apprentice to a Renaissance inventor who needs help with their latest creation.'
-    ],
-    'values-lessons': [
-      'You meet a new student at school who seems sad and has no friends to sit with at lunch.',
-      'You find a wallet full of money on the playground and must decide what to do.',
-      'Your best friend starts spreading rumors about someone, and you have to choose what\'s right.'
-    ],
-    'silly-humor': [
-      'Your pet goldfish becomes a stand-up comedian and starts telling jokes to other pets.',
-      'You wake up to find that gravity works backwards in your house for one day.',
-      'Your school cafeteria food comes to life and starts a food fight revolution.'
-    ]
+  const loadAIPrompts = async () => {
+    setIsLoadingPrompts(true);
+    try {
+      const aiPrompts = await generateNewPrompts(selectedGenre!, selectedAge || undefined);
+      setCurrentPrompts(aiPrompts);
+    } catch (err) {
+      console.error('Failed to load AI prompts, using fallbacks:', err);
+      // Use fallback prompts if AI generation fails
+      setCurrentPrompts(getFallbackPrompts(selectedGenre!));
+    } finally {
+      setIsLoadingPrompts(false);
+    }
   };
 
-  const handlePromptSelect = (selectedPrompt: string) => {
+  const getFallbackPrompts = (genre: string): string[] => {
+    const fallbacks: Record<string, string[]> = {
+      'bedtime-stories': [
+        'A magical moonbeam visits your bedroom and takes you on a gentle adventure through the stars.',
+        'Your stuffed animals come to life at midnight and throw a peaceful tea party.',
+        'A friendly cloud floats down to your window and offers to show you how to make rainbows.',
+        'You discover a secret door in your closet that leads to a land where dreams are made.',
+        'A wise old owl teaches you the language of the night and helps you understand your dreams.'
+      ],
+      'fantasy-and-magic': [
+        'A magical door appears in your bedroom wall, and a friendly dragon invites you to explore a world of floating islands.',
+        'You discover that your pet can talk and has been hiding a secret magical kingdom in your backyard.',
+        'An ancient book in the library opens by itself and transports you to a realm where everyone can fly.',
+        'A mysterious wizard appears in your backyard and asks for your help to save magic itself.',
+        'You inherit a magical library where the stories inside the books are real and need your help.'
+      ],
+      'adventure-and-exploration': [
+        'Your grandfather\'s old compass doesn\'t point north—it points to hidden treasures in your neighborhood.',
+        'You find a map in the attic that leads to a secret garden filled with talking animals.',
+        'A mysterious invitation arrives, inviting you to join a club of young explorers who discover hidden worlds.',
+        'You discover that your school has secret passages leading to hidden worlds.',
+        'A mysterious island appears on your local lake that wasn\'t there yesterday.'
+      ],
+      'mystery-and-detective': [
+        'Every book you check out from the library contains a hidden message meant just for you.',
+        'You notice that all the toys in your room are arranged differently each morning.',
+        'A friendly ghost appears in your house and needs help solving a gentle mystery.',
+        'You inherit your detective grandfather\'s office and find his unsolved case files.',
+        'A mysterious package arrives at your door with clues to a treasure hunt.'
+      ],
+      'science-fiction-and-space': [
+        'Your new smartphone starts receiving messages from your future self about amazing discoveries.',
+        'You wake up on a friendly space station where robots help you learn about the solar system.',
+        'A friendly alien visits your school and needs help understanding Earth\'s customs.',
+        'You discover that your dreams are actually glimpses into parallel universes.',
+        'A tiny alien crash-lands in your backyard and needs help fixing their spaceship.'
+      ],
+      'educational-stories': [
+        'You shrink down to explore the human body and learn how it works from the inside.',
+        'A time machine takes you back to ancient Egypt where you help build the pyramids using math.',
+        'You become friends with a robot who teaches you about science through fun experiments.',
+        'You discover a magical school where every subject is taught through real adventures.',
+        'A talking computer virus teaches you about internet safety while trying to fix the digital world.'
+      ],
+      'values-and-life-lessons': [
+        'You meet a new student at school who seems sad and needs a friend to help them feel welcome.',
+        'You find a wallet full of money on the playground and must decide what to do.',
+        'Your best friend starts spreading rumors about someone, and you have to choose what\'s right.',
+        'You discover that your words have the power to make people feel better or worse.',
+        'A magical mirror shows you how your actions affect others in ways you never imagined.'
+      ],
+      'silly-and-humorous': [
+        'Your pet goldfish becomes a stand-up comedian and starts telling jokes to other pets.',
+        'You wake up to find that gravity works backwards in your house for one day.',
+        'Your school cafeteria food comes to life and starts a food fight revolution.',
+        'You discover that your shadow has a mind of its own and keeps getting you into trouble.',
+        'A magical remote control lets you change the channel on real life, but with hilarious consequences.'
+      ]
+    };
+
+    // Handle potential URL truncation issues
+    if (genre === 'and-magic') {
+      console.log('Detected truncated genre "and-magic", using fantasy-and-magic fallback');
+      return fallbacks['fantasy-and-magic'];
+    }
+
+    return fallbacks[genre] || fallbacks['fantasy-and-magic'];
+  };
+
+  const handlePromptSelect = async (selectedPrompt: string) => {
     setPrompt(selectedPrompt);
+    // Auto-start story creation when a prompt is selected
+    if (selectedPrompt.trim()) {
+      // Small delay to show the selection
+      setTimeout(() => {
+        handleBeginAdventure();
+      }, 300);
+    }
   };
 
   const handleGenerateNewPrompts = async () => {
     try {
-      const newPrompts = await generateNewPrompts(selectedGenre);
+      const newPrompts = await generateNewPrompts(selectedGenre!, selectedAge || undefined);
       setCurrentPrompts(newPrompts);
       toast.success('✨ New inspiration prompts generated!');
     } catch (err) {
@@ -130,15 +171,20 @@ const CreatePrompt: React.FC = () => {
     try {
       console.log('Creating new story with prompt:', prompt);
       
+      // Pipeline verification: Step 1 - Verify input parameters
+      const age = searchParams.get('age');
+      const genre = selectedGenre;
+      probe('story_creation_input', { age, genre, prompt });
+      
       // Create a new story first
       const { data: story, error: storyError } = await supabase
         .from('stories')
         .insert({
-          title: prompt.slice(0, 100) + (prompt.length > 100 ? '...' : ''), // Use first 100 chars as title
+          title: prompt.slice(0, 100) + (prompt.length > 100 ? '...' : ''),
           description: prompt,
           story_mode: selectedGenre || 'fantasy',
-          target_age: searchParams.get('age'), // Store the selected age
-          user_id: user?.id || null // Associate with user if authenticated, otherwise anonymous
+          target_age: searchParams.get('age'),
+          user_id: user?.id || null
         })
         .select()
         .single();
@@ -152,6 +198,17 @@ const CreatePrompt: React.FC = () => {
         throw new Error('No story data returned');
       }
 
+      // Pipeline verification: Step 2 - Verify story creation
+      probe('story_created', { 
+        storyId: story.id, 
+        storyMode: story.story_mode, 
+        description: story.description 
+      });
+      
+      // Verify the story matches our input parameters
+      assert(story.story_mode === genre, `Genre drift: expected ${genre}, got ${story.story_mode}`);
+      assert(story.description === prompt, `Prompt drift: expected ${prompt}, got ${story.description}`);
+
       console.log('Story created successfully:', story);
 
       // Navigate to the enhanced story display with initial parameters
@@ -159,7 +216,8 @@ const CreatePrompt: React.FC = () => {
         genre: selectedGenre || 'fantasy',
         prompt: prompt.trim(),
         mode: 'create',
-        age: searchParams.get('age') || ''
+        age: searchParams.get('age') || '',
+        skipImage: skipImage.toString()
       });
       
       navigate(`/story/${story.id}?${params.toString()}`, { replace: true });
@@ -173,21 +231,18 @@ const CreatePrompt: React.FC = () => {
     }
   };
 
-  const genreDisplayNames: Record<string, string> = {
-    'bedtime-stories': 'Bedtime Stories',
-    'fantasy-magic': 'Fantasy & Magic',
-    'adventure-exploration': 'Adventure & Exploration',
-    'mystery-detective': 'Mystery & Detective',
-    'science-space': 'Science Fiction & Space',
-    'educational-stories': 'Educational Stories',
-    'values-lessons': 'Values & Life Lessons',
-    'silly-humor': 'Silly & Humorous Stories'
+  const handleBack = () => {
+    navigate('/create/genre');
   };
 
   if (!selectedGenre) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-pulse text-white text-xl">Loading...</div>
+      <div className="magical-page-container">
+        <div className="magical-content">
+          <div className="flex items-center justify-center min-h-screen">
+            <div className="animate-pulse text-white text-xl">Loading...</div>
+          </div>
+        </div>
       </div>
     );
   }
@@ -197,96 +252,155 @@ const CreatePrompt: React.FC = () => {
       <div className="magical-content">
         <div className="container mx-auto px-4 py-16">
           {/* Header */}
-          <div className="text-center mb-12 relative px-4">
-            <div className="flex justify-between items-center mb-8">
-              <button
-                onClick={() => navigate('/create/genre')}
-                className="glass-card px-4 py-2 text-white hover:bg-amber-500/20 border-amber-500/30 backdrop-blur-sm"
-              >
-                <ArrowLeft className="mr-2 h-4 w-4" />
-                Back
-              </button>
-              
-              <button
-                onClick={() => navigate('/')}
-                className="glass-card px-4 py-2 text-white hover:bg-amber-500/20 border-amber-500/30 backdrop-blur-sm flex items-center gap-2"
-              >
-                <Home className="h-4 w-4" />
-                Home
-              </button>
-            </div>
-            
-            <div className="pt-8 md:pt-12 animate-magical-fade-in">
-              <h1 className="fantasy-heading text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight break-words">
-                Your <span className="text-amber-400">{genreDisplayNames[selectedGenre]}</span> Adventure
-              </h1>
-              <p className="fantasy-subtitle text-xl text-gray-200 max-w-2xl mx-auto">
-                Describe your story idea or choose from our suggestions below
-              </p>
-            </div>
-          </div>
-
-          {/* Story Prompt Input */}
-          <div className="max-w-4xl mx-auto mb-12">
-            <div className="prompt-input-container">
-              <div className="mb-4">
-                <h3 className="fantasy-title text-xl text-white flex items-center gap-2 mb-2">
-                  <Wand2 className="h-5 w-5 text-amber-400" />
-                  Your Story Beginning
-                </h3>
-                <p className="text-amber-200/90 font-medium">
-                  Write your own prompt or select one from the magical suggestions below
-                </p>
+          <div className="text-center mb-12 animate-magical-fade-in">
+            <div className="flex items-center justify-center gap-4 mb-4">
+              <div className="p-3 bg-gradient-to-br from-amber-500/20 to-orange-500/20 rounded-xl border border-amber-400/30">
+                <ChevronLeft className="h-8 w-8 text-amber-400 cursor-pointer" onClick={handleBack} />
               </div>
-              <textarea
-                placeholder="A mysterious letter arrives at your door on a stormy night..."
-                value={prompt}
-                onChange={(e) => setPrompt(e.target.value)}
-                className="prompt-textarea w-full"
-              />
+              <div className="p-3 bg-gradient-to-br from-amber-500/20 to-orange-500/20 rounded-xl border border-amber-400/30">
+                <span className="text-2xl">🌱</span>
+              </div>
             </div>
+            <h1 className="fantasy-heading text-4xl md:text-6xl font-bold text-white mb-6">
+              Story <span className="text-amber-400">Seed</span>
+            </h1>
+            <p className="fantasy-subtitle text-xl text-gray-300 max-w-2xl mx-auto">
+              Plant the seed of your imagination and watch your story grow!
+              <br />
+              <span className="text-amber-300 font-medium">Write your own or choose from our magical suggestions.</span>
+            </p>
           </div>
 
-          {/* Story Suggestions */}
-          <div className="max-w-4xl mx-auto mb-12">
-            <div className="text-center mb-6">
-              <h3 className="fantasy-title text-2xl font-bold text-white">
-                Need Inspiration?
-              </h3>
-            </div>
-            <div className="grid gap-4">
-              {currentPrompts.map((suggestion, index) => (
-                <div
-                  key={index}
-                  className={`suggestion-card ${prompt === suggestion ? 'selected' : ''}`}
-                  onClick={() => handlePromptSelect(suggestion)}
+          {/* Main Content Card */}
+          <div className="max-w-4xl mx-auto">
+            <div className="bg-white/10 backdrop-blur-md rounded-3xl border border-white/20 shadow-2xl p-8">
+              
+              {/* Text Input */}
+              <div className="mb-8">
+                <textarea
+                  rows={4}
+                  value={prompt}
+                  onChange={e => setPrompt(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' && !e.shiftKey && prompt.trim()) {
+                      e.preventDefault();
+                      handleBeginAdventure();
+                    }
+                  }}
+                  placeholder="Eg. A lonely dragon meets a brave mouse... (Press Enter to start)"
+                  className="w-full break-words overflow-y-auto rounded-xl p-4 bg-white/20 backdrop-blur-sm border border-white/30 text-white placeholder-gray-300 focus:ring-2 focus:ring-amber-400 focus:border-transparent resize-none"
+                  style={{ textShadow: 'rgba(0, 0, 0, 0.7) 1px 1px 2px' }}
+                />
+              </div>
+              
+              {/* Prompt Suggestions */}
+              <div className="mb-8">
+                <h3 className="text-2xl font-bold text-white mb-4" style={{ textShadow: 'rgba(0, 0, 0, 0.8) 2px 2px 4px' }}>
+                  ✨ Magical Story Seeds
+                </h3>
+                
+                {isLoadingPrompts ? (
+                  <div className="space-y-3">
+                    {[...Array(5)].map((_, index) => (
+                      <div key={index} className="w-full p-4 rounded-xl border border-white/30 bg-white/10 animate-pulse">
+                        <div className="h-4 bg-white/20 rounded mb-2"></div>
+                        <div className="h-4 bg-white/20 rounded w-3/4"></div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="grid gap-3">
+                    {currentPrompts.map((suggestion, index) => (
+                      <button
+                        key={index}
+                        onClick={() => handlePromptSelect(suggestion)}
+                        className={`w-full text-left p-4 rounded-xl border transition-all duration-300 ${
+                          prompt === suggestion
+                            ? 'border-amber-400 bg-amber-500/20 shadow-lg shadow-amber-500/30'
+                            : 'border-white/30 bg-white/10 hover:border-amber-400/50 hover:bg-white/15'
+                        }`}
+                      >
+                        <p className="text-white text-sm leading-relaxed" style={{ textShadow: 'rgba(0, 0, 0, 0.7) 1px 1px 2px' }}>
+                          {suggestion}
+                        </p>
+                      </button>
+                    ))}
+                  </div>
+                )}
+                
+                <button
+                  onClick={handleGenerateNewPrompts}
+                  disabled={isGenerating || isLoadingPrompts}
+                  className="mt-4 text-amber-300 hover:text-amber-200 text-sm font-medium hover:underline disabled:opacity-50 transition-colors"
                 >
-                  <p className="suggestion-text">
-                    {suggestion}
+                  {isGenerating ? '✨ Generating new magic...' : '✨ Generate new story seeds'}
+                </button>
+              </div>
+
+              {/* Image Generation Choice */}
+              <div className="mb-8">
+                <div className="bg-gradient-to-r from-amber-900/20 to-amber-800/20 border-2 border-amber-500/50 p-6 rounded-xl backdrop-blur-sm">
+                  <h4 className="text-amber-300 font-semibold mb-3 flex items-center gap-2">
+                    <Image className="h-5 w-5" />
+                    Visual Magic Settings
+                  </h4>
+                  <p className="text-amber-200 text-sm mb-4 leading-relaxed">
+                    Choose whether to include AI-generated images with your story. You can always change this later!
                   </p>
+                  <div className="flex items-center space-x-3 bg-amber-900/30 p-4 rounded-lg">
+                    <input
+                      type="checkbox"
+                      id="skip-image"
+                      checked={skipImage}
+                      onChange={(e) => setSkipImage(e.target.checked)}
+                      className="w-4 h-4 text-amber-500 bg-slate-700 border-amber-400 rounded focus:ring-amber-500 focus:ring-2"
+                    />
+                    <label htmlFor="skip-image" className="text-amber-200 cursor-pointer flex-1 text-sm">
+                      Skip image generation for now (you can add images later)
+                    </label>
+                  </div>
+                  {skipImage && (
+                    <p className="text-amber-300/70 text-xs mt-2">
+                      💡 Tip: You can enable images for future chapters anytime during your story!
+                    </p>
+                  )}
                 </div>
-              ))}
+              </div>
+
+              {/* Manual Generate Button (Fallback) */}
+              <div className="text-center">
+                <p className="text-amber-300 text-sm mb-4">
+                  💡 Tip: Click any story seed above or press Enter in the text box to start automatically!
+                </p>
+                <button 
+                  onClick={handleBeginAdventure}
+                  disabled={!prompt.trim() || isCreating}
+                  className="fantasy-button bg-gradient-to-r from-slate-800 to-slate-900 hover:from-slate-700 hover:to-slate-800 text-white font-bold py-4 px-8 rounded-xl text-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed border-2 border-amber-400/50"
+                  style={{ 
+                    textShadow: '0 2px 4px rgba(0, 0, 0, 0.8)',
+                    boxShadow: '0 4px 15px rgba(0, 0, 0, 0.3), 0 0 20px rgba(255, 255, 255, 0.1)',
+                    color: 'white !important'
+                  }}
+                >
+                  {isCreating ? '🌱 Growing Your Story...' : '🌱 Plant Your Story Seed'}
+                </button>
+                {searchParams.get('age') && (
+                  <p className="text-amber-300 text-sm mt-3">
+                    Creating stories perfect for {searchParams.get('age')} year olds
+                  </p>
+                )}
+              </div>
             </div>
           </div>
 
-          {/* Begin Adventure Button */}
-          <div className="text-center mb-8">
-            <button
-              onClick={handleBeginAdventure}
-              disabled={!prompt.trim() || isCreating}
-              className="btn-magical px-12 py-4 text-xl font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 whitespace-nowrap mx-auto"
-            >
-              {isCreating ? (
-                <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
-              ) : (
-                <Wand2 className="h-5 w-5" />
-              )}
-              <span>{isCreating ? 'Creating Adventure...' : `Begin My ${genreDisplayNames[selectedGenre] ? genreDisplayNames[selectedGenre].split(' ').slice(1).join(' ') : 'Story'} Adventure`}</span>
-              <ArrowRight className="h-5 w-5" />
-            </button>
+          {/* Progress indicator */}
+          <div className="text-center mt-8">
+            <div className="inline-flex items-center gap-2 bg-amber-600/20 border border-amber-500/30 rounded-lg px-4 py-2">
+              <div className="w-3 h-3 bg-amber-400 rounded-full animate-pulse" />
+              <span className="text-amber-300 text-sm font-medium">
+                Step 3 of 3: Story Seed
+              </span>
+            </div>
           </div>
         </div>
       </div>

@@ -111,7 +111,7 @@ export const VideoCompilationSection: React.FC<VideoCompilationSectionProps> = (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-3">
             <h4 className="font-semibold flex items-center">
-              <Sparkles className="w-4 h-4 mr-2 text-yellow-500" />
+              <Sparkles className="w-4 h-4 mr-2 text-white" />
               AI-Powered Generation
             </h4>
             <ul className="text-sm text-muted-foreground space-y-1">

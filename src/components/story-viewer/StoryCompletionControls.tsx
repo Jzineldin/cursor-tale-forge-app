@@ -11,6 +11,7 @@ import AudioPlayer from '@/components/AudioPlayer';
 import FullStoryText from './FullStoryText';
 import StorySlideshow from './StorySlideshow';
 
+import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 interface StoryCompletionControlsProps {
     storyId: string;
     segments?: StorySegmentRow[];
@@ -156,7 +157,7 @@ const StoryCompletionControls: React.FC<StoryCompletionControlsProps> = ({
                             >
                                 {generateAudioMutation.isPending ? (
                                     <>
-                                        <Loader2 className="mr-2 h-4 w-4 animate-spin" /> 
+                                        <LoadingSpinner size="sm" className="mr-2 h-4 w-4 " /> 
                                         Starting Generation...
                                     </>
                                 ) : (
@@ -176,7 +177,7 @@ const StoryCompletionControls: React.FC<StoryCompletionControlsProps> = ({
                 {audioGenerationStatus === 'in_progress' && (
                     <Card className="border-blue-500/30 bg-slate-800/80 backdrop-blur-sm">
                         <CardContent className="text-center p-6">
-                            <Loader2 className="h-8 w-8 animate-spin mx-auto mb-3 text-blue-400" />
+                            <LoadingSpinner size="md" className="h-8 w-8  mx-auto mb-3 text-blue-400" />
                             <p className="text-blue-300 font-medium">Generating full story audio...</p>
                             <p className="text-sm text-blue-200/70 mt-1">This may take a few minutes. The slideshow will auto-launch when ready!</p>
                         </CardContent>

@@ -26,10 +26,12 @@ interface StoryMainContentProps {
   onChapterChange: (index: number) => void;
   onToggleHistory: () => void;
   onToggleAudio: () => void;
-  onChoiceSelect: (choice: string) => void;
+  onChoiceSelect: (choice: string, skipImage?: boolean) => void;
   onFinishStory: () => Promise<void>;
   onChapterNavigate: (index: number) => void;
   onAudioGenerated: (audioUrl: string) => Promise<void>;
+  skipImage?: boolean;
+  onSkipImageChange?: (skipImage: boolean) => void;
 }
 
 const StoryMainContent: React.FC<StoryMainContentProps> = ({
@@ -51,7 +53,9 @@ const StoryMainContent: React.FC<StoryMainContentProps> = ({
   onChoiceSelect,
   onFinishStory,
   onChapterNavigate,
-  onAudioGenerated
+  onAudioGenerated,
+  skipImage = false,
+  onSkipImageChange
 }) => {
   const handleSwitchToPlayer = async () => {
     if (allStorySegments.length > 0) {
@@ -99,6 +103,8 @@ const StoryMainContent: React.FC<StoryMainContentProps> = ({
             onChapterNavigate={onChapterNavigate}
             onChapterChange={onChapterChange}
             onAudioGenerated={onAudioGenerated}
+            skipImage={skipImage}
+            onSkipImageChange={onSkipImageChange}
           />
         )}
       </div>

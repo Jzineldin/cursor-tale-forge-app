@@ -49,7 +49,7 @@ const DemoUsageIndicator: React.FC = () => {
   const getUsageTextColor = (current: number, limit: number) => {
     const percentage = (current / limit) * 100;
     if (percentage >= 90) return 'text-red-400';
-    if (percentage >= 70) return 'text-yellow-400';
+    if (percentage >= 70) return 'text-white';
     return 'text-green-400';
   };
 

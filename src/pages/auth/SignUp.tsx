@@ -292,7 +292,7 @@ const SignUp = () => {
                 <div className="space-y-1">
                   <div className="flex justify-between text-xs">
                     <span className="text-slate-400">Password strength</span>
-                    <span className={`${passwordStrength >= 75 ? 'text-green-400' : passwordStrength >= 50 ? 'text-yellow-400' : 'text-red-400'}`}>
+                    <span className={`${passwordStrength >= 75 ? 'text-green-400' : passwordStrength >= 50 ? 'text-white' : 'text-red-400'}`}>
                       {getStrengthText(passwordStrength)}
                     </span>
                   </div>

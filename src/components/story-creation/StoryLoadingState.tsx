@@ -53,8 +53,16 @@ const StoryLoadingState: React.FC<StoryLoadingStateProps> = ({
   const CurrentIcon = steps[currentStep]?.icon || Sparkles;
 
   return (
-    <StoryDisplayLayout>
-      <div className="flex items-center justify-center min-h-[70vh] relative">
+    <div 
+      className="min-h-screen bg-slate-900 relative overflow-hidden flex items-center justify-center"
+      style={{
+        backgroundImage: `linear-gradient(rgba(15, 23, 42, 0.8), rgba(30, 41, 59, 0.8)), url('/images/Flux_Dev_Lonely_astronaut_sitting_on_a_pile_of_books_in_space__0.jpg')`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat'
+      }}
+    >
+      <div className="flex items-center justify-center w-full relative">
         {/* Floating magical particles */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           {[...Array(12)].map((_, i) => (
@@ -172,7 +180,7 @@ const StoryLoadingState: React.FC<StoryLoadingStateProps> = ({
           </CardContent>
         </Card>
       </div>
-    </StoryDisplayLayout>
+    </div>
   );
 };
 

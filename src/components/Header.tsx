@@ -14,21 +14,22 @@ interface HeaderProps {
   isSlideshowOpen?: boolean;
 }
 
-const Header: React.FC<HeaderProps> = ({ isSlideshowOpen = false }) => {
+export default function Header({ isSlideshowOpen = false }: HeaderProps) {
   const { user } = useAuth();
   const location = useLocation();
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [open, setOpen] = useState(false);
   const mobileMenuRef = useRef<HTMLDivElement>(null);
+  const mobile = window.innerWidth <= 768;
 
   // Click outside handler to close mobile menu
   useEffect(() => {
     const handleClickOutside = (event: Event) => {
       if (mobileMenuRef.current && !mobileMenuRef.current.contains(event.target as Node)) {
-        setIsMobileMenuOpen(false);
+        setOpen(false);
       }
     };
 
-    if (isMobileMenuOpen) {
+    if (open) {
       document.addEventListener('mousedown', handleClickOutside);
       document.addEventListener('touchstart', handleClickOutside);
     }
@@ -37,11 +38,11 @@ const Header: React.FC<HeaderProps> = ({ isSlideshowOpen = false }) => {
       document.removeEventListener('mousedown', handleClickOutside);
       document.removeEventListener('touchstart', handleClickOutside);
     };
-  }, [isMobileMenuOpen]);
+  }, [open]);
 
   // Manage body class for mobile menu
   useEffect(() => {
-    if (isMobileMenuOpen) {
+    if (open) {
       document.body.classList.add('mobile-menu-open');
     } else {
       document.body.classList.remove('mobile-menu-open');
@@ -50,7 +51,7 @@ const Header: React.FC<HeaderProps> = ({ isSlideshowOpen = false }) => {
     return () => {
       document.body.classList.remove('mobile-menu-open');
     };
-  }, [isMobileMenuOpen]);
+  }, [open]);
 
   const isActive = (path: string) => {
     if (path === '/' && (location.pathname === '/' || location.pathname === '/create-story')) {
@@ -61,14 +62,8 @@ const Header: React.FC<HeaderProps> = ({ isSlideshowOpen = false }) => {
 
   const isCreateStoryActive = () => location.pathname === '/create-story';
 
-  const toggleMobileMenu = () => {
-    console.log('Toggle mobile menu clicked, current state:', isMobileMenuOpen);
-    setIsMobileMenuOpen(prev => !prev);
-  };
-
   const closeMobileMenu = () => {
-    console.log('Closing mobile menu');
-    setIsMobileMenuOpen(false);
+    setOpen(false);
   };
 
   const NavigationLinks = ({ isMobile = false }) => (
@@ -122,46 +117,29 @@ const Header: React.FC<HeaderProps> = ({ isSlideshowOpen = false }) => {
         <span className="hidden lg:inline">Discover</span>
         <span className="lg:hidden">Explore</span>
       </Link>
-      
-      {/* Hide pricing until it's ready */}
-      {false && (
-        <Link 
-          to="/pricing" 
-          onClick={isMobile ? closeMobileMenu : undefined}
-          className={`flex items-center gap-2 px-3 py-2 rounded-md transition-all duration-300 ${
-            isActive('/pricing') 
-              ? 'bg-gradient-to-r from-amber-500 to-amber-600 text-white shadow-lg' 
-              : 'text-slate-300 hover:text-white hover:bg-slate-800/50'
-          } ${isMobile ? 'w-full text-left' : ''}`}
-        >
-          <Crown className="h-4 w-4" />
-          <span className="hidden lg:inline">Pricing</span>
-          <span className="lg:hidden">Premium</span>
-        </Link>
-      )}
     </>
   );
 
   return (
-    <header className={`header-glassmorphic ${isSlideshowOpen ? 'hidden' : 'block'}`} ref={mobileMenuRef}>
-      <div className="container mx-auto px-6 w-full">
-        <div className="flex items-center justify-between">
-          {/* Logo/Brand */}
-          <Link 
-            to="/" 
-            className="header-brand"
-            onClick={closeMobileMenu}
-          >
-            📖 Tale Forge
-          </Link>
+    <header className={`bg-slate-900 text-white ${isSlideshowOpen ? 'hidden' : 'block'}`} ref={mobileMenuRef}>
+      <div className="container mx-auto flex items-center justify-between px-4 h-16">
+        {/* LOGO */}
+        <Link
+          to="/"
+          className="text-xl font-semibold text-white hover:text-amber-400 transition-colors"
+          onClick={closeMobileMenu}
+        >
+          TaleForge
+        </Link>
 
-          {/* Desktop Navigation & Actions */}
-          <div className="hidden md:flex items-center gap-4 min-w-0">
+        {/* Desktop nav */}
+        {!mobile && (
+          <div className="flex items-center gap-4">
             {/* Changelog and What's New Buttons */}
-            <div className="flex items-center gap-2 flex-shrink-0">
+            <div className="flex items-center gap-2">
               <ChangelogModal 
                 trigger={
-                  <Button variant="ghost" size="sm" className="header-action-btn">
+                  <Button variant="ghost" size="sm" className="text-slate-300 hover:text-white hover:bg-slate-800/50">
                     <FileText className="mr-2 h-4 w-4" />
                     Changelog
                   </Button>
@@ -169,7 +147,7 @@ const Header: React.FC<HeaderProps> = ({ isSlideshowOpen = false }) => {
               />
               <WhatsNewModal 
                 trigger={
-                  <Button variant="ghost" size="sm" className="header-action-btn">
+                  <Button variant="ghost" size="sm" className="text-slate-300 hover:text-white hover:bg-slate-800/50">
                     <Star className="mr-2 h-4 w-4" />
                     What's New?
                   </Button>
@@ -177,70 +155,46 @@ const Header: React.FC<HeaderProps> = ({ isSlideshowOpen = false }) => {
               />
             </div>
             
+            <nav className="flex space-x-6 text-sm">
+              <NavigationLinks />
+            </nav>
+
             {user ? (
-              <>
-                {/* Navigation Links for authenticated users */}
-                <nav className="flex items-center gap-4 min-w-0">
-                  <NavigationLinks />
-                </nav>
-
-                {/* User Menu */}
-                <div className="flex-shrink-0">
-                  <UserMenu />
-                </div>
-              </>
+              <UserMenu />
             ) : (
-              <div className="flex items-center gap-2 min-w-0">
-                {/* Navigation Links for anonymous users */}
-                <nav className="flex items-center gap-4 min-w-0">
-                  <NavigationLinks />
-                </nav>
-
-                <div className="flex-shrink-0">
-                  <AuthButtons />
-                </div>
-              </div>
+              <AuthButtons />
             )}
           </div>
+        )}
 
-          {/* Mobile Menu Button */}
-          <div className="md:hidden flex items-center gap-2 flex-shrink-0">
-            <div className="flex items-center gap-1 flex-shrink-0">
-              <ChangelogModal 
-                trigger={
-                  <Button variant="ghost" size="sm" className="header-action-btn p-2">
-                    <FileText className="h-4 w-4" />
-                  </Button>
-                }
-              />
-              <WhatsNewModal 
-                trigger={
-                  <Button variant="ghost" size="sm" className="header-action-btn p-2">
-                    <Star className="h-4 w-4" />
-                  </Button>
-                }
-              />
-            </div>
-            <button
-              onClick={toggleMobileMenu}
-              className="header-mobile-btn"
-              aria-label="Toggle mobile menu"
-              type="button"
-            >
-              {isMobileMenuOpen ? (
-                <X className="h-5 w-5 text-white" />
-              ) : (
-                <Menu className="h-5 w-5 text-white" />
-              )}
+        {/* Mobile menu */}
+        {mobile && (
+          <div className="flex items-center gap-2">
+            <ChangelogModal 
+              trigger={
+                <Button variant="ghost" size="sm" className="p-2 text-slate-300 hover:text-white">
+                  <FileText className="h-4 w-4" />
+                </Button>
+              }
+            />
+            <WhatsNewModal 
+              trigger={
+                <Button variant="ghost" size="sm" className="p-2 text-slate-300 hover:text-white">
+                  <Star className="h-4 w-4" />
+                </Button>
+              }
+            />
+            <button onClick={() => setOpen(!open)} className="p-1 rounded">
+              {open ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
           </div>
-        </div>
+        )}
       </div>
 
-      {/* Mobile Menu - Full Width Positioning */}
-      {isMobileMenuOpen && (
-        <div className="md:hidden header-mobile-menu">
-          <nav className="flex flex-col gap-2">
+      {/* Mobile drawer */}
+      {mobile && open && (
+        <nav className="absolute w-full bg-slate-800 top-16 pb-4 z-50">
+          <div className="flex flex-col gap-2 p-4">
             <NavigationLinks isMobile={true} />
             
             {user ? (
@@ -252,11 +206,9 @@ const Header: React.FC<HeaderProps> = ({ isSlideshowOpen = false }) => {
                 <AuthButtons />
               </div>
             )}
-          </nav>
-        </div>
+          </div>
+        </nav>
       )}
     </header>
   );
-};
-
-export default Header;
+}

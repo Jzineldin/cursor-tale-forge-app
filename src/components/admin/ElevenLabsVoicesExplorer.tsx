@@ -112,7 +112,7 @@ export const ElevenLabsVoicesExplorer: React.FC = () => {
       case 'premade':
         return <Volume2 className="h-4 w-4" />;
       case 'professional':
-        return <Crown className="h-4 w-4 text-yellow-500" />;
+        return <Crown className="h-4 w-4 text-white" />;
       case 'cloned':
         return <User className="h-4 w-4 text-blue-500" />;
       case 'generated':

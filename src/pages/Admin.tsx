@@ -24,6 +24,7 @@ import { toast } from 'sonner';
 import { Save, Activity, Settings, FileText, BarChart3, Zap, DollarSign, Volume2, Database, RefreshCw, AlertTriangle, Users } from 'lucide-react';
 import { usePublicStoriesMigration } from '@/utils/migratePublicStories';
 
+import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 const Admin: React.FC = () => {
   const { hasAccess, loading: accessLoading } = useAdminAccess();
   const { settings, setSettings, loading } = useAdminSettings();
@@ -269,7 +270,7 @@ const Admin: React.FC = () => {
                     >
                       {isMigrating ? (
                         <>
-                          <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
+                          <LoadingSpinner size="sm" className="mr-2 h-4 w-4 " />
                           Running Migration...
                         </>
                       ) : (

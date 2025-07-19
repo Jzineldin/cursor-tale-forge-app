@@ -151,6 +151,8 @@ const InlineStoryCreation: React.FC<InlineStoryCreationProps> = ({ onExit, resum
                 choices={currentSegment.choices}
                 isGenerating={isCurrentlyGenerating}
                 onChoiceSelect={(choice) => showConfirmation('choice', choice)}
+                skipImage={skipImage}
+                onSkipImageChange={setSkipImage}
               />
             )}
 

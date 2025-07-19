@@ -28,7 +28,7 @@ const StoryImageSection: React.FC<StoryImageSectionProps> = React.memo(({
         imageUrl={imageUrl || null}
         imageGenerationStatus={imageGenerationStatus || 'pending'}
         altText="AI generated story illustration"
-        className="w-full max-w-4xl h-80 md:h-96 rounded-lg shadow-lg mx-auto"
+        className="w-full max-w-4xl h-64 md:h-80 rounded-lg shadow-lg mx-auto"
         segmentId={segmentId || ''}
         {...(onRetry && { onRetry })}
       />

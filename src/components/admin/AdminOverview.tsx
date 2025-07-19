@@ -230,7 +230,7 @@ const AdminOverview: React.FC = () => {
           value={stats?.imageSegments || 0}
           icon={<Image className="h-6 w-6 text-white" />}
           description="Segments with images"
-          color="bg-orange-600"
+          color="bg-brand-indigo"
         />
       </div>
 

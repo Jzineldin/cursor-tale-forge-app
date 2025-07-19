@@ -153,7 +153,7 @@ const SystemLogsViewer: React.FC = () => {
       case 'error':
         return <AlertCircle className="h-4 w-4 text-red-500" />;
       case 'warning':
-        return <AlertCircle className="h-4 w-4 text-yellow-500" />;
+        return <AlertCircle className="h-4 w-4 text-white" />;
       case 'info':
         return <CheckCircle className="h-4 w-4 text-blue-500" />;
       case 'debug':
@@ -302,7 +302,7 @@ const SystemLogsViewer: React.FC = () => {
           </div>
           <div className="bg-slate-700 p-3 rounded-lg">
             <div className="text-sm text-purple-200">Warnings</div>
-            <div className="text-2xl font-bold text-yellow-400">
+            <div className="text-2xl font-bold text-white">
               {filteredLogs.filter(log => log.level === 'warning').length}
             </div>
           </div>

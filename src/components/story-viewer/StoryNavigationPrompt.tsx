@@ -25,7 +25,7 @@ const StoryNavigationPrompt = () => {
           
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <Link to="/my-stories">
-              <Button className="bg-purple-600 hover:bg-purple-700 text-white">
+              <Button className="fantasy-heading bg-purple-600 hover:bg-purple-700 text-white">
                 {user ? (
                   <>
                     <BookOpen className="mr-2 h-4 w-4" />
@@ -41,7 +41,7 @@ const StoryNavigationPrompt = () => {
             </Link>
             
             <Link to="/">
-              <Button variant="outline" className="border-purple-600 text-purple-200 hover:bg-purple-600 hover:text-white">
+              <Button variant="outline" className="fantasy-heading border-purple-600 text-purple-200 hover:bg-purple-600 hover:text-white">
                 <Home className="mr-2 h-4 w-4" />
                 Create Another Story
               </Button>
@@ -54,7 +54,7 @@ const StoryNavigationPrompt = () => {
                 Want to keep your stories forever?
               </p>
               <Link to="/#waitlist">
-                <Button size="sm" variant="outline" className="border-orange-500 text-orange-200 hover:bg-orange-500 hover:text-white">
+                <Button size="sm" variant="outline" className="fantasy-heading border-brand-indigo text-indigo-200 hover:bg-brand-indigo hover:text-white">
                   Join Waitlist
                 </Button>
               </Link>

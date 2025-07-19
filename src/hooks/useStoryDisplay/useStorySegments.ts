@@ -49,7 +49,11 @@ export const useStorySegments = () => {
           audioStatus: s.audio_generation_status 
         })));
         
-        setAllStorySegments(enhancedSegments);
+        // Context window capping: keep only last 2 segments (< 1 kB)
+        const cappedSegments = enhancedSegments.slice(-2);
+        console.log(`📏 Context window: ${enhancedSegments.length} total segments, keeping last ${cappedSegments.length}`);
+        
+        setAllStorySegments(cappedSegments);
         setCurrentStorySegment(enhancedSegments[enhancedSegments.length - 1]);
         setSegmentCount(enhancedSegments.length);
       }

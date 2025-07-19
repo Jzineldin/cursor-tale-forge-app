@@ -209,7 +209,7 @@
   position: relative;
   z-index: 10;
   min-height: 100vh;
-  padding-top: 120px; /* Increased padding to prevent header overlap */
+  padding-top: 80px; /* Reduced padding to fix header gap */
 }
 
 /* Story Card System */

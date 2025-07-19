@@ -7,8 +7,16 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
+import { 
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
 
-import { Search, Filter, BookOpen, Clock, CheckCircle, Grid, List, PenTool, Eye, Edit, Check, X } from 'lucide-react';
+import { Search, Filter, BookOpen, Clock, CheckCircle, Grid, List, PenTool, Eye, Edit, Check, X, Home } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -145,6 +153,11 @@ const MyStories: React.FC = () => {
     };
   }, [filteredAndSortedStories]);
 
+  // Debug: Log stories data to see what's available
+  // console.log('All stories data:', stories);
+  // console.log('Filtered stories:', filteredAndSortedStories);
+  // console.log('Story groups:', storyGroups);
+
   // Memoized handlers
   const handleSetStoryToDelete = useMemoizedCallback((storyId: string) => {
     const story = stories.find(s => s.id === storyId);
@@ -205,22 +218,110 @@ const MyStories: React.FC = () => {
   const renderStoryCard = (story: any) => {
     const isEditing = editingStoryId === story.id;
     
+    // Get genre image based on story mode - using actual available images
+    const getGenreImage = (storyMode: string) => {
+      const genreImages: { [key: string]: string } = {
+        'fantasy-magic': '/images/AlbedoBase_XL_Fantasy_book_cover_design_glowing_rune_symbols_m_1.jpg',
+        'adventure-exploration': '/images/adventure-and-exploration.png',
+        'mystery-detective': '/images/mystery-and-detective.png',
+        'values-lessons': '/images/values-and-life-lessons.png',
+        'science-space': '/images/astronaut-background-genre.jpg',
+        'educational-stories': '/images/educational-adventure.png',
+        'bedtime-stories': '/images/child-adapted-story.png',
+        'silly-humor': '/images/silly-and-humorous.png'
+      };
+      return genreImages[storyMode] || '/images/AlbedoBase_XL_Fantasy_book_cover_design_glowing_rune_symbols_m_1.jpg'; // default fallback
+    };
+
+    const getGenreEmoji = (storyMode: string) => {
+      const genreEmojis: { [key: string]: string } = {
+        'fantasy-magic': '🧙‍♂️',
+        'adventure-exploration': '🗺️',
+        'mystery-detective': '🔍',
+        'values-lessons': '💎',
+        'science-space': '🚀',
+        'educational-stories': '📚',
+        'bedtime-stories': '🌙',
+        'silly-humor': '😄'
+      };
+      return genreEmojis[storyMode] || '📖';
+    };
+
+    const getGenreColor = (storyMode: string) => {
+      const genreColors: { [key: string]: string } = {
+        'fantasy-magic': 'from-purple-500/20 to-pink-500/20',
+        'adventure-exploration': 'from-blue-500/20 to-cyan-500/20',
+        'mystery-detective': 'from-green-500/20 to-emerald-500/20',
+        'values-lessons': 'from-amber-500/20 to-orange-500/20',
+        'science-space': 'from-indigo-500/20 to-purple-500/20',
+        'educational-stories': 'from-teal-500/20 to-blue-500/20',
+        'bedtime-stories': 'from-blue-500/20 to-indigo-500/20',
+        'silly-humor': 'from-yellow-500/20 to-orange-500/20'
+      };
+      return genreColors[storyMode] || 'from-gray-500/20 to-gray-600/20';
+    };
+
+    const getGenreDisplayName = (storyMode: string) => {
+      const genreNames: { [key: string]: string } = {
+        'fantasy-magic': 'Fantasy & Magic',
+        'adventure-exploration': 'Adventure & Exploration',
+        'mystery-detective': 'Mystery & Detective',
+        'values-lessons': 'Values & Life Lessons',
+        'science-space': 'Science & Space',
+        'educational-stories': 'Educational Stories',
+        'bedtime-stories': 'Bedtime Stories',
+        'silly-humor': 'Silly & Humorous'
+      };
+      return genreNames[storyMode] || 'Unknown Genre';
+    };
+    
     return (
-      <div key={story.id} className="h-96 bg-white/10 backdrop-blur-xl rounded-xl overflow-hidden shadow-2xl border border-white/20 hover:bg-white/15 hover:scale-105 transition-all duration-300 flex flex-col group">
-        <div className="h-40 overflow-hidden">
-          {story.thumbnail_url && (
-            <img 
-              src={story.thumbnail_url} 
-              alt={story.title ?? 'Story thumbnail'}
-              className="w-full h-full object-cover"
-              onError={(e) => {
-                const target = e.target as HTMLImageElement;
-                target.style.display = 'none';
-              }}
-            />
+      <div key={story.id} className="group relative bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-md rounded-2xl overflow-hidden shadow-2xl border border-gray-600/50 hover:border-amber-400/50 hover:scale-105 transition-all duration-300">
+        {/* Genre Image Header */}
+        <div className="relative h-48 overflow-hidden">
+          <div className={`absolute inset-0 bg-gradient-to-br ${getGenreColor(story.story_mode)}`} />
+          <img 
+            src={getGenreImage(story.story_mode)}
+            alt={`${getGenreDisplayName(story.story_mode)} genre`}
+            className="w-full h-full object-cover opacity-60 group-hover:opacity-80 transition-opacity duration-300"
+            onError={(e) => {
+              const target = e.target as HTMLImageElement;
+              target.style.display = 'none';
+            }}
+          />
+          
+          {/* Genre Badge */}
+          <div className="absolute top-4 left-4">
+            <div className="bg-black/50 backdrop-blur-sm rounded-lg px-3 py-1 flex items-center gap-2">
+              <span className="text-lg">{getGenreEmoji(story.story_mode)}</span>
+              <span className="text-white text-sm font-medium">
+                {getGenreDisplayName(story.story_mode)}
+              </span>
+            </div>
+          </div>
+
+          {/* Completion Status */}
+          {story.is_completed && (
+            <div className="absolute top-4 right-4">
+              <div className="bg-green-500/80 backdrop-blur-sm rounded-full px-3 py-1">
+                <span className="text-white text-xs font-medium">✓ Complete</span>
+              </div>
+            </div>
           )}
+
+          {/* Chapter Count */}
+          <div className="absolute bottom-4 right-4">
+            <div className="bg-black/50 backdrop-blur-sm rounded-lg px-3 py-1 flex items-center gap-2">
+              <BookOpen className="h-4 w-4 text-amber-400" />
+              <span className="text-white text-sm font-medium">
+                {story.segment_count || 0} {story.segment_count === 1 ? 'chapter' : 'chapters'}
+              </span>
+            </div>
+          </div>
         </div>
-        <div className="p-6 flex flex-col flex-grow">
+
+        {/* Card Content */}
+        <div className="p-6">
           {/* Title with edit functionality */}
           <div className="mb-3">
             {isEditing ? (
@@ -253,7 +354,7 @@ const MyStories: React.FC = () => {
               </div>
             ) : (
               <div className="flex items-center gap-2">
-                <h3 className="text-white font-bold text-lg line-clamp-2 fantasy-heading flex-1">
+                <h3 className="text-white font-bold text-lg line-clamp-2 fantasy-heading flex-1 group-hover:text-amber-300 transition-colors">
                   {story.title ?? 'Untitled Story'}
                 </h3>
                 <button
@@ -267,22 +368,16 @@ const MyStories: React.FC = () => {
             )}
           </div>
           
-          <p className="text-gray-300 text-sm mb-4 line-clamp-3 flex-grow">
+          {/* Description */}
+          <p className="text-gray-300 text-sm mb-4 line-clamp-3 leading-relaxed">
             {story.description || 'No description available'}
           </p>
-          <div className="flex items-center justify-between text-xs text-gray-400 mb-4">
-            <div className="flex items-center gap-2">
-              <span>{story.story_mode || 'Unknown Genre'}</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <BookOpen className="h-3 w-3" />
-              <span>{story.segment_count || 0}</span>
-            </div>
-          </div>
-          <div className="flex items-center gap-2 mt-auto">
+
+          {/* Action Buttons */}
+          <div className="flex items-center gap-2">
             <button 
               onClick={() => navigate(`/story/${story.id}`)}
-              className="bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 flex items-center justify-center gap-2 whitespace-nowrap flex-1"
+              className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 flex items-center justify-center gap-2 whitespace-nowrap flex-1 group-hover:shadow-lg group-hover:shadow-amber-500/25"
             >
               <Eye className="h-4 w-4" />
               <span>{story.is_completed ? 'Read Story' : 'Continue'}</span>
@@ -312,43 +407,20 @@ const MyStories: React.FC = () => {
     <div className="magical-page-container">
       <div className="magical-content">
         <div className="container mx-auto px-4 py-16">
-          {/* Enhanced Header - matching Discover style */}
+          {/* NEW compact hero */}
           <div className="text-center mb-12 animate-magical-fade-in">
-            <div className="flex items-center justify-center gap-4 mb-4">
-              <div className="p-3 bg-gradient-to-br from-amber-500/20 to-orange-500/20 rounded-xl border border-amber-400/30">
-                <BookOpen className="h-8 w-8 text-amber-400" />
-              </div>
-              <h1 className="fantasy-heading text-4xl md:text-6xl font-bold text-white">
-                My <span className="text-amber-400">Stories</span>
-              </h1>
-            </div>
-            <p className="fantasy-subtitle text-xl text-gray-300 max-w-2xl mx-auto">
-              Your personal collection of interactive adventures and tales
+            <h1 className="fantasy-heading text-3xl md:text-4xl font-bold text-white mb-2">
+              Your Library
+            </h1>
+            <p className="fantasy-subtitle text-gray-400 text-lg">
+              Every adventure you've authored, here to replay or continue.
             </p>
-            <div className="flex items-center justify-center gap-6 mt-6 text-amber-300/80">
-              <div className="flex items-center gap-2">
-                <BookOpen className="h-5 w-5" />
-                <span>{stats.total} stories</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <CheckCircle className="h-5 w-5" />
-                <span>{stats.completed} completed</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Clock className="h-5 w-5" />
-                <span>{stats.inProgress} in progress</span>
-              </div>
-            </div>
-            
-            {/* Create New Story Button */}
-            <div className="mt-8">
-              <Link to="/">
-                <button className="btn-magical text-lg px-8 py-3">
-                  <PenTool className="h-5 w-5 mr-2" />
-                  Create New Story
-                </button>
-              </Link>
-            </div>
+            <button
+              onClick={() => navigate('/')}
+              className="mt-6 btn-magical text-lg px-8 py-3">
+              <PenTool className="h-5 w-5 mr-2" />
+              Create New Story
+            </button>
           </div>
 
           {/* Enhanced Search and Filters - matching Discover style */}
@@ -437,8 +509,7 @@ const MyStories: React.FC = () => {
                           onClick={() => setSelectedGenre(genre.value)}
                           className={`px-3 py-1 rounded text-sm ${selectedGenre === genre.value 
                             ? 'bg-amber-500 hover:bg-amber-600' 
-                            : 'glass-card text-gray-300 hover:bg-slate-700'
-                          }`}
+                            : 'glass-card text-gray-300 hover:bg-slate-700'}`}
                         >
                           {genre.emoji} {genre.label}
                         </button>

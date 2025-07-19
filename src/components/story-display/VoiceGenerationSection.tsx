@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Mic, Loader2, AlertCircle, RotateCcw } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 
+import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 interface VoiceGenerationSectionProps {
   storySegments: Array<{
     segment_text: string;
@@ -71,7 +72,7 @@ const VoiceGenerationSection: React.FC<VoiceGenerationSectionProps> = ({
       <CardContent>
         {isGenerating ? (
           <div className="text-center py-8">
-            <Loader2 className="h-12 w-12 animate-spin text-amber-400 mx-auto mb-4" />
+            <LoadingSpinner size="lg" className="h-12 w-12  text-amber-400 mx-auto mb-4" />
             <p className="text-amber-300 text-lg mb-2">Generating voice narration...</p>
             <p className="text-gray-400 text-sm">This may take 1-2 minutes</p>
             <div className="w-full bg-slate-700 rounded-full h-2 mt-4">

@@ -16,6 +16,7 @@ const config: Config = {
     'translateY-[-4px]',
     'line-clamp-2',
     'story-card-landscape',
+    {pattern:/min-(w|h)-11/}, // Mobile-crack: Safe touch size 44px
   ],
   theme: {
     container: {
@@ -60,7 +61,16 @@ const config: Config = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
-        // Add amber/gold theme colors
+        // TaleForge brand palette only
+        brand: {
+          rose: '#fb7185',
+          indigo: '#6366f1',
+          slate: { 
+            50: '#f8fafc',
+            900: '#0f172a'
+          }
+        },
+        // Legacy colors - deprecated, use brand colors instead
         amber: {
           50: '#fffbeb',
           100: '#fef3c7',
@@ -120,12 +130,17 @@ const config: Config = {
             opacity: "1"
           }
         },
+        "loader-bob": { 
+          "0%,100%": { transform: "translateY(0)" }, 
+          "50%": { transform: "translateY(-3px)" } 
+        }
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
         "fade-in": "fade-in 0.3s ease-out",
         "scale-in": "scale-in 0.2s ease-out",
+        "pulse-bob": "pulse 1.2s infinite, loader-bob 1.2s infinite",
       },
       transform: {
         '3d': 'preserve-3d',

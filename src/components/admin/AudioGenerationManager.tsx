@@ -159,7 +159,7 @@ const AudioGenerationManager: React.FC = () => {
                       onClick={() => handleResetStory(story.id)}
                       variant="outline"
                       size="sm"
-                      className="border-orange-500/50 text-orange-400 hover:bg-orange-500/20"
+                      className="border-brand-indigo/50 text-brand-indigo hover:bg-brand-indigo/20"
                     >
                       <RefreshCw className="h-4 w-4 mr-1" />
                       Reset

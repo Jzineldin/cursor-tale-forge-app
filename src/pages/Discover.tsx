@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 
 import { Search, Heart, Calendar, User, BookOpen, Sparkles, Filter, Grid, List, PenTool, Check, X, MessageCircle, Eye, Bookmark } from 'lucide-react';
 import { LikeButton } from '@/components/ui/LikeButton';
@@ -619,7 +620,7 @@ const Discover: React.FC = () => {
           {/* Loading State */}
           {isLoading && (
             <div className="text-center py-20">
-              <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-amber-400 mx-auto"></div>
+              <LoadingSpinner size="lg" className="mx-auto" />
               <p className="text-white mt-4">Loading amazing stories...</p>
             </div>
           )}
