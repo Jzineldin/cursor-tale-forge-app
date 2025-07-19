@@ -6,9 +6,9 @@ import { Clock, User, AlertTriangle } from 'lucide-react';
 
 const AnonymousStoriesBanner = () => {
   return (
-    <Alert className="mb-6 border-orange-500/50 bg-orange-500/10">
-      <AlertTriangle className="h-4 w-4 text-orange-500" />
-      <AlertDescription className="text-orange-200">
+            <Alert className="mb-6 border-brand-indigo/50 bg-brand-indigo/10">
+              <AlertTriangle className="h-4 w-4 text-brand-indigo" />
+        <AlertDescription className="text-indigo-200">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div className="flex items-start gap-3">
             <Clock className="h-5 w-5 text-orange-400 mt-0.5 flex-shrink-0" />

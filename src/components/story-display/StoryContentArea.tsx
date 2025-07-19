@@ -22,9 +22,11 @@ interface StoryContentAreaProps {
   onToggleHistory: () => void;
   onSwitchToPlayer: () => void;
   onToggleAudio: () => void;
-  onChoiceSelect: (choice: string) => void;
+  onChoiceSelect: (choice: string, skipImage?: boolean) => void;
   onFinishStory: () => void;
   onChapterChange: (index: number) => void;
+  skipImage?: boolean;
+  onSkipImageChange?: ((skipImage: boolean) => void) | undefined;
 }
 
 const StoryContentArea: React.FC<StoryContentAreaProps> = ({
@@ -42,7 +44,9 @@ const StoryContentArea: React.FC<StoryContentAreaProps> = ({
   onToggleAudio,
   onChoiceSelect,
   onFinishStory,
-  onChapterChange
+  onChapterChange,
+  skipImage = false,
+  onSkipImageChange
 }) => {
   const storySegmentsForSidebar = allStorySegments.length > 0 ? allStorySegments : (currentStorySegment ? [currentStorySegment] : []);
   const isStoryComplete = currentStorySegment?.is_end || false;
@@ -55,33 +59,36 @@ const StoryContentArea: React.FC<StoryContentAreaProps> = ({
   const showChoices = currentChapterIndex === allStorySegments.length - 1 && !isGenerating;
 
   return (
-    <div className={`flex-1 ${showHistory ? 'max-w-2xl md:max-w-4xl' : 'max-w-4xl md:max-w-6xl'} mx-auto space-y-6 md:space-y-8 px-2 md:px-4`}>
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <StoryProgress 
-          segmentCount={segmentCount}
-          maxSegments={maxSegments}
-        />
-        
-        <div className="flex flex-wrap gap-2 w-full sm:w-auto">
-          <Button
-            onClick={onToggleHistory}
-            variant="outline"
-            size="sm"
-            className="border-amber-500/40 text-amber-400 hover:bg-amber-500/20 flex-1 sm:flex-none"
-          >
-            {showHistory ? '← Hide History' : '📖 Show History'}
-          </Button>
+    <div className={`flex-1 ${showHistory ? 'max-w-2xl md:max-w-4xl' : 'max-w-4xl md:max-w-6xl'} mx-auto space-y-4`}>
+      {/* Header with progress and controls */}
+      <div className="bg-gradient-to-r from-slate-900/95 via-slate-800/95 to-slate-900/95 border-2 border-amber-500/40 backdrop-blur-lg shadow-2xl rounded-2xl p-4">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <StoryProgress 
+            segmentCount={segmentCount}
+            maxSegments={maxSegments}
+          />
           
-          {allStorySegments.length > 0 && (
+          <div className="flex flex-wrap gap-3 w-full sm:w-auto">
             <Button
-              onClick={onSwitchToPlayer}
+              onClick={onToggleHistory}
               variant="outline"
               size="sm"
-              className="border-amber-500/40 text-amber-400 hover:bg-amber-500/20 flex-1 sm:flex-none"
+              className="fantasy-heading border-amber-500/50 text-amber-300 hover:bg-amber-500/20 hover:border-amber-400 hover:text-amber-200 transition-all duration-300 flex-1 sm:flex-none bg-slate-800/60"
             >
-              🎭 Play Story
+              {showHistory ? '← Hide History' : '📖 Show History'}
             </Button>
-          )}
+            
+            {allStorySegments.length > 0 && (
+              <Button
+                onClick={onSwitchToPlayer}
+                variant="outline"
+                size="sm"
+                className="fantasy-heading border-amber-500/50 text-amber-300 hover:bg-amber-500/20 hover:border-amber-400 hover:text-amber-200 transition-all duration-300 flex-1 sm:flex-none bg-slate-800/60"
+              >
+                🎭 Play Story
+              </Button>
+            )}
+          </div>
         </div>
       </div>
 
@@ -103,6 +110,8 @@ const StoryContentArea: React.FC<StoryContentAreaProps> = ({
           showChoices={showChoices}
           isGenerating={isGenerating}
           onChoiceSelect={onChoiceSelect}
+          skipImage={skipImage}
+          onSkipImageChange={onSkipImageChange}
         />
       )}
 
@@ -129,7 +138,7 @@ const StoryContentArea: React.FC<StoryContentAreaProps> = ({
           <Button
             onClick={() => onChapterChange(allStorySegments.length - 1)}
             variant="outline"
-            className="border-amber-500/40 text-amber-400 hover:bg-amber-500/20"
+            className="fantasy-heading border-amber-500/40 text-amber-400 hover:bg-amber-500/20"
           >
             📚 Go to Latest Chapter
           </Button>

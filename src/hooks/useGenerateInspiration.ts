@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 
 interface UseGenerateInspirationReturn {
-  generateNewPrompts: (genre: string) => Promise<string[]>;
+  generateNewPrompts: (genre: string, age?: string) => Promise<string[]>;
   isGenerating: boolean;
   error: string | null;
 }
@@ -11,13 +11,13 @@ export const useGenerateInspiration = (): UseGenerateInspirationReturn => {
   const [isGenerating, setIsGenerating] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const generateNewPrompts = async (genre: string): Promise<string[]> => {
+  const generateNewPrompts = async (genre: string, age?: string): Promise<string[]> => {
     setIsGenerating(true);
     setError(null);
 
     try {
       const { data, error: functionError } = await supabase.functions.invoke('generate-inspiration-prompts', {
-        body: { genre }
+        body: { genre, age }
       });
 
       if (functionError) {

@@ -26,7 +26,7 @@ const StoryChapterNavigation: React.FC<StoryChapterNavigationProps> = ({
         disabled={currentChapterIndex === 0}
         variant="ghost"
         size="sm"
-        className="text-amber-400 hover:text-amber-300 disabled:opacity-50"
+        className="fantasy-heading text-amber-400 hover:text-amber-300 disabled:opacity-50"
       >
         <ChevronLeft className="h-4 w-4 mr-1" />
         Previous
@@ -34,11 +34,11 @@ const StoryChapterNavigation: React.FC<StoryChapterNavigationProps> = ({
 
       <div className="flex items-center gap-2">
         <BookOpen className="h-4 w-4 text-amber-400" />
-        <span className="text-amber-300 text-sm font-medium">
+        <span className="fantasy-heading text-amber-300 text-sm font-medium">
           Chapter {currentChapterIndex + 1} of {segments.length + (isGenerating ? 1 : 0)}
         </span>
         {isGenerating && currentChapterIndex === segments.length - 1 && (
-          <span className="text-amber-400 text-xs">(Next chapter loading...)</span>
+          <span className="fantasy-subtitle text-amber-400 text-xs">(Next chapter loading...)</span>
         )}
       </div>
 
@@ -47,7 +47,7 @@ const StoryChapterNavigation: React.FC<StoryChapterNavigationProps> = ({
         disabled={currentChapterIndex >= segments.length - 1}
         variant="ghost"
         size="sm"
-        className="text-amber-400 hover:text-amber-300 disabled:opacity-50"
+        className="fantasy-heading text-amber-400 hover:text-amber-300 disabled:opacity-50"
       >
         Next
         <ChevronRight className="h-4 w-4 ml-1" />

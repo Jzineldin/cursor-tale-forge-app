@@ -74,17 +74,32 @@ const DownloadStorySection: React.FC<DownloadStorySectionProps> = ({
   }, [storyId]);
 
   return (
-    <Card className="bg-gradient-to-r from-emerald-900/30 to-cyan-900/30 border-emerald-500/30 backdrop-blur-sm">
-      <CardHeader>
-        <CardTitle className="text-emerald-200 flex items-center gap-2">
-          <span className="h-5 w-5 bg-emerald-500 rounded-full flex items-center justify-center text-xs text-white">3</span>
-          Save & Share Your Story
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        <p className="text-emerald-300 mb-6">
-          Keep your story forever! Download it in multiple formats or share it with friends.
-        </p>
+    <div className="relative">
+      {/* Magical Background Glow */}
+      <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/10 via-cyan-500/10 to-teal-500/10 rounded-2xl blur-xl"></div>
+      
+      {/* Main Content Card */}
+      <div className="relative bg-gradient-to-br from-slate-900/95 via-slate-800/95 to-slate-900/95 backdrop-blur-xl border border-emerald-400/30 rounded-2xl shadow-2xl overflow-hidden">
+        {/* Magical Border Glow */}
+        <div className="absolute inset-0 bg-gradient-to-r from-emerald-400/20 via-cyan-400/20 to-teal-400/20 rounded-2xl blur-sm"></div>
+        
+        {/* Header */}
+        <div className="relative p-6 text-center border-b border-emerald-400/20">
+          <div className="flex items-center justify-center gap-3 mb-4">
+            <div className="p-2 bg-gradient-to-br from-emerald-500/20 to-cyan-500/20 rounded-lg border border-emerald-400/30">
+              <Download className="h-6 w-6 text-emerald-400" />
+            </div>
+          </div>
+          <h3 className="fantasy-heading text-2xl text-white mb-2">
+            Save & Share Your Story
+          </h3>
+          <p className="fantasy-subtitle text-gray-400">
+            Keep your story forever! Download it in multiple formats or share it with friends.
+          </p>
+        </div>
+        
+        {/* Content */}
+        <div className="relative p-6 space-y-4">
         
         <div className="flex flex-col sm:flex-row gap-3">
           {/* Enhanced Download Dropdown */}
@@ -93,7 +108,7 @@ const DownloadStorySection: React.FC<DownloadStorySectionProps> = ({
               <Button
                 variant="outline"
                 size="lg"
-                className="bg-emerald-600/90 hover:bg-emerald-600 border-2 border-emerald-400 hover:border-emerald-300 text-white px-6 py-3 font-semibold flex-1"
+                className="fantasy-button bg-gradient-to-r from-emerald-600 to-cyan-600 hover:from-emerald-700 hover:to-cyan-700 border-2 border-emerald-400 hover:border-emerald-300 text-white px-6 py-3 font-bold flex-1 shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
                 disabled={isExporting}
               >
                 {isExporting ? (
@@ -205,7 +220,7 @@ const DownloadStorySection: React.FC<DownloadStorySectionProps> = ({
             onClick={handleShare}
             variant="outline"
             size="lg"
-            className="bg-cyan-600/90 hover:bg-cyan-600 border-2 border-cyan-400 hover:border-cyan-300 text-white px-6 py-3 font-semibold flex-1"
+            className="fantasy-button bg-gradient-to-r from-cyan-600 to-teal-600 hover:from-cyan-700 hover:to-teal-700 border-2 border-cyan-400 hover:border-cyan-300 text-white px-6 py-3 font-bold flex-1 shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300"
           >
             <Share2 className="mr-2 h-5 w-5" />
             🔗 Share Link
@@ -213,15 +228,16 @@ const DownloadStorySection: React.FC<DownloadStorySectionProps> = ({
         </div>
 
         <div className="text-center mt-4">
-          <p className="text-emerald-400 text-sm">
+          <p className="fantasy-subtitle text-emerald-300 text-sm">
             ✨ Export includes all chapters, images, and formatting
           </p>
-          <p className="text-emerald-400/80 text-xs mt-1">
+          <p className="fantasy-subtitle text-emerald-200/70 text-xs mt-1">
             💡 Tip: Use EPUB for e-readers, PDF for printing, HTML for web viewing
           </p>
         </div>
-      </CardContent>
-    </Card>
+        </div>
+      </div>
+    </div>
   );
 };
 

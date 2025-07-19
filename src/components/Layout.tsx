@@ -49,7 +49,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       {/* Main content - full height when header is hidden */}
       <main 
         className={`relative z-10 transition-all duration-500 ease-in-out ${
-          isHeaderVisible ? 'pt-16 sm:pt-20 md:pt-24' : 'pt-0'
+          isHeaderVisible ? 'pt-0' : 'pt-0'
         }`} 
         style={{ background: 'transparent' }}
         data-breakpoint={breakpoint}

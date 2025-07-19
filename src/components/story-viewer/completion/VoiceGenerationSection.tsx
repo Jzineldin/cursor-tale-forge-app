@@ -9,6 +9,7 @@ import { useAuth } from '@/context/AuthProvider';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 
+import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 interface VoiceGenerationSectionProps {
   hasAudio: boolean;
   isGenerating: boolean;
@@ -127,134 +128,164 @@ const VoiceGenerationSection: React.FC<VoiceGenerationSectionProps> = ({
   // Show premium features notice for unauthenticated users
   if (!isAuthenticated) {
     return (
-      <Card className="bg-slate-800/90 border-amber-500/30 backdrop-blur-sm">
-        <CardHeader>
-          <CardTitle className="text-slate-200 flex items-center gap-2">
-            <Lock className="h-5 w-5 text-amber-400" />
-            Voice Narration
-            <span className="text-xs bg-amber-100 text-amber-800 px-2 py-1 rounded-full">
-              Premium
-            </span>
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="text-center py-8">
-            <div className="text-4xl mb-4">🔒</div>
-            <h3 className="text-lg font-semibold text-white mb-3">
+      <div className="relative">
+        {/* Magical Background Glow */}
+        <div className="absolute inset-0 bg-gradient-to-br from-amber-500/10 via-orange-500/10 to-red-500/10 rounded-2xl blur-xl"></div>
+        
+        {/* Main Content Card */}
+        <div className="relative bg-gradient-to-br from-slate-900/95 via-slate-800/95 to-slate-900/95 backdrop-blur-xl border border-amber-400/30 rounded-2xl shadow-2xl overflow-hidden">
+          {/* Magical Border Glow */}
+          <div className="absolute inset-0 bg-gradient-to-r from-amber-400/20 via-orange-400/20 to-red-400/20 rounded-2xl blur-sm"></div>
+          
+          {/* Header */}
+          <div className="relative p-6 text-center border-b border-amber-400/20">
+            <div className="flex items-center justify-center gap-3 mb-4">
+              <div className="p-2 bg-gradient-to-br from-amber-500/20 to-orange-500/20 rounded-lg border border-amber-400/30">
+                <Lock className="h-6 w-6 text-amber-400" />
+              </div>
+            </div>
+            <h3 className="fantasy-heading text-2xl text-white mb-2">
               Premium Voice Features
             </h3>
-            <p className="text-slate-300 mb-6 max-w-md mx-auto">
-              Create beautiful narrated stories with AI voices. Log in to unlock professional-quality audio narration for your stories.
+            <p className="fantasy-subtitle text-gray-400">
+              Create beautiful narrated stories with AI voices. Log in to unlock professional-quality audio narration.
             </p>
-            <div className="space-y-3">
-              <Button
-                onClick={handleLoginRedirect}
-                className="bg-amber-600 hover:bg-amber-700 text-white px-6 py-3"
-                size="lg"
-              >
-                Sign In to Continue
-              </Button>
-              <p className="text-xs text-slate-400">
-                Free to sign up • No credit card required
-              </p>
-            </div>
           </div>
-        </CardContent>
-      </Card>
+          
+          {/* Content */}
+          <div className="relative p-6 text-center">
+            <div className="text-4xl mb-4">🔒</div>
+            <Button
+              onClick={handleLoginRedirect}
+              className="fantasy-button bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white font-bold px-8 py-3 rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300"
+              size="lg"
+            >
+              Sign In to Continue
+            </Button>
+            <p className="fantasy-subtitle text-gray-400 text-sm mt-4">
+              Free to sign up • No credit card required
+            </p>
+          </div>
+        </div>
+      </div>
     );
   }
 
   return (
-    <Card className="bg-slate-800/90 border-amber-500/30 backdrop-blur-sm">
-      <CardHeader>
-        <CardTitle className="text-slate-200 flex items-center gap-2">
-          {hasAudio ? (
-            <CheckCircle className="h-5 w-5 text-green-400" />
-          ) : (
-            <span className="h-5 w-5 bg-amber-500 rounded-full flex items-center justify-center text-xs text-white">2</span>
-          )}
-          Voice Narration
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
-        {hasAudio ? (
-          <div className="space-y-4">
-            <p className="text-green-400 mb-4">🎵 Your story audio is ready!</p>
-            <AudioPlayer src={fullStoryAudioUrl || ''} />
-          </div>
-        ) : canGenerate ? (
-          <div className="space-y-4">
-            <p className="text-slate-400 mb-4">
-              Add voice narration to bring your story to life using ElevenLabs voices
-            </p>
-            <div className="space-y-2">
-              <p className="text-sm text-slate-300">Select a voice for your story narration:</p>
-              <VoiceSelector 
-                selectedVoice={selectedVoice}
-                onVoiceChange={setSelectedVoice}
-              />
-              {/* Debug info removed for cleaner UI */}
-            </div>
-            <Button 
-              onClick={handleGenerateVoice}
-              disabled={isGenerating}
-              className="bg-amber-600 hover:bg-amber-700"
-              size="lg"
-            >
-              {isGenerating ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Generating Voice...
-                </>
+    <div className="relative">
+      {/* Magical Background Glow */}
+      <div className="absolute inset-0 bg-gradient-to-br from-amber-500/10 via-orange-500/10 to-red-500/10 rounded-2xl blur-xl"></div>
+      
+      {/* Main Content Card */}
+      <div className="relative bg-gradient-to-br from-slate-900/95 via-slate-800/95 to-slate-900/95 backdrop-blur-xl border border-amber-400/30 rounded-2xl shadow-2xl overflow-hidden">
+        {/* Magical Border Glow */}
+        <div className="absolute inset-0 bg-gradient-to-r from-amber-400/20 via-orange-400/20 to-red-400/20 rounded-2xl blur-sm"></div>
+        
+        {/* Header */}
+        <div className="relative p-6 text-center border-b border-amber-400/20">
+          <div className="flex items-center justify-center gap-3 mb-4">
+            <div className="p-2 bg-gradient-to-br from-amber-500/20 to-orange-500/20 rounded-lg border border-amber-400/30">
+              {hasAudio ? (
+                <CheckCircle className="h-6 w-6 text-green-400" />
               ) : (
-                <>
-                  <Mic className="mr-2 h-4 w-4" />
-                  Generate Voice Narration
-                </>
+                <Mic className="h-6 w-6 text-amber-400" />
               )}
-            </Button>
-          </div>
-        ) : isGenerating && !isStuck ? (
-          <div className="text-center py-8">
-            <Loader2 className="h-8 w-8 animate-spin mx-auto mb-3 text-amber-500" />
-            <p className="text-amber-300 font-medium mb-2">Generating voice narration...</p>
-            <p className="text-sm text-amber-400 mt-1">This may take a few minutes</p>
-          </div>
-        ) : isStuck ? (
-          <div className="text-center py-8">
-            <AlertTriangle className="h-8 w-8 mx-auto mb-3 text-orange-500" />
-            <p className="text-orange-300 font-medium mb-2">Audio generation appears to be stuck</p>
-            <p className="text-sm text-orange-400 mb-4">
-              The previous audio generation may have failed. You can reset and try again with ElevenLabs voices.
-            </p>
-            <div className="space-y-3">
-              <Button 
-                onClick={handleResetAudioStatus}
-                disabled={isResetting}
-                variant="outline"
-                className="border-orange-500/50 text-orange-400 hover:bg-orange-500/20"
-              >
-                {isResetting ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Resetting...
-                  </>
-                ) : (
-                  <>
-                    <RefreshCw className="mr-2 h-4 w-4" />
-                    Reset Audio Status
-                  </>
-                )}
-              </Button>
             </div>
           </div>
-        ) : (
-          <div className="text-center py-8">
-            <p className="text-slate-400">Voice generation not available</p>
-          </div>
-        )}
-      </CardContent>
-    </Card>
+          <h3 className="fantasy-heading text-2xl text-white mb-2">
+            Voice Narration
+          </h3>
+          <p className="fantasy-subtitle text-gray-400">
+            Transform your story into an immersive audio experience
+          </p>
+        </div>
+        
+        {/* Content */}
+        <div className="relative p-6">
+          {hasAudio ? (
+            <div className="text-center space-y-4">
+              <p className="fantasy-subtitle text-green-300 text-lg">🎵 Your story audio is ready!</p>
+              <div className="max-w-md mx-auto">
+                <AudioPlayer src={fullStoryAudioUrl || ''} />
+              </div>
+            </div>
+          ) : canGenerate ? (
+            <div className="space-y-6">
+              <div className="text-center">
+                <p className="fantasy-subtitle text-gray-400 mb-4">
+                  Add voice narration to bring your story to life using ElevenLabs voices
+                </p>
+                <div className="space-y-4">
+                  <p className="text-sm text-slate-300">Select a voice for your story narration:</p>
+                  <VoiceSelector 
+                    selectedVoice={selectedVoice}
+                    onVoiceChange={setSelectedVoice}
+                  />
+                </div>
+              </div>
+              <div className="text-center">
+                <Button 
+                  onClick={handleGenerateVoice}
+                  disabled={isGenerating}
+                  className="fantasy-button bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white font-bold py-3 px-6 rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                  size="lg"
+                >
+                  {isGenerating ? (
+                    <>
+                      <LoadingSpinner size="sm" className="mr-2 h-5 w-5 " />
+                      Generating Voice...
+                    </>
+                  ) : (
+                    <>
+                      <Mic className="mr-2 h-5 w-5" />
+                      Generate Voice Narration
+                    </>
+                  )}
+                </Button>
+              </div>
+            </div>
+          ) : isGenerating && !isStuck ? (
+            <div className="text-center py-8">
+              <LoadingSpinner size="lg" className="h-12 w-12  mx-auto mb-4 text-amber-400" />
+              <p className="fantasy-heading text-xl text-amber-300 font-medium mb-2">Generating voice narration...</p>
+              <p className="fantasy-subtitle text-amber-200/70">This may take a few minutes</p>
+            </div>
+          ) : isStuck ? (
+            <div className="text-center py-8">
+              <AlertTriangle className="h-12 w-12 mx-auto mb-4 text-orange-400" />
+              <p className="fantasy-heading text-xl text-orange-300 font-medium mb-2">Audio generation appears to be stuck</p>
+              <p className="fantasy-subtitle text-orange-200/70 mb-6">
+                The previous audio generation may have failed. You can reset and try again with ElevenLabs voices.
+              </p>
+              <div className="space-y-3">
+                <Button 
+                  onClick={handleResetAudioStatus}
+                  disabled={isResetting}
+                  variant="outline"
+                  className="border-orange-500/50 text-orange-300 hover:bg-orange-500/20 fantasy-button"
+                >
+                  {isResetting ? (
+                    <>
+                      <LoadingSpinner size="sm" className="mr-2 h-4 w-4 " />
+                      Resetting...
+                    </>
+                  ) : (
+                    <>
+                      <LoadingSpinner size="sm" className="mr-2 h-4 w-4" />
+                      Reset Audio Status
+                    </>
+                  )}
+                </Button>
+              </div>
+            </div>
+          ) : (
+            <div className="text-center py-8">
+              <p className="fantasy-subtitle text-gray-400">Voice generation not available</p>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
   );
 };
 

@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 import { Flag, Crown } from 'lucide-react';
+import { heroGrad, actionBtn } from '@/components/ui/theme';
 import VoiceSelectionDialog from './VoiceSelectionDialog';
 import EnhancedAudioPlayer from './EnhancedAudioPlayer';
 import StorySegmentsDisplay from './StorySegmentsDisplay';
@@ -65,28 +66,31 @@ const StoryEndSection: React.FC<StoryEndSectionProps> = ({
   if (isEnd) {
     return (
       <div className="space-y-8">
-        {/* Story Complete Header */}
-        <Card className="bg-gradient-to-r from-amber-500/20 to-purple-500/20 border-amber-500/30 text-center">
-          <CardHeader>
-            <CardTitle className="text-3xl font-serif text-amber-300 flex items-center justify-center gap-2">
-              <Crown className="h-8 w-8" />
-              Story Complete!
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-xl text-gray-300 mb-2">🎉 The End 🎉</p>
-            <p className="text-gray-400">Your adventure has reached its conclusion!</p>
-            <div className="mt-4 text-sm text-amber-300">
-              <span className="font-semibold">{storyTitle}</span> • {storySegments.length} chapters
+        {/* TRUE STORY CARD - one slick toolbar in Hero theme */}
+        <section className={heroGrad + ' p-6 mt-10 rounded-2xl'}>
+          <div className="flex items-center justify-between">
+            <h2 className="fantasy-heading text-2xl font-bold text-white">Your adventure is complete</h2>
+            <div className="flex space-x-2">
+              <button className={`fantasy-heading ${actionBtn}`} onClick={() => window.open(`/story/${storyId}`, '_blank')}>
+                Share Story
+              </button>
+              <button className={`fantasy-heading ${actionBtn}`}>Download PDF</button>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+
+          {/* stats ribbon — optional but thematic */}
+          <div className="mt-4 flex text-xs font-medium text-indigo-100 space-x-6">
+            <span>{storySegments.reduce((total, seg) => total + (seg.segment_text?.split(/\s+/).length || 0), 0)} words</span>
+            <span>Images: {storySegments.filter(seg => seg.image_url).length}</span>
+            <span>Chapters: {storySegments.length}</span>
+          </div>
+        </section>
 
         {/* Voice Generation Section - This is where users generate full story narration */}
         {!audioUrl && storySegments.length > 0 && (
           <Card className="bg-slate-800/80 border-amber-500/20 text-center">
             <CardHeader>
-              <CardTitle className="text-amber-300 text-xl">🎙️ Generate Voice Narration</CardTitle>
+              <CardTitle className="fantasy-heading text-amber-300 text-xl">🎙️ Generate Voice Narration</CardTitle>
               <p className="text-gray-300 text-sm">Transform your complete story into an immersive audio experience</p>
             </CardHeader>
             <CardContent>
@@ -131,11 +135,19 @@ const StoryEndSection: React.FC<StoryEndSectionProps> = ({
 
   return (
     <div className="end-story-section w-full pt-6 border-t border-amber-500/20">
+      <div className="text-center mb-4">
+        <p className="fantasy-subtitle text-amber-200 text-sm mb-3">
+          ✨ Complete your adventure with a magical ending ✨
+        </p>
+        <p className="text-gray-300 text-xs mb-4">
+          This will create a beautiful conclusion to your story, summarizing the journey and crafting an appropriate ending
+        </p>
+      </div>
       <Button
         onClick={onFinishStory}
         disabled={isGenerating}
         variant="outline"
-        className="w-full border-orange-500/50 text-orange-300 hover:bg-orange-500/20 hover:border-orange-400 transition-all duration-300 py-3 text-lg font-medium bg-slate-800/60"
+                    className="fantasy-heading w-full border-brand-indigo/50 text-indigo-300 hover:bg-brand-indigo/20 hover:border-indigo-400 transition-all duration-300 py-3 text-lg font-medium bg-slate-800/60"
       >
         <Flag className="mr-3 h-5 w-5" />
         End Story Here

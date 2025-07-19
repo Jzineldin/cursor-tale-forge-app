@@ -39,7 +39,7 @@ const StoryRealtimeStatus: React.FC<StoryRealtimeStatusProps> = ({
                 description: 'Using backup polling for updates. Images may take longer to appear.',
                 variant: 'default' as const,
                 showRefresh: true,
-                color: 'text-yellow-600'
+                color: 'text-white'
             };
         }
 

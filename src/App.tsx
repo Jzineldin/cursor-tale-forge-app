@@ -10,6 +10,9 @@ import Layout from "@/components/Layout";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import { Suspense, lazy } from "react";
 
+// Import magical theme styles
+import "@/styles/magical-theme.css";
+
 // Lazy load components for better performance
 const Index = lazy(() => import("./pages/Index"));
 

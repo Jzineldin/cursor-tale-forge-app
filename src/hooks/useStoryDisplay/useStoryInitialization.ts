@@ -10,7 +10,7 @@ export const useStoryInitialization = () => {
 
   // Get parameters from URL - make them stable
   const genre = searchParams.get('genre') || searchParams.get('mode') || 'fantasy';
-  const prompt = searchParams.get('prompt') || '';
+  const prompt = searchParams.get('prompt') || 'Create an exciting story';
   const characterName = searchParams.get('characterName') || '';
   const mode = searchParams.get('mode') || 'create'; // Default to create mode
 
@@ -18,7 +18,10 @@ export const useStoryInitialization = () => {
   useEffect(() => {
     console.log('🆔 Story ID from params:', id);
     console.log('🎭 Mode from params:', mode);
-  }, [id, mode]);
+    console.log('📝 Prompt from params:', prompt);
+    console.log('🎭 Genre from params:', genre);
+    console.log('🔍 Raw search params:', searchParams.toString());
+  }, [id, mode, prompt, genre, searchParams]);
 
   return {
     id,

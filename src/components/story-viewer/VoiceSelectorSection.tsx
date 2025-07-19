@@ -6,6 +6,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { Play, Volume2, Loader2, RefreshCw, User, Mic, Crown } from 'lucide-react';
 
+import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 interface Voice {
   voice_id: string;
   name: string;
@@ -176,7 +177,7 @@ const VoiceSelectorSection: React.FC<VoiceSelectorSectionProps> = ({
       case 'cloned':
         return 'text-blue-400 bg-blue-900/30 border-blue-500/30';
       case 'generated':
-        return 'text-orange-400 bg-orange-900/30 border-orange-500/30';
+        return 'text-brand-indigo bg-indigo-900/30 border-brand-indigo/30';
       default:
         return 'text-slate-400 bg-slate-700/30 border-slate-500/30';
     }
@@ -195,7 +196,7 @@ const VoiceSelectorSection: React.FC<VoiceSelectorSectionProps> = ({
           Story Narration
         </h2>
         <div className="text-center py-8 bg-slate-700/50 rounded-lg">
-          <Loader2 className="animate-spin w-8 h-8 border-2 border-amber-500 border-t-transparent rounded-full mx-auto mb-3" />
+          <LoadingSpinner size="md" className=" w-8 h-8 border-2 border-amber-500 border-t-transparent rounded-full mx-auto mb-3" />
           <p className="text-slate-300">Checking access...</p>
         </div>
       </div>
@@ -237,9 +238,9 @@ const VoiceSelectorSection: React.FC<VoiceSelectorSectionProps> = ({
           className="flex items-center gap-2 text-xs px-3 py-2 bg-slate-700 hover:bg-slate-600 text-slate-300 rounded-lg transition-colors disabled:opacity-50"
         >
           {loadingVoices ? (
-            <Loader2 className="h-3 w-3 animate-spin" />
+            <LoadingSpinner size="sm" className="h-3 w-3 " />
           ) : (
-            <RefreshCw className="h-3 w-3" />
+            <LoadingSpinner size="sm" className="h-3 w-3" />
           )}
           {loadingVoices ? 'Loading...' : 'Refresh Voices'}
         </button>
@@ -293,7 +294,7 @@ const VoiceSelectorSection: React.FC<VoiceSelectorSectionProps> = ({
             
             {loadingVoices ? (
               <div className="w-full px-4 py-8 border border-slate-600 rounded-lg bg-slate-700 text-slate-300 text-center">
-                <Loader2 className="animate-spin w-6 h-6 border-2 border-amber-500 border-t-transparent rounded-full mx-auto mb-3" />
+                <LoadingSpinner size="sm" className=" w-6 h-6 border-2 border-amber-500 border-t-transparent rounded-full mx-auto mb-3" />
                 Loading voices from ElevenLabs...
               </div>
             ) : voiceError ? (
@@ -338,7 +339,7 @@ const VoiceSelectorSection: React.FC<VoiceSelectorSectionProps> = ({
                           title={`Test ${selectedVoiceData.name}`}
                         >
                           {testingVoice === selectedVoiceData.voice_id ? (
-                            <Loader2 className="h-4 w-4 animate-spin text-white" />
+                            <LoadingSpinner size="sm" className="h-4 w-4  text-white" />
                           ) : (
                             <Play className="h-4 w-4 text-white" />
                           )}
@@ -388,7 +389,7 @@ const VoiceSelectorSection: React.FC<VoiceSelectorSectionProps> = ({
                             title={`Test ${voice.name}`}
                           >
                             {testingVoice === voice.voice_id ? (
-                              <Loader2 className="h-3 w-3 animate-spin text-amber-400" />
+                              <LoadingSpinner size="sm" className="h-3 w-3  text-amber-400" />
                             ) : (
                               <Play className="h-3 w-3 text-amber-400" />
                             )}
@@ -418,7 +419,7 @@ const VoiceSelectorSection: React.FC<VoiceSelectorSectionProps> = ({
           >
             {isGenerating ? (
               <span className="flex items-center justify-center">
-                <Loader2 className="animate-spin w-5 h-5 border-2 border-white border-t-transparent rounded-full mr-2" />
+                <LoadingSpinner size="sm" className=" w-5 h-5 border-2 border-white border-t-transparent rounded-full mr-2" />
                 Generating Audio...
               </span>
             ) : (

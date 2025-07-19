@@ -289,7 +289,7 @@ export class AIWorkflowOptimizer {
    */
   private getDefaultProvider(type: 'text' | 'image' | 'audio'): string {
     const defaults = {
-      text: 'openai-gpt',
+      text: 'ovh-ai',
       image: 'openai-dalle',
       audio: 'openai-tts'
     };

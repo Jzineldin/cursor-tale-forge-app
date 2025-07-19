@@ -11,6 +11,7 @@ import { toast } from 'sonner';
 import { Mail, Users, CheckCircle, Loader2, Star } from 'lucide-react';
 import { trackWaitlistSignup } from '@/utils/analytics';
 
+import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 const waitlistSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters'),
   email: z.string().email('Please enter a valid email address'),
@@ -74,7 +75,7 @@ const WaitlistSignup: React.FC<WaitlistSignupProps> = ({ variant = 'card', class
         <CardContent className="p-6 text-center space-y-4">
           <div className="relative">
             <CheckCircle className="h-16 w-16 text-green-400 mx-auto" />
-            <Star className="h-6 w-6 text-yellow-400 absolute -top-1 -right-1 animate-pulse" />
+            <Star className="h-6 w-6 text-white absolute -top-1 -right-1 animate-pulse" />
           </div>
           <div className="space-y-2">
             <h3 className="text-xl font-semibold text-green-300">You're on the list!</h3>
@@ -143,7 +144,7 @@ const WaitlistSignup: React.FC<WaitlistSignupProps> = ({ variant = 'card', class
         >
           {isLoading ? (
             <div className="flex items-center gap-2">
-              <Loader2 className="h-4 w-4 animate-spin" />
+              <LoadingSpinner size="sm" className="h-4 w-4 " />
               Joining...
             </div>
           ) : (

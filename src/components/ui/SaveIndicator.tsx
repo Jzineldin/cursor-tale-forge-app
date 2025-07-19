@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { CheckCircle, AlertCircle, Loader2 } from 'lucide-react';
 
+import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 interface SaveIndicatorProps {
   status: 'saving' | 'saved' | 'error' | null;
   message?: string;
@@ -32,7 +33,7 @@ const SaveIndicator: React.FC<SaveIndicatorProps> = ({ status, message }) => {
     switch (status) {
       case 'saving':
         return {
-          icon: <Loader2 className="h-4 w-4 animate-spin" />,
+          icon: <LoadingSpinner size="sm" className="h-4 w-4 " />,
           bgColor: 'bg-blue-100',
           textColor: 'text-blue-800',
           borderColor: 'border-blue-200'

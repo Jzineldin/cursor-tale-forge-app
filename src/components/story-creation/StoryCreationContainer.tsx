@@ -105,13 +105,23 @@ export const StoryCreationContainer: React.FC<StoryCreationContainerProps> = ({ 
     setSkipImage(checked === true);
   };
 
-  const showConfirmation = (action: 'start' | 'choice' | 'finish', choice?: string) => {
+  const showConfirmation = async (action: 'start' | 'choice' | 'finish', choice?: string) => {
     console.log('💰 showConfirmation called with:', { action, choice });
     
-    // For choices and finish actions, show confirmation dialog
-    setPendingAction(action);
-    if (choice) setPendingChoice(choice);
-    setShowCostDialog(true);
+    // Direct generation without confirmation dialog
+    setApiCallsCount(prev => prev + 1);
+    
+    try {
+      if (action === 'choice' && choice) {
+        console.log('🎯 Direct choice selection...');
+        await handleSelectChoice(choice, { skipImage });
+      } else if (action === 'finish') {
+        console.log('🏁 Direct story finish...');
+        await handleFinishStory();
+      }
+    } catch (error) {
+      console.error('❌ Direct generation failed:', error);
+    }
   };
 
   const confirmGeneration = async () => {

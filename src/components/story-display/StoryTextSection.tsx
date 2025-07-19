@@ -23,11 +23,8 @@ const StoryTextSection: React.FC<StoryTextSectionProps> = React.memo(({
   return (
     <div className="story-text-section w-full">
       <Card className="bg-slate-800/80 border-amber-500/20 shadow-inner">
-        <CardHeader className="pb-4">
-          <div className="flex items-center justify-between">
-            <CardTitle className="text-white font-serif text-lg md:text-xl">
-              Chapter {segmentCount}
-            </CardTitle>
+        <CardHeader className="pb-2">
+          <div className="flex items-center justify-end">
             {/* Show audio controls whenever audio exists, regardless of story completion */}
             {audioUrl && (
               <Button
@@ -41,11 +38,11 @@ const StoryTextSection: React.FC<StoryTextSectionProps> = React.memo(({
             )}
           </div>
         </CardHeader>
-        <CardContent className="p-4 md:p-8">
+        <CardContent className="p-3 md:p-6">
           <div className="prose prose-invert max-w-none">
             <div 
-              className="text-gray-100 text-base md:text-lg leading-relaxed font-serif whitespace-pre-wrap"
-              style={{ fontFamily: "'Playfair Display', serif" }}
+              className="text-gray-100 text-sm md:text-base leading-relaxed whitespace-pre-wrap"
+              style={{ fontFamily: "'Crimson Text', serif" }}
             >
               {segmentText}
             </div>

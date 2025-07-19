@@ -1,6 +1,6 @@
 
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { supabase } from '@/integrations/supabase/client';
+import { generateStorySegment } from '@/lib/ai-api';
 import { secureConsole } from '@/utils/secureLogger';
 
 
@@ -23,35 +23,34 @@ export const useStoryGeneration = () => {
     mutationFn: async (params: GenerateStoryParams) => {
       secureConsole.debug('🚀 Generating story with params:', params);
 
-      const { data, error } = await supabase.functions.invoke('generate-story-segment', {
-        body: params
+      // Use centralized AI API with context window capping
+      const result = await generateStorySegment({
+        prompt: params.prompt || '',
+        age: params.targetAge || '7-9',
+        genre: params.genre || 'fantasy',
+        ...(params.storyId && { storyId: params.storyId }),
+        ...(params.parentSegmentId && { parentSegmentId: params.parentSegmentId }),
+        ...(params.choiceText && { choiceText: params.choiceText }),
+        ...(params.skipImage !== undefined && { skipImage: params.skipImage }),
       });
 
-      secureConsole.debug('📡 Raw response from edge function:', { data, error });
-
-      if (error) {
-        secureConsole.error('❌ Supabase function error:', error);
-        throw new Error(error.message || 'Failed to generate story');
-      }
-
-      if (!data) {
-        secureConsole.error('❌ No data returned from function');
-        throw new Error('No data returned from story generation');
-      }
-
-      // Handle both old and new response formats
-      if (data.success === false) {
-        secureConsole.error('❌ Story generation failed:', data.error);
-        throw new Error(data.error || 'Story generation failed');
-      }
-
-      // Extract the actual story data
-      const storyData = data.success ? data.data : data;
-      
-      if (!storyData) {
-        secureConsole.error('❌ No story data in response');
-        throw new Error('No story data returned');
-      }
+      // Create a segment object from the enhanced response
+      const storyData = {
+        id: result.id || `temp-${Date.now()}`,
+        story_id: result.story_id || params.storyId || `story-${Date.now()}`,
+        parent_segment_id: params.parentSegmentId || null,
+        segment_text: result.text,
+        choice_text: params.choiceText || null,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        audio_url: null,
+        audio_status: 'not_started',
+        image_url: result.image_url || '/placeholder.svg',
+        image_status: result.image_url && result.image_url !== '/placeholder.svg' ? 'completed' : 'not_started',
+        image_prompt: null,
+        choices: result.choices || [],
+        is_end: result.is_end || false
+      };
 
       secureConsole.info('✅ Story generation successful:', storyData);
       return storyData;

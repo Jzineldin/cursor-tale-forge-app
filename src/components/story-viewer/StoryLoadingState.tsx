@@ -2,10 +2,11 @@
 import React from 'react';
 import { Loader2 } from 'lucide-react';
 
+import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 const StoryLoadingState: React.FC = () => {
   return (
     <div className="text-center">
-      <Loader2 className="h-6 w-6 animate-spin mx-auto text-purple-400" />
+      <LoadingSpinner size="sm" className="h-6 w-6  mx-auto text-purple-400" />
       <p className="text-purple-200 mt-2">Loading next part...</p>
     </div>
   );

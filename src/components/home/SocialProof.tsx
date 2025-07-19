@@ -26,7 +26,7 @@ const SocialProof: React.FC = () => {
       icon: <Star className="h-8 w-8" />,
       value: "New",
       label: "Platform",
-      color: "text-yellow-400"
+              color: "text-white"
     }
   ];
 
@@ -96,7 +96,7 @@ const SocialProof: React.FC = () => {
                 <div className="space-y-4">
                   <div className="flex gap-1">
                     {[...Array(testimonial.rating)].map((_, i) => (
-                      <Star key={i} className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                      <Star key={i} className="h-4 w-4 fill-white text-white" />
                     ))}
                   </div>
                   <p className="text-gray-300 leading-relaxed">

@@ -23,7 +23,7 @@ const GenreHeader: React.FC = () => {
       </div>
       
       {/* Title content - reduced padding since Layout already provides spacing */}
-      <div className="pt-20 md:pt-24">
+      <div className="pt-8 md:pt-12">
         <h1 className="text-4xl md:text-6xl font-bold text-white mb-6 font-serif magical-text">
           Choose Your <span className="text-amber-400">Adventure</span>
         </h1>

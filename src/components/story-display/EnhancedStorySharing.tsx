@@ -330,7 +330,7 @@ const EnhancedStorySharing: React.FC<EnhancedStorySharingProps> = ({
                 <Button
                   onClick={() => handleSocialShare('reddit')}
                   variant="outline"
-                  className="border-orange-500/40 text-orange-400 hover:bg-orange-500/20"
+                  className="border-brand-indigo/40 text-brand-indigo hover:bg-brand-indigo/20"
                 >
                   Share on Reddit
                 </Button>

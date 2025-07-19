@@ -1,7 +1,7 @@
 import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { ArrowRight, Baby, GraduationCap, Users } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { wizardGrad, wizardCard, wizardTitle, wizardSubtitle, wizardBtn } from '@/lib/theme';
+import { Baby, GraduationCap, Users } from 'lucide-react';
 
 export interface AgeSelectionProps {
   selectedAge: string;
@@ -16,134 +16,80 @@ const AgeSelection: React.FC<AgeSelectionProps> = ({
   onNext,
   disabled = false
 }) => {
-  const ageOptions = [
-    {
-      id: '4-6',
-      label: 'I\'m 4-6 years old',
-      description: 'Simple stories with big pictures and easy words',
-      icon: Baby,
-      color: 'from-pink-400 to-purple-400',
-      features: ['Short sentences', 'Bright colors', 'Simple lessons', 'Friendly characters']
+  const navigate = useNavigate();
+  
+  const ages = [
+    { 
+      range: '4-6', 
+      Icon: Baby, 
+      label: 'Little Heroes',
+      description: 'Simple stories with big pictures and easy words'
     },
-    {
-      id: '7-9',
-      label: 'I\'m 7-9 years old',
-      description: 'Fun adventures with friends and learning',
-      icon: GraduationCap,
-      color: 'from-blue-400 to-green-400',
-      features: ['Friendship stories', 'Basic problem-solving', 'Educational fun', 'Mild adventure']
+    { 
+      range: '7-9', 
+      Icon: GraduationCap, 
+      label: 'Young Adventurers',
+      description: 'Fun adventures with friends and learning'
     },
-    {
-      id: '10-12',
-      label: 'I\'m 10-12 years old',
-      description: 'Exciting stories with deeper thinking and STEM',
-      icon: Users,
-      color: 'from-orange-400 to-red-400',
-      features: ['Complex plots', 'STEM concepts', 'Character growth', 'Moral choices']
+    { 
+      range: '10-12', 
+      Icon: Users, 
+      label: 'Epic Explorers',
+      description: 'Exciting stories with deeper thinking and STEM'
     }
   ];
 
-  const handleAgeSelect = (ageId: string) => {
-    onAgeSelect(ageId);
-  };
-
-  const handleNext = () => {
-    if (selectedAge) {
-      onNext();
-    }
+  const handleAgeSelect = (ageRange: string) => {
+    onAgeSelect(ageRange);
+    // Auto-navigate to genre selection
+    navigate(`/create/genre?age=${ageRange}`);
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center p-4">
-      <div className="w-full max-w-4xl">
-        {/* Header */}
-        <div className="text-center mb-12">
-          <h1 className="text-4xl md:text-6xl font-bold text-white mb-6 font-serif">
-            Choose Your <span className="text-amber-400">Age Group</span>
-          </h1>
-          <p className="text-xl text-gray-300 max-w-2xl mx-auto">
-            This helps us create the perfect story just for you! 
-            <br />
-            <span className="text-amber-300 font-medium">Pick the age group that matches you best.</span>
-          </p>
-        </div>
+    <div className="magical-page-container">
+      <div className="magical-content">
+        <div className="container mx-auto px-4 py-8 md:py-16">
+          <div className="w-full max-w-4xl mx-auto">
+            {/* Header */}
+            <div className="text-center mb-12 animate-magical-fade-in">
+              <h1 className="fantasy-heading text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-6">
+                CHOOSE YOUR <span className="text-amber-400">AGE GROUP</span>
+              </h1>
+              <p className="fantasy-subtitle text-xl md:text-2xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
+                This helps us create the perfect story just for you! 
+                <br />
+                <span className="text-amber-300 font-medium">Pick the age group that matches you best.</span>
+              </p>
+            </div>
 
-        {/* Age Selection Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-          {ageOptions.map((option) => {
-            const IconComponent = option.icon;
-            const isSelected = selectedAge === option.id;
-            
-            return (
-              <Card
-                key={option.id}
-                className={`cursor-pointer transition-all duration-300 transform hover:scale-105 ${
-                  isSelected 
-                    ? 'ring-4 ring-amber-400 bg-gradient-to-br from-amber-500/20 to-orange-500/20 border-amber-400' 
-                    : 'bg-slate-800/90 border-slate-600 hover:border-amber-400/50 hover:bg-slate-800/95'
-                } backdrop-blur-sm shadow-2xl`}
-                onClick={() => handleAgeSelect(option.id)}
-              >
-                <CardHeader className="text-center pb-4">
-                  <div className={`w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-r ${option.color} flex items-center justify-center shadow-lg`}>
-                    <IconComponent className="h-8 w-8 text-white" />
-                  </div>
-                  <CardTitle className={`text-xl font-bold ${isSelected ? 'text-amber-300' : 'text-white'}`}>
-                    {option.label}
-                  </CardTitle>
-                  <p className="text-gray-300 text-sm leading-relaxed">
-                    {option.description}
-                  </p>
-                </CardHeader>
-                <CardContent className="pt-0">
-                  <div className="space-y-2">
-                    {option.features.map((feature, index) => (
-                      <div key={index} className="flex items-center gap-2 text-sm">
-                        <div className={`w-2 h-2 rounded-full ${isSelected ? 'bg-amber-400' : 'bg-gray-500'}`} />
-                        <span className={isSelected ? 'text-amber-200' : 'text-gray-400'}>
-                          {feature}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-            );
-          })}
-        </div>
+            {/* Age Selection Cards - Larger & More Engaging */}
+            <div className="relative w-full">
+              <div className={wizardGrad + ' absolute inset-0 rounded-3xl blur-xl opacity-30'} />
+              <div className="relative bg-white/10 backdrop-blur-md rounded-3xl p-8 md:p-12 border border-white/20 shadow-2xl">
+                <h2 className="text-3xl md:text-4xl font-bold text-white mb-3 text-center">
+                  Choose the Age
+                </h2>
+                <p className="text-gray-300 text-center mb-8 text-lg">
+                  So we match the reading level perfectly.
+                </p>
 
-        {/* Next Button */}
-        <div className="text-center">
-          <Button
-            onClick={handleNext}
-            disabled={!selectedAge || disabled}
-            className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white px-12 py-4 text-xl font-bold disabled:opacity-50 disabled:cursor-not-allowed shadow-2xl shadow-amber-500/30 hover:shadow-xl hover:shadow-amber-500/40 transition-all duration-300 hover:scale-105 rounded-2xl"
-            size="lg"
-          >
-            {selectedAge ? (
-              <>
-                Continue to Story Creation
-                <ArrowRight className="ml-3 h-6 w-6" />
-              </>
-            ) : (
-              'Please select your age group'
-            )}
-          </Button>
-          
-          {selectedAge && (
-            <p className="text-amber-300 text-sm mt-4 font-medium">
-              Perfect! We'll create stories perfect for {selectedAge} year olds.
-            </p>
-          )}
-        </div>
-
-        {/* Safety Note */}
-        <div className="mt-12 text-center">
-          <div className="inline-flex items-center gap-2 bg-green-600/20 border border-green-500/30 rounded-lg px-4 py-2">
-            <div className="w-3 h-3 bg-green-400 rounded-full animate-pulse" />
-            <span className="text-green-300 text-sm font-medium">
-              All stories are kid-safe and age-appropriate! 🛡️
-            </span>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
+                  {ages.map(({ range, Icon, label, description }) => (
+                    <button
+                      key={range}
+                      onClick={() => handleAgeSelect(range)}
+                      disabled={disabled}
+                      className="flex flex-col items-center p-6 md:p-8 rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10 hover:bg-white/15 hover:border-white/20 hover:scale-105 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed group shadow-lg hover:shadow-xl"
+                    >
+                      <Icon className="w-16 h-16 md:w-20 md:h-20 text-amber-400 group-hover:text-amber-300 transition-colors mb-4" />
+                      <p className="mt-2 font-semibold text-white text-lg md:text-xl mb-2">{label}</p>
+                      <span className="text-sm md:text-base text-amber-300 mb-3 font-medium">{range} years</span>
+                      <p className="text-sm md:text-base text-gray-300 text-center leading-relaxed">{description}</p>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>

@@ -67,7 +67,7 @@ const StoryCard = ({ story }: StoryCardProps) => {
           {story.is_completed ? (
             <CheckCircle className="h-3 w-3 sm:h-4 sm:w-4 text-green-400" />
           ) : (
-            <Hourglass className="h-3 w-3 sm:h-4 sm:w-4 text-yellow-400" />
+            <Hourglass className="h-3 w-3 sm:h-4 sm:w-4 text-white" />
           )}
         </div>
 

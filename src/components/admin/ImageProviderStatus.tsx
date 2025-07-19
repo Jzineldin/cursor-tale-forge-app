@@ -100,7 +100,7 @@ const ImageProviderStatus: React.FC = () => {
       case 'healthy':
         return <CheckCircle className="h-4 w-4 text-green-500" />;
       case 'degraded':
-        return <AlertCircle className="h-4 w-4 text-yellow-500" />;
+        return <AlertCircle className="h-4 w-4 text-white" />;
       case 'down':
         return <AlertCircle className="h-4 w-4 text-red-500" />;
       default:

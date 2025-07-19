@@ -11,6 +11,7 @@ import { useStoryGeneration } from '@/hooks/useStoryGeneration';
 import { Loader2, Sparkles, AlertCircle } from 'lucide-react';
 import { toast } from 'sonner';
 
+import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 const StoryPage: React.FC = () => {
   const [prompt, setPrompt] = useState('');
   const navigate = useNavigate();
@@ -128,7 +129,7 @@ const StoryPage: React.FC = () => {
           >
             {isGenerating ? (
               <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                <LoadingSpinner size="sm" className="mr-2 h-4 w-4 " />
                 Creating Your Story...
               </>
             ) : (

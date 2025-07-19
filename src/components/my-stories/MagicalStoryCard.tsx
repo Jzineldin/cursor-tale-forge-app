@@ -232,9 +232,10 @@ const MagicalStoryCard: React.FC<MagicalStoryCardProps> = ({
               {!story.is_completed && (
                 <button
                   onClick={handleContinue}
-                  className="px-3 py-1 text-xs bg-green-600/20 text-green-300 border border-green-500/30 rounded hover:bg-green-600/30 transition-colors"
+                  className="px-3 py-1 text-xs bg-green-600/20 text-green-300 border border-green-500/30 rounded hover:bg-green-600/30 transition-colors flex items-center justify-center gap-1 whitespace-nowrap"
                 >
-                  Continue
+                  <Play className="h-3 w-3" />
+                  <span>Continue</span>
                 </button>
               )}
               {!isEditing && (

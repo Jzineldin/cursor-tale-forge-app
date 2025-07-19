@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import { 
   Play, 
   Pause, 
@@ -8,12 +9,14 @@ import {
   Loader2,
   VolumeX,
   Volume1,
-  RotateCcw
+  RotateCcw,
+  BookmarkIcon
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import StoryImage from '@/components/story-viewer/StoryImage';
+import { heroGrad, actionBtn } from '@/lib/theme';
 
 interface StorySegment {
   id: string;
@@ -30,12 +33,16 @@ interface StoryPlayerProps {
   segments: StorySegment[];
   initialSegmentIndex?: number;
   className?: string;
+  onChoice?: (segmentIndex: number, choiceIndex: number, nextSegment: string) => void;
+  bookmark?: (segmentIndex: number) => void;
 }
 
 const StoryPlayer: React.FC<StoryPlayerProps> = ({ 
   segments, 
   initialSegmentIndex = 0,
-  className = ''
+  className = '',
+  onChoice,
+  bookmark = () => {}
 }) => {
   const [currentSegmentIndex, setCurrentSegmentIndex] = useState(initialSegmentIndex);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -190,200 +197,212 @@ const StoryPlayer: React.FC<StoryPlayerProps> = ({
   };
 
   return (
-    <div className={`story-player max-w-4xl mx-auto bg-slate-900 rounded-lg overflow-hidden shadow-2xl ${className}`}>
-      {/* Story Display */}
-      <div className="relative">
-        <div className="w-full h-96 overflow-hidden bg-slate-800">
-          <StoryImage
-            imageUrl={currentSegment?.image_url || null}
-            imageGenerationStatus={currentSegment?.image_generation_status || ''}
-            altText={`Chapter ${currentSegmentIndex + 1}`}
-            className="w-full h-full object-cover"
-          />
-        </div>
-        
-        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black via-black/70 to-transparent p-6">
-          <h2 className="text-white text-2xl font-bold mb-2">
-            Chapter {currentSegmentIndex + 1}
-          </h2>
-          <div className="text-amber-400 text-sm flex items-center gap-2">
-            <span>{currentSegmentIndex + 1} of {localSegments.length}</span>
-            {currentSegment?.word_count && (
-              <span>• {currentSegment.word_count} words</span>
+    <main className="min-h-screen bg-slate-50 dark:bg-slate-900 flex items-center justify-center py-8">
+      <article className="relative w-full max-w-3xl rounded-2xl overflow-hidden shadow-2xl">
+        {/* subtle hero burst */}
+        <div className={heroGrad + ' absolute inset-0 z-0 pointer-events-none'}/>
+
+        {/* thin progress ribbon inside the card shadow */}
+        <div
+          className="card-progress absolute top-0 left-0 z-20"
+          style={{ width: `${((currentSegmentIndex + 1) / localSegments.length) * 100}%` }}
+        />
+
+        {/* glass card */}
+        <div className="relative bg-white/70 dark:bg-slate-800/70 backdrop-blur-md p-6 sm:p-8 z-10">
+
+          {/* top nav */}
+          <header className="border-b border-slate-300/20 dark:border-slate-700/20 pb-3 mb-6">
+            <div className="flex items-center justify-between text-sm text-indigo-600 dark:text-indigo-400">
+              <span>Story • {currentSegmentIndex + 1} / {localSegments.length}</span>
+              <button onClick={() => bookmark(currentSegmentIndex)} className="hover:text-indigo-800">
+                <BookmarkIcon className="w-5 h-5" />
+              </button>
+            </div>
+            <h1 className="text-xl font-bold text-slate-800 dark:text-slate-100 mt-1">
+              Chapter {currentSegmentIndex + 1}
+            </h1>
+          </header>
+
+          {/* rich body */}
+          <section className="prose prose-slate dark:prose-invert max-w-none">
+            {currentSegment?.image_url && (
+              <figure className="mb-5 rounded-xl overflow-hidden shadow-sm">
+                <StoryImage
+                  imageUrl={currentSegment.image_url}
+                  imageGenerationStatus={currentSegment.image_generation_status || ''}
+                  altText={`Chapter ${currentSegmentIndex + 1}`}
+                  className="w-full aspect-[16/9] object-cover"
+                />
+              </figure>
             )}
-          </div>
-        </div>
-      </div>
+            <p className="text-base leading-relaxed text-slate-700 dark:text-slate-300">
+              {currentSegment?.segment_text}
+            </p>
+          </section>
 
-      {/* Story Text */}
-      <div className="p-6 bg-slate-800 max-h-64 overflow-y-auto">
-        <div className="prose prose-invert max-w-none">
-          <p className="text-gray-200 text-lg leading-relaxed font-serif">
-            {currentSegment?.segment_text}
-          </p>
-        </div>
-      </div>
+          {/* Audio Player Controls */}
+          {currentSegment?.audio_url && (
+            <div className="mt-6 p-4 bg-slate-100/50 dark:bg-slate-700/50 rounded-xl">
+              <audio
+                ref={audioRef}
+                src={currentSegment.audio_url}
+                preload="metadata"
+                onTimeUpdate={() => setCurrentTime(audioRef.current?.currentTime || 0)}
+                onLoadedMetadata={() => setDuration(audioRef.current?.duration || 0)}
+                onEnded={handleAudioEnd}
+                onPlay={() => setIsPlaying(true)}
+                onPause={() => setIsPlaying(false)}
+                onError={() => setAudioError('Failed to load audio')}
+              />
 
-      {/* Audio Player Controls */}
-      <div className="bg-slate-900 p-6">
-        {currentSegment?.audio_url && (
-          <audio
-            ref={audioRef}
-            src={currentSegment.audio_url}
-            preload="metadata"
-            onTimeUpdate={() => setCurrentTime(audioRef.current?.currentTime || 0)}
-            onLoadedMetadata={() => setDuration(audioRef.current?.duration || 0)}
-            onEnded={handleAudioEnd}
-            onPlay={() => setIsPlaying(true)}
-            onPause={() => setIsPlaying(false)}
-            onError={() => setAudioError('Failed to load audio')}
-          />
-        )}
+              {/* Progress Bar */}
+              <div className="mb-4">
+                <div 
+                  className="w-full h-2 bg-slate-300 dark:bg-slate-600 rounded-full cursor-pointer"
+                  onClick={handleSeek}
+                >
+                  <div 
+                    className="h-full bg-indigo-500 rounded-full transition-all duration-100"
+                    style={{ width: `${duration ? (currentTime / duration) * 100 : 0}%` }}
+                  />
+                </div>
+                <div className="flex justify-between text-sm text-slate-600 dark:text-slate-400 mt-1">
+                  <span>{formatTime(currentTime)}</span>
+                  <span>{formatTime(duration)}</span>
+                </div>
+              </div>
 
-        {/* Progress Bar */}
-        <div className="mb-4">
-          <div 
-            className="w-full h-2 bg-slate-700 rounded-full cursor-pointer"
-            onClick={handleSeek}
-          >
-            <div 
-              className="h-full bg-amber-400 rounded-full transition-all duration-100"
-              style={{ width: `${duration ? (currentTime / duration) * 100 : 0}%` }}
-            />
-          </div>
-          <div className="flex justify-between text-sm text-gray-400 mt-1">
-            <span>{formatTime(currentTime)}</span>
-            <span>{formatTime(duration)}</span>
-          </div>
-        </div>
+              {/* Main Control Buttons */}
+              <div className="flex items-center justify-center space-x-4 mb-4">
+                <Button
+                  onClick={goToPreviousSegment}
+                  disabled={currentSegmentIndex === 0}
+                  variant="ghost"
+                  size="sm"
+                  className="fantasy-heading text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 disabled:opacity-50"
+                >
+                  <SkipBack className="w-6 h-6" />
+                </Button>
 
-        {/* Main Control Buttons */}
-        <div className="flex items-center justify-center space-x-4 mb-4">
-          <Button
-            onClick={goToPreviousSegment}
-            disabled={currentSegmentIndex === 0}
-            variant="ghost"
-            size="sm"
-            className="text-gray-400 hover:text-white disabled:opacity-50"
-          >
-            <SkipBack className="w-6 h-6" />
-          </Button>
+                <Button
+                  onClick={togglePlayPause}
+                  disabled={!currentSegment?.audio_url || isGeneratingAudio}
+                  size="lg"
+                  className="fantasy-heading bg-indigo-600 text-white hover:bg-indigo-500 disabled:opacity-50 rounded-full w-16 h-16"
+                >
+                  {isGeneratingAudio ? (
+                    <LoadingSpinner size="sm" className="w-6 h-6 " />
+                  ) : isPlaying ? (
+                    <Pause className="w-6 h-6" />
+                  ) : (
+                    <Play className="w-6 h-6" />
+                  )}
+                </Button>
 
-          <Button
-            onClick={togglePlayPause}
-            disabled={!currentSegment?.audio_url || isGeneratingAudio}
-            size="lg"
-            className="bg-amber-400 text-slate-900 hover:bg-amber-300 disabled:opacity-50 rounded-full w-16 h-16"
-          >
-            {isGeneratingAudio ? (
-              <Loader2 className="w-6 h-6 animate-spin" />
-            ) : isPlaying ? (
-              <Pause className="w-6 h-6" />
-            ) : (
-              <Play className="w-6 h-6" />
-            )}
-          </Button>
+                <Button
+                  onClick={goToNextSegment}
+                  disabled={currentSegmentIndex === localSegments.length - 1}
+                  variant="ghost"
+                  size="sm"
+                  className="fantasy-heading text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 disabled:opacity-50"
+                >
+                  <SkipForward className="w-6 h-6" />
+                </Button>
+              </div>
 
-          <Button
-            onClick={goToNextSegment}
-            disabled={currentSegmentIndex === localSegments.length - 1}
-            variant="ghost"
-            size="sm"
-            className="text-gray-400 hover:text-white disabled:opacity-50"
-          >
-            <SkipForward className="w-6 h-6" />
-          </Button>
-        </div>
+              {/* Volume and Additional Controls */}
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-2">
+                  {getVolumeIcon()}
+                  <input
+                    type="range"
+                    min="0"
+                    max="1"
+                    step="0.1"
+                    value={volume}
+                    onChange={handleVolumeChange}
+                    className="w-20 accent-indigo-500"
+                  />
+                </div>
+                
+                <div className="flex items-center space-x-2">
+                  {!currentSegment?.audio_url && !isGeneratingAudio && (
+                    <Button
+                      onClick={() => generateAudioForSegment(currentSegment)}
+                      variant="outline"
+                      size="sm"
+                      className="fantasy-heading text-indigo-600 border-indigo-600 hover:bg-indigo-600 hover:text-white"
+                    >
+                      <Volume2 className="w-4 h-4 mr-1" />
+                      Generate Audio
+                    </Button>
+                  )}
+                  
+                  {audioError && (
+                    <Button
+                      onClick={() => {
+                        setAudioError(null);
+                        if (currentSegment) generateAudioForSegment(currentSegment);
+                      }}
+                      variant="outline"
+                      size="sm"
+                      className="fantasy-heading text-red-500 border-red-500 hover:bg-red-500 hover:text-white"
+                    >
+                      <RotateCcw className="w-4 h-4 mr-1" />
+                      Retry
+                    </Button>
+                  )}
+                </div>
+              </div>
 
-        {/* Volume and Additional Controls */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-2">
-            {getVolumeIcon()}
-            <input
-              type="range"
-              min="0"
-              max="1"
-              step="0.1"
-              value={volume}
-              onChange={handleVolumeChange}
-              className="w-20 accent-amber-400"
-            />
-          </div>
-          
-          <div className="flex items-center space-x-2">
-            {!currentSegment?.audio_url && !isGeneratingAudio && (
-              <Button
-                onClick={() => generateAudioForSegment(currentSegment)}
-                variant="outline"
-                size="sm"
-                className="text-amber-400 border-amber-400 hover:bg-amber-400 hover:text-slate-900"
-              >
-                <Volume2 className="w-4 h-4 mr-1" />
-                Generate Audio
-              </Button>
-            )}
-            
-            {audioError && (
-              <Button
-                onClick={() => {
-                  setAudioError(null);
-                  if (currentSegment) generateAudioForSegment(currentSegment);
-                }}
-                variant="outline"
-                size="sm"
-                className="text-red-400 border-red-400 hover:bg-red-400 hover:text-white"
-              >
-                <RotateCcw className="w-4 h-4 mr-1" />
-                Retry
-              </Button>
-            )}
-          </div>
-        </div>
-
-        {/* Status Messages */}
-        {isGeneratingAudio && (
-          <div className="mt-4 text-center text-amber-400 text-sm flex items-center justify-center space-x-2">
-            <Loader2 className="w-4 h-4 animate-spin" />
-            <span>Generating audio for this chapter...</span>
-          </div>
-        )}
-        
-        {audioError && (
-          <div className="mt-4 text-center text-red-400 text-sm">
-            {audioError}
-          </div>
-        )}
-      </div>
-
-      {/* Chapter Navigation */}
-      <div className="bg-slate-800 p-4 border-t border-slate-700">
-        <div className="flex space-x-2 overflow-x-auto pb-2">
-          {localSegments.map((segment, index) => (
-            <Button
-              key={segment.id}
-              onClick={() => {
-                setCurrentSegmentIndex(index);
-                setCurrentTime(0);
-                setIsPlaying(false);
-                setAudioError(null);
-              }}
-              variant={index === currentSegmentIndex ? "default" : "outline"}
-              size="sm"
-              className={`flex-shrink-0 ${
-                index === currentSegmentIndex
-                  ? 'bg-amber-400 text-slate-900 hover:bg-amber-300'
-                  : 'border-amber-500/40 text-amber-400 hover:bg-amber-500/20'
-              }`}
-            >
-              <span>Chapter {index + 1}</span>
-              {segment.audio_url && (
-                <Volume2 className="w-3 h-3 ml-1" />
+              {/* Status Messages */}
+              {isGeneratingAudio && (
+                <div className="mt-4 text-center text-indigo-600 dark:text-indigo-400 text-sm flex items-center justify-center space-x-2">
+                  <LoadingSpinner size="sm" className="w-4 h-4 " />
+                  <span>Generating audio for this chapter...</span>
+                </div>
               )}
-            </Button>
-          ))}
+              
+              {audioError && (
+                <div className="mt-4 text-center text-red-500 text-sm">
+                  {audioError}
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Chapter Navigation */}
+          <footer className="mt-8 border-t border-slate-300/20 dark:border-slate-700/20 pt-6">
+            <div className="flex space-x-2 overflow-x-auto pb-2">
+              {localSegments.map((segment, index) => (
+                <Button
+                  key={segment.id}
+                  onClick={() => {
+                    setCurrentSegmentIndex(index);
+                    setCurrentTime(0);
+                    setIsPlaying(false);
+                    setAudioError(null);
+                  }}
+                  variant={index === currentSegmentIndex ? "default" : "outline"}
+                  size="sm"
+                  className={`fantasy-heading flex-shrink-0 ${
+                    index === currentSegmentIndex
+                      ? 'bg-indigo-600 text-white hover:bg-indigo-500'
+                      : 'border-indigo-500/40 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-500/20'
+                  }`}
+                >
+                  <span>Chapter {index + 1}</span>
+                  {segment.audio_url && (
+                    <Volume2 className="w-3 h-3 ml-1" />
+                  )}
+                </Button>
+              ))}
+            </div>
+          </footer>
         </div>
-      </div>
-    </div>
+      </article>
+    </main>
   );
 };
 

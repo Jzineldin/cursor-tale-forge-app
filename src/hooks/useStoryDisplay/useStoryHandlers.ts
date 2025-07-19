@@ -47,15 +47,18 @@ export const useStoryHandlers = ({
   const showConfirmation = (action: 'start' | 'choice', choice?: string) => {
     console.log('🎬 Showing confirmation dialog for action:', action, 'with choice:', choice);
     setPendingAction(action, { choice });
-    setShowCostDialog(true);
+    // Skip the confirmation dialog and directly call the generation
+    handleConfirmGeneration(action, { choice });
   };
 
-  const handleConfirmGeneration = async () => {
-    console.log('🚀 Starting story generation confirmation...', { pendingAction, pendingParams });
+  const handleConfirmGeneration = async (action?: 'start' | 'choice' | null, params?: any) => {
+    const currentAction = action || pendingAction;
+    const currentParams = params || pendingParams;
+    console.log('🚀 Starting story generation confirmation...', { currentAction, currentParams });
     setShowCostDialog(false);
     await confirmGeneration(
-      pendingAction,
-      pendingParams,
+      currentAction,
+      currentParams,
       genre,
       prompt,
       characterName,

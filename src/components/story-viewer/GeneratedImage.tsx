@@ -40,10 +40,25 @@ const GeneratedImage: React.FC<GeneratedImageProps> = ({
 
     useEffect(() => setError(false), [signedSrc]);
     
-    // TEMPORARY: Don't show anything if no real image URL
+    // Show placeholder or loading state when no real image URL
     if (!isRealImageUrl) {
-        // No real image URL available
-        return null;
+        return (
+            <div className={`relative overflow-hidden bg-muted border aspect-square w-full ${className}`}>
+                <ImageOverlay
+                    status={getImageStatusDisplay(imageGenerationStatus, false, false, false)}
+                    onRetry={() => setError(false)}
+                    showDebugInfo={showDebugInfo}
+                    imageGenerationStatus={imageGenerationStatus || ''}
+                    imageUrl={imageUrl || ''}
+                    isRealImageUrl={false}
+                    urlContainsSupabase={false}
+                    urlContainsStorage={false}
+                    urlStartsWithHttp={false}
+                    imageLoaded={false}
+                    imageError={false}
+                />
+            </div>
+        );
     }
 
     const status = getImageStatusDisplay(imageGenerationStatus, isRealImageUrl, !error && !!signedSrc, error);

@@ -15,15 +15,18 @@ const StoryProgress: React.FC<StoryProgressProps> = ({
   const progressPercentage = (segmentCount / maxSegments) * 100;
 
   return (
-    <Card className="bg-slate-800/90 border-slate-600 backdrop-blur-sm mb-6">
-      <CardContent className="pt-6">
-        <div className="flex items-center justify-between mb-2">
-          <span className="text-gray-300 text-sm">Story Progress</span>
-          <span className="text-amber-400 text-sm">{segmentCount}/{maxSegments}</span>
-        </div>
-        <Progress value={progressPercentage} className="h-2" />
-      </CardContent>
-    </Card>
+    <div className="bg-gradient-to-r from-slate-900/95 via-slate-800/95 to-slate-900/95 border-2 border-amber-500/40 backdrop-blur-lg shadow-xl rounded-xl p-3">
+      <div className="flex items-center justify-between mb-2">
+        <span className="fantasy-heading text-amber-300 text-sm font-medium">Story Progress</span>
+        <span className="fantasy-heading text-amber-400 text-sm font-bold">{segmentCount}/{maxSegments}</span>
+      </div>
+      <div className="w-full bg-slate-700/50 rounded-full h-3 overflow-hidden">
+        <div 
+          className="h-full bg-gradient-to-r from-amber-400 to-yellow-400 rounded-full transition-all duration-1000 ease-out shadow-lg"
+          style={{ width: `${progressPercentage}%` }}
+        />
+      </div>
+    </div>
   );
 };
 

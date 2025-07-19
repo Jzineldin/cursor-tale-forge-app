@@ -2,6 +2,7 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
+import { actionBtn } from '@/lib/theme';
 
 interface SegmentContentProps {
     segmentText: string;
@@ -26,28 +27,44 @@ const SegmentContent: React.FC<SegmentContentProps> = ({
 }) => {
     return (
         <div className="col-span-2">
-            {index > 0 && canContinue && (
-                <Button
-                    variant="ghost"
-                    size="icon"
-                    className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity"
-                    onClick={() => onGoBack(segmentId)}
-                    disabled={isGoBackPending}
-                    title="Go back to this point"
-                >
-                    <ArrowLeft className="h-5 w-5" />
-                    <span className="sr-only">Go back to this point</span>
-                </Button>
-            )}
-            {triggeringChoiceText && (
-                <p className="text-sm text-muted-foreground italic mb-2">
-                    You chose: "{triggeringChoiceText}"
+            {/* top nav */}
+            <header className="border-b border-slate-300/20 dark:border-slate-700/20 pb-3 mb-6">
+                <div className="flex items-center justify-between text-sm text-indigo-600 dark:text-indigo-400">
+                    <span>Chapter {index + 1}</span>
+                    {index > 0 && canContinue && (
+                        <Button
+                            variant="ghost"
+                            size="sm"
+                            className="hover:text-indigo-800"
+                            onClick={() => onGoBack(segmentId)}
+                            disabled={isGoBackPending}
+                            title="Go back to this point"
+                        >
+                            <ArrowLeft className="h-4 w-4 mr-1" />
+                            Go Back
+                        </Button>
+                    )}
+                </div>
+            </header>
+
+            {/* rich body */}
+            <section className="prose prose-slate dark:prose-invert max-w-none">
+                {triggeringChoiceText && (
+                    <div className="mb-4 p-3 bg-indigo-50 dark:bg-indigo-900/20 rounded-lg border border-indigo-200 dark:border-indigo-700/30">
+                        <p className="text-sm text-indigo-700 dark:text-indigo-300 italic">
+                            You chose: "{triggeringChoiceText}"
+                        </p>
+                    </div>
+                )}
+                <p className="text-base leading-relaxed text-slate-700 dark:text-slate-300">
+                    {segmentText}
                 </p>
-            )}
-            <p className="font-serif text-lg leading-relaxed">{segmentText}</p>
-            {isEnd && (
-                <p className="font-serif text-2xl text-foreground mt-6 text-center">The End.</p>
-            )}
+                {isEnd && (
+                    <div className="mt-6 text-center">
+                        <p className="text-2xl font-bold text-indigo-600 dark:text-indigo-400">The End.</p>
+                    </div>
+                )}
+            </section>
         </div>
     );
 };

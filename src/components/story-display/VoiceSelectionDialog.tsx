@@ -6,6 +6,7 @@ import { VoiceSelector } from '@/components/VoiceSelector';
 import { useGenerateFullStoryAudio } from '@/hooks/useGenerateFullStoryAudio';
 import { Mic, Loader2 } from 'lucide-react';
 
+import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 interface VoiceSelectionDialogProps {
   storyId: string;
   storyTitle: string;
@@ -84,7 +85,7 @@ const VoiceSelectionDialog: React.FC<VoiceSelectionDialogProps> = ({
             >
               {generateAudioMutation.isPending ? (
                 <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  <LoadingSpinner size="sm" className="mr-2 h-4 w-4 " />
                   Generating...
                 </>
               ) : (

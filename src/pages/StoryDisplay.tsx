@@ -70,6 +70,7 @@ const StoryDisplay: React.FC = () => {
     handleChoiceSelect,
     handleFinishStory,
     refreshStoryData,
+    showConfirmation,
     
     // Navigation - we'll modify this to avoid URL changes
     navigate
@@ -210,6 +211,53 @@ const StoryDisplay: React.FC = () => {
     );
   }
 
+  // Show start story button if no story content exists yet
+  if (storyData?.id && allStorySegments.length === 0 && !currentStorySegment && !storyGeneration.isGenerating) {
+    return (
+      <StoryDisplayLayout>
+        <div className="flex items-center justify-center min-h-[60vh]">
+          <div className="text-center max-w-2xl mx-auto p-8">
+            <div className="mb-8">
+              <h1 className="fantasy-heading text-3xl md:text-4xl font-bold text-white mb-4">
+                Ready to Begin Your Adventure?
+              </h1>
+              <p className="fantasy-subtitle text-lg text-gray-300 mb-6">
+                Your story seed is planted and ready to grow! Click the button below to start generating your magical tale.
+              </p>
+              <div className="bg-white/10 backdrop-blur-md rounded-xl border border-white/20 p-4 mb-6">
+                <p className="text-amber-300 font-medium mb-2">Story Prompt:</p>
+                <p className="text-white italic">"{prompt}"</p>
+              </div>
+            </div>
+            
+            <div className="space-y-4">
+              <button
+                onClick={() => showConfirmation('start')}
+                className="fantasy-heading bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-bold py-4 px-8 rounded-xl text-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300"
+              >
+                🌱 Start Your Story
+              </button>
+              
+              <button
+                onClick={handleExit}
+                className="fantasy-heading block mx-auto mt-4 text-gray-400 hover:text-white transition-colors"
+              >
+                ← Back to Home
+              </button>
+            </div>
+          </div>
+        </div>
+        
+        <CostConfirmationDialog
+          open={showCostDialog}
+          onOpenChange={setShowCostDialog}
+          onConfirm={confirmGeneration}
+          pendingAction={pendingAction}
+        />
+      </StoryDisplayLayout>
+    );
+  }
+
   return (
     <StoryDisplayLayout>
 
@@ -252,6 +300,8 @@ const StoryDisplay: React.FC = () => {
           onFinishStory={handleFinishStory}
           onChapterNavigate={handleChapterNavigate}
           onAudioGenerated={handleAudioGenerated}
+          skipImage={skipImage}
+          onSkipImageChange={setSkipImage}
         />
       )}
 
@@ -260,12 +310,6 @@ const StoryDisplay: React.FC = () => {
         onOpenChange={setShowCostDialog}
         onConfirm={confirmGeneration}
         pendingAction={pendingAction}
-        skipImage={skipImage}
-        skipAudio={skipAudio}
-        onSkipImageChange={setSkipImage}
-        onSkipAudioChange={setSkipAudio}
-        apiUsageCount={apiUsageCount}
-        showAudioOption={false}
       />
     </StoryDisplayLayout>
   );

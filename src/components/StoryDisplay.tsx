@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Wand2, ImageIcon, Flag } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import StoryLoadingState from '@/components/story-viewer/StoryLoadingState';
+import StoryChoicesSection from '@/components/story-creation/StoryChoicesSection';
 
 interface StoryDisplayProps {
   storySegment: {
@@ -21,6 +22,8 @@ interface StoryDisplayProps {
   isLoading: boolean;
   isFinishingStory: boolean;
   isEmbedded?: boolean;
+  skipImage?: boolean;
+  onSkipImageChange?: (skipImage: boolean) => void;
 }
 
 const StoryDisplay: React.FC<StoryDisplayProps> = ({
@@ -30,7 +33,9 @@ const StoryDisplay: React.FC<StoryDisplayProps> = ({
   onRestart,
   isLoading,
   isFinishingStory,
-  isEmbedded = false
+  isEmbedded = false,
+  skipImage = false,
+  onSkipImageChange
 }) => {
   const actualSegmentId = storySegment.segmentId || 'fallback';
   
@@ -115,25 +120,15 @@ const StoryDisplay: React.FC<StoryDisplayProps> = ({
             </Card>
           </div>
 
-          {/* SECTION 3: Choice Buttons */}
+          {/* SECTION 3: Choice Buttons with Image Toggle */}
           {!storySegment.isEnd && storySegment.choices && storySegment.choices.length > 0 && (
-            <div className="choices-section w-full space-y-4">
-              <h3 className="text-amber-300 text-xl font-semibold text-center mb-6">What happens next?</h3>
-              <div className="space-y-3">
-                {storySegment.choices.map((choice, index) => (
-                  <Button
-                    key={index}
-                    onClick={() => onSelectChoice(choice)}
-                    disabled={isLoading}
-                    variant="outline"
-                    className="w-full text-left justify-start border-amber-500/40 text-white hover:bg-amber-500/20 hover:border-amber-400 transition-all duration-300 min-h-fit py-4 px-6 text-base font-medium bg-slate-800/60 hover:shadow-lg hover:shadow-amber-500/10"
-                  >
-                    <span className="text-amber-400 font-bold mr-4">{index + 1}.</span>
-                    <span className="leading-relaxed">{choice}</span>
-                  </Button>
-                ))}
-              </div>
-            </div>
+            <StoryChoicesSection
+              choices={storySegment.choices}
+              isGenerating={isLoading}
+              onChoiceSelect={onSelectChoice}
+              skipImage={skipImage}
+              onSkipImageChange={onSkipImageChange}
+            />
           )}
 
           {/* SECTION 4: End Story Button */}

@@ -18,11 +18,13 @@ interface StoryCreateModeProps {
   onToggleHistory: () => void;
   onSwitchToPlayer: () => void;
   onToggleAudio: () => void;
-  onChoiceSelect: (choice: string) => void;
+  onChoiceSelect: (choice: string, skipImage?: boolean) => void;
   onFinishStory: () => void;
   onChapterNavigate: (index: number) => void;
   onChapterChange: (index: number) => void;
   onAudioGenerated?: (audioUrl: string) => void;
+  skipImage?: boolean;
+  onSkipImageChange?: ((skipImage: boolean) => void) | undefined;
 }
 
 const StoryCreateMode: React.FC<StoryCreateModeProps> = ({
@@ -40,8 +42,9 @@ const StoryCreateMode: React.FC<StoryCreateModeProps> = ({
   onToggleAudio,
   onChoiceSelect,
   onFinishStory,
-  
   onChapterChange,
+  skipImage = false,
+  onSkipImageChange
 }) => {
   const storyTitle = prompt.substring(0, 50) + '...';
 
@@ -71,8 +74,9 @@ const StoryCreateMode: React.FC<StoryCreateModeProps> = ({
             onToggleAudio={onToggleAudio}
             onChoiceSelect={onChoiceSelect}
             onFinishStory={onFinishStory}
-            
             onChapterChange={onChapterChange}
+            skipImage={skipImage}
+            onSkipImageChange={onSkipImageChange}
           />
         </div>
 

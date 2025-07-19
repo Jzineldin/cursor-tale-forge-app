@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { AlertCircle, Clock, ImageIcon, RefreshCw, Loader2, Sparkles, Wand2, Stars } from 'lucide-react';
 
+import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 interface ImageStatusOverlayProps {
     imageGenerationStatus?: string;
     imageError?: boolean;
@@ -57,6 +58,19 @@ const ImageStatusOverlay: React.FC<ImageStatusOverlayProps> = ({
     const [currentStep, setCurrentStep] = useState(1);
     const [startTime, setStartTime] = useState<number | null>(null);
     const [elapsedTime, setElapsedTime] = useState(0);
+    const [showError, setShowError] = useState(false);
+
+    // Delay showing error state to prevent premature error messages
+    useEffect(() => {
+        if (imageError) {
+            const timer = setTimeout(() => {
+                setShowError(true);
+            }, 5000); // Wait 5 seconds before showing error
+            return () => clearTimeout(timer);
+        } else {
+            setShowError(false);
+        }
+    }, [imageError]);
 
     // Initialize timing when generation starts
     useEffect(() => {
@@ -136,7 +150,7 @@ const ImageStatusOverlay: React.FC<ImageStatusOverlayProps> = ({
                 showProgress: false
             };
         }
-        if (imageError) {
+        if (imageError && showError) {
             return { 
                 icon: AlertCircle, 
                 text: 'Failed to load image', 
@@ -146,6 +160,18 @@ const ImageStatusOverlay: React.FC<ImageStatusOverlayProps> = ({
                 showProgress: false
             };
         }
+        // Don't show error state immediately - give image time to load
+        if (imageUrl && imageGenerationStatus === 'completed' && !imageLoaded && !imageError) {
+            return { 
+                icon: Loader2, 
+                text: 'Loading image...', 
+                spinning: true, 
+                showRetry: false,
+                description: 'Downloading your generated image',
+                showProgress: false
+            };
+        }
+        // Give more time for images to load before showing any error
         if (imageUrl && !imageLoaded && !imageError) {
             return { 
                 icon: Loader2, 
@@ -250,7 +276,7 @@ const ImageStatusOverlay: React.FC<ImageStatusOverlayProps> = ({
                         onClick={handleRetryImage}
                         className="mt-4"
                     >
-                        <RefreshCw className="h-3 w-3 mr-1" />
+                        <LoadingSpinner size="sm" className="h-3 w-3 mr-1" />
                         Retry
                     </Button>
                 )}

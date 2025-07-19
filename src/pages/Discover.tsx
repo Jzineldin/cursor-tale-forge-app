@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 
 import { Search, Heart, Calendar, User, BookOpen, Sparkles, Filter, Grid, List, PenTool, Check, X, MessageCircle, Eye, Bookmark } from 'lucide-react';
 import { LikeButton } from '@/components/ui/LikeButton';
@@ -503,218 +504,240 @@ const Discover: React.FC = () => {
   const totalPages = storiesData?.totalPages || 1;
 
   return (
-    <div 
-      className="min-h-screen bg-slate-900"
-      style={{
-        backgroundImage: `linear-gradient(rgba(15, 23, 42, 0.8), rgba(15, 23, 42, 0.8)), url('/images/Flux_Dev_Lonely_astronaut_sitting_on_a_pile_of_books_in_space__0.jpg')`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center'
-      }}
-    >
-      <div className="container mx-auto px-4 pb-16">
-        {/* Enhanced Page Header */}
-        <div className="mb-8 pt-4">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-            <div>
-              <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">
-                Discover Amazing Stories
-              </h1>
-              <p className="text-gray-400 text-lg">
-                Explore stories created by our community of storytellers
-              </p>
-            </div>
-            <div className="flex items-center gap-6 text-amber-300/80">
-              <div className="flex items-center gap-2">
-                <BookOpen className="h-5 w-5" />
-                <span>{storiesData?.totalCount || 0} stories</span>
+    <div className="magical-page-container">
+      <div className="magical-content">
+        <div className="container mx-auto px-4 py-16">
+          {/* Enhanced Page Header */}
+          <div className="mb-12 pt-4 animate-magical-fade-in">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+              <div>
+                <h1 className="fantasy-heading text-3xl md:text-4xl font-bold text-white mb-2">
+                  Discover Amazing Stories
+                </h1>
+                <p className="fantasy-subtitle text-gray-400 text-lg">
+                  Explore stories created by our community of storytellers
+                </p>
               </div>
-              <div className="flex items-center gap-2">
-                <User className="h-5 w-5" />
-                <span>Community created</span>
+              <div className="flex items-center gap-6 text-amber-300/80">
+                <div className="flex items-center gap-2">
+                  <BookOpen className="h-5 w-5" />
+                  <span>{storiesData?.totalCount || 0} stories</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <User className="h-5 w-5" />
+                  <span>Community created</span>
+                </div>
               </div>
             </div>
           </div>
-        </div>
 
-        {/* Enhanced Search and Filters */}
-        <Card className="bg-slate-800/90 border-slate-600 backdrop-blur-sm mb-8">
-          <CardContent className="p-6">
-            <div className="space-y-4">
-              {/* Search Bar */}
-              <div className="relative max-w-2xl mx-auto">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
-                <Input
-                  type="text"
-                  placeholder="Search stories by title or description..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10 bg-slate-700/50 border-slate-600 text-white placeholder-gray-400"
-                />
-              </div>
-
-              {/* Controls Row */}
-              <div className="flex flex-wrap items-center justify-between gap-4">
-                <div className="flex items-center gap-4">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setShowFilters(!showFilters)}
-                    className="border-slate-600 text-gray-300 hover:bg-slate-700"
-                  >
-                    <Filter className="h-4 w-4 mr-2" />
-                    Filters
-                  </Button>
-                  
-                  <Select value={sortBy} onValueChange={(value) => setSortBy(value as SortOption)}>
-                    <SelectTrigger className="w-40 bg-slate-700/50 border-slate-600">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {sortOptions.map((option) => (
-                        <SelectItem key={option.value} value={option.value}>
-                          {option.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+          {/* Enhanced Search and Filters */}
+          <div className="glass-enhanced mb-8">
+            <div className="p-6">
+              <div className="space-y-4">
+                {/* Search Bar */}
+                <div className="relative max-w-2xl mx-auto">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
+                  <input
+                    type="text"
+                    placeholder="Search stories by title or description..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="glass-input w-full pl-10"
+                  />
                 </div>
 
-                <div className="flex items-center gap-2">
-                  <Button
-                    variant={viewMode === 'grid' ? 'default' : 'outline'}
-                    size="sm"
-                    onClick={() => setViewMode('grid')}
-                    className={viewMode === 'grid' ? 'bg-amber-500 hover:bg-amber-600' : 'border-slate-600 text-gray-300 hover:bg-slate-700'}
-                  >
-                    <Grid className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    variant={viewMode === 'list' ? 'default' : 'outline'}
-                    size="sm"
-                    onClick={() => setViewMode('list')}
-                    className={viewMode === 'list' ? 'bg-amber-500 hover:bg-amber-600' : 'border-slate-600 text-gray-300 hover:bg-slate-700'}
-                  >
-                    <List className="h-4 w-4" />
-                  </Button>
-                </div>
-              </div>
-
-              {/* Genre Filters */}
-              {showFilters && (
-                <div className="border-t border-slate-600 pt-4">
-                  <div className="flex flex-wrap justify-center gap-2">
-                    <Button
-                      variant={selectedGenre === '' ? 'default' : 'outline'}
-                      size="sm"
-                      onClick={() => setSelectedGenre('')}
-                      className={selectedGenre === '' ? 'bg-amber-500 hover:bg-amber-600' : 'border-slate-600 text-gray-300 hover:bg-slate-700'}
+                {/* Controls Row */}
+                <div className="flex flex-wrap items-center justify-between gap-4">
+                  <div className="flex items-center gap-4">
+                    <button
+                      onClick={() => setShowFilters(!showFilters)}
+                      className="glass-card px-4 py-2 text-gray-300 hover:bg-slate-700"
                     >
-                      All Genres
-                    </Button>
-                    {genres.map((genre) => (
-                      <Button
-                        key={genre.value}
-                        variant={selectedGenre === genre.value ? 'default' : 'outline'}
-                        size="sm"
-                        onClick={() => setSelectedGenre(genre.value)}
-                        className={selectedGenre === genre.value 
-                          ? 'bg-amber-500 hover:bg-amber-600' 
-                          : 'border-slate-600 text-gray-300 hover:bg-slate-700'
-                        }
+                      <Filter className="h-4 w-4 mr-2" />
+                      Filters
+                    </button>
+                    
+                    <Select value={sortBy} onValueChange={(value) => setSortBy(value as SortOption)}>
+                      <SelectTrigger className="w-40 glass-input">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {sortOptions.map((option) => (
+                          <SelectItem key={option.value} value={option.value}>
+                            {option.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => setViewMode('grid')}
+                      className={`px-3 py-2 rounded ${viewMode === 'grid' ? 'bg-amber-500 hover:bg-amber-600' : 'glass-card text-gray-300 hover:bg-slate-700'}`}
+                    >
+                      <Grid className="h-4 w-4" />
+                    </button>
+                    <button
+                      onClick={() => setViewMode('list')}
+                      className={`px-3 py-2 rounded ${viewMode === 'list' ? 'bg-amber-500 hover:bg-amber-600' : 'glass-card text-gray-300 hover:bg-slate-700'}`}
+                    >
+                      <List className="h-4 w-4" />
+                    </button>
+                  </div>
+                </div>
+
+                {/* Genre Filters */}
+                {showFilters && (
+                  <div className="border-t border-slate-600 pt-4">
+                    <div className="flex flex-wrap justify-center gap-2">
+                      <button
+                        onClick={() => setSelectedGenre('')}
+                        className={`px-3 py-1 rounded text-sm ${selectedGenre === '' ? 'bg-amber-500 hover:bg-amber-600' : 'glass-card text-gray-300 hover:bg-slate-700'}`}
                       >
-                        {genre.emoji} {genre.label}
-                      </Button>
-                    ))}
+                        All Genres
+                      </button>
+                      {genres.map((genre) => (
+                        <button
+                          key={genre.value}
+                          onClick={() => setSelectedGenre(genre.value)}
+                          className={`px-3 py-1 rounded text-sm ${selectedGenre === genre.value 
+                            ? 'bg-amber-500 hover:bg-amber-600' 
+                            : 'glass-card text-gray-300 hover:bg-slate-700'
+                          }`}
+                        >
+                          {genre.emoji} {genre.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* Loading State */}
+          {isLoading && (
+            <div className="text-center py-20">
+              <LoadingSpinner size="lg" className="mx-auto" />
+              <p className="text-white mt-4">Loading amazing stories...</p>
+            </div>
+          )}
+
+          {/* Error State */}
+          {error && (
+            <div className="text-center py-20">
+              <div className="glass-enhanced max-w-lg mx-auto">
+                <div className="p-8">
+                  <h3 className="fantasy-title text-2xl font-bold text-white mb-4">Oops! Something went wrong</h3>
+                  <p className="text-gray-300 mb-6">
+                    We couldn't load the stories right now. Please try again later.
+                  </p>
+                  <button
+                    onClick={() => window.location.reload()}
+                    className="btn-magical"
+                  >
+                    Try Again
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Stories Grid */}
+          {!isLoading && !error && (
+            <>
+              {stories.length === 0 ? (
+                <div className="text-center py-20">
+                  <div className="glass-enhanced max-w-lg mx-auto">
+                    <div className="p-8">
+                      <Search className="h-16 w-16 text-amber-400 mx-auto mb-6" />
+                      <h3 className="fantasy-title text-2xl font-bold text-white mb-4">No Stories Found</h3>
+                      <p className="text-gray-300 mb-6">
+                        Try adjusting your search terms or filters to find stories.
+                      </p>
+                      <button
+                        onClick={() => {
+                          setSearchTerm('');
+                          setSelectedGenre('');
+                        }}
+                        className="btn-magical"
+                      >
+                        Clear Filters
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div className={viewMode === 'grid' ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 px-6' : 'space-y-4'}>
+                  {stories.map((story) => (
+                    <div key={story.id} className="h-96 bg-white/10 backdrop-blur-xl rounded-xl overflow-hidden shadow-2xl border border-white/20 hover:bg-white/15 hover:scale-105 transition-all duration-300 flex flex-col">
+                      <div className="h-40 overflow-hidden">
+                        {story.thumbnail_url && (
+                          <img 
+                            src={story.thumbnail_url} 
+                            alt={story.title}
+                            className="w-full h-full object-cover"
+                            onError={(e) => {
+                              const target = e.target as HTMLImageElement;
+                              target.style.display = 'none';
+                            }}
+                          />
+                        )}
+                      </div>
+                      <div className="p-6 flex flex-col flex-grow">
+                        <h3 className="text-white font-bold text-lg mb-3 line-clamp-2 fantasy-heading">{story.title}</h3>
+                        <p className="text-gray-300 text-sm mb-4 line-clamp-3 flex-grow">{story.description}</p>
+                        <div className="flex items-center justify-between text-xs text-gray-400 mb-4">
+                          <div className="flex items-center gap-2">
+                            <span>{getGenreEmoji(story.story_mode)} {getGenreLabel(story.story_mode)}</span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <BookOpen className="h-3 w-3" />
+                            <span>{story.segment_count}</span>
+                          </div>
+                        </div>
+                        <button 
+                          onClick={() => navigate(`/story/${story.id}`)}
+                          className="bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 flex items-center justify-center gap-2 whitespace-nowrap mt-auto"
+                        >
+                          <Eye className="h-4 w-4" />
+                          <span>Read Story</span>
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* Pagination */}
+              {totalPages > 1 && (
+                <div className="flex justify-center mt-8">
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
+                      disabled={currentPage === 1}
+                      className="glass-card px-4 py-2 text-white disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      Previous
+                    </button>
+                    <span className="text-white px-4 py-2">
+                      Page {currentPage} of {totalPages}
+                    </span>
+                    <button
+                      onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
+                      disabled={currentPage === totalPages}
+                      className="glass-card px-4 py-2 text-white disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      Next
+                    </button>
                   </div>
                 </div>
               )}
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Stories Content */}
-        {isLoading ? (
-          <div className={`grid gap-6 ${viewMode === 'grid' ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4' : 'grid-cols-1'}`}>
-            {[...Array(8)].map((_, i) => (
-              <Card key={i} className="bg-slate-800/90 border-slate-600 backdrop-blur-sm animate-pulse">
-                <div className="h-32 bg-slate-600 rounded-t-lg"></div>
-                <CardHeader>
-                  <div className="h-6 bg-slate-600 rounded mb-2"></div>
-                  <div className="h-4 bg-slate-600 rounded w-3/4"></div>
-                </CardHeader>
-                <CardContent>
-                  <div className="h-4 bg-slate-600 rounded mb-2"></div>
-                  <div className="h-4 bg-slate-600 rounded w-2/3"></div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        ) : error ? (
-          <Card className="bg-slate-800/90 border-slate-600 backdrop-blur-sm text-center py-12">
-            <CardContent>
-              <h3 className="text-2xl font-bold text-red-400 mb-4">Error Loading Stories</h3>
-              <p className="text-gray-300 mb-6">
-                There was an error loading the stories. Please try again later.
-              </p>
-              <Button
-                onClick={() => window.location.reload()}
-                className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white"
-              >
-                Retry
-              </Button>
-            </CardContent>
-          </Card>
-        ) : stories.length > 0 ? (
-          <>
-            <div className={`grid gap-6 mb-8 ${viewMode === 'grid' ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4' : 'grid-cols-1'}`}>
-              {stories.map(renderStoryCard)}
-            </div>
-
-            {/* Pagination */}
-            {totalPages > 1 && (
-              <div className="flex items-center justify-center gap-2">
-                <Button
-                  variant="outline"
-                  onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
-                  disabled={currentPage === 1}
-                  className="border-slate-600 text-gray-300 hover:bg-slate-700"
-                >
-                  Previous
-                </Button>
-                <span className="text-gray-300 px-4">
-                  Page {currentPage} of {totalPages}
-                </span>
-                <Button
-                  variant="outline"
-                  onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
-                  disabled={currentPage === totalPages}
-                  className="border-slate-600 text-gray-300 hover:bg-slate-700"
-                >
-                  Next
-                </Button>
-              </div>
-            )}
-          </>
-        ) : (
-          <Card className="bg-slate-800/90 border-slate-600 backdrop-blur-sm text-center py-12">
-            <CardContent>
-              <Search className="h-16 w-16 text-amber-400 mx-auto mb-6" />
-              <h3 className="text-2xl font-bold text-white mb-4">No Stories Found</h3>
-              <p className="text-gray-300 mb-6">
-                {searchTerm || selectedGenre 
-                  ? "Try adjusting your search or filters" 
-                  : "Be the first to publish a public story!"
-                }
-              </p>
-              <Button
-                onClick={() => navigate('/create/genre')}
-                className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white"
-              >
-                Create Story
-              </Button>
-            </CardContent>
-          </Card>
-        )}
+            </>
+          )}
+        </div>
       </div>
     </div>
   );

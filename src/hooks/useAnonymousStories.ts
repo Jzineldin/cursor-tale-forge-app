@@ -10,7 +10,7 @@ const fetchAnonymousStories = async (storyIds: string[]) => {
   }
   const { data, error } = await supabase
     .from('stories')
-    .select('id, title, created_at, is_public, is_completed, thumbnail_url, segment_count, story_mode, full_story_audio_url, audio_generation_status, shotstack_status, shotstack_video_url')
+    .select('id, title, created_at, is_public, is_completed, thumbnail_url, segment_count, story_mode, full_story_audio_url, audio_generation_status, shotstack_status, shotstack_video_url, description')
     .in('id', storyIds)
     .order('created_at', { ascending: false });
 

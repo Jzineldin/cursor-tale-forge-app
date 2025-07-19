@@ -79,7 +79,7 @@ export const PremiumGate: React.FC<PremiumGateProps> = ({
           </div>
           <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/50 to-transparent flex items-end justify-center pb-8">
             <div className="text-center space-y-2">
-              <Crown className="w-8 h-8 mx-auto text-yellow-500" />
+              <Crown className="w-8 h-8 mx-auto text-white" />
               <p className="text-sm font-medium">Premium Feature</p>
             </div>
           </div>

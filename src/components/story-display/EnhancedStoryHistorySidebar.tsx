@@ -55,95 +55,93 @@ const EnhancedStoryHistorySidebar: React.FC<EnhancedStoryHistorySidebarProps> = 
   return (
     <div className="w-full lg:w-80 space-y-4">
       {/* Story Statistics */}
-      <Card className="bg-slate-800/60 border-amber-500/30">
-        <CardHeader className="pb-3">
-          <CardTitle className="text-amber-300 text-lg flex items-center gap-2">
-            <Book className="h-5 w-5" />
+      <div className="bg-gradient-to-br from-slate-900/95 via-slate-800/95 to-slate-900/95 border-2 border-amber-500/40 backdrop-blur-lg shadow-2xl rounded-2xl p-4">
+        <div className="flex items-center gap-3 mb-4">
+          <Book className="h-6 w-6 text-amber-400" />
+          <h3 className="fantasy-heading text-lg font-bold text-amber-400">
             Story Statistics
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
+          </h3>
+        </div>
+        <div className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div className="text-center">
-              <div className="text-2xl font-bold text-amber-400">{storySegments.length}</div>
-              <div className="text-sm text-gray-400">Chapters</div>
+              <div className="fantasy-heading text-2xl font-bold text-amber-400">{storySegments.length}</div>
+              <div className="fantasy-subtitle text-xs text-gray-300">Chapters</div>
             </div>
             <div className="text-center">
-              <div className="text-2xl font-bold text-amber-400">{totalWords}</div>
-              <div className="text-sm text-gray-400">Words</div>
+              <div className="fantasy-heading text-2xl font-bold text-amber-400">{totalWords}</div>
+              <div className="fantasy-subtitle text-xs text-gray-300">Words</div>
             </div>
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div className="text-center">
-              <div className="text-2xl font-bold text-amber-400">{estimatedReadTime}</div>
-              <div className="text-sm text-gray-400">Min Read</div>
+              <div className="fantasy-heading text-2xl font-bold text-amber-400">{estimatedReadTime}</div>
+              <div className="fantasy-subtitle text-xs text-gray-300">Min Read</div>
             </div>
             <div className="text-center">
-              <div className="text-2xl font-bold text-amber-400">{storySegments.length}</div>
-              <div className="text-sm text-gray-400">Images</div>
+              <div className="fantasy-heading text-2xl font-bold text-amber-400">{storySegments.length}</div>
+              <div className="fantasy-subtitle text-xs text-gray-300">Images</div>
             </div>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
 
       {/* Story History */}
-      <Card className="bg-slate-800/60 border-amber-500/30">
-        <CardHeader className="pb-3">
-          <CardTitle className="text-amber-300 text-lg flex items-center gap-2">
-            <FileText className="h-5 w-5" />
+      <div className="bg-gradient-to-br from-slate-900/95 via-slate-800/95 to-slate-900/95 border-2 border-amber-500/40 backdrop-blur-lg shadow-2xl rounded-2xl p-4">
+        <div className="flex items-center gap-3 mb-4">
+          <FileText className="h-6 w-6 text-amber-400" />
+          <h3 className="fantasy-heading text-lg font-bold text-amber-400">
             Story History
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="p-0">
-          <ScrollArea ref={scrollAreaRef} className="h-64 md:h-80">
-            <div className="space-y-2 p-4">
-              {storySegments.map((segment, index) => {
-                const isCurrentChapter = index === currentChapterIndex;
-                return (
-                  <div
-                    key={segment.id}
-                    ref={isCurrentChapter ? currentChapterRef : null}
-                    onClick={() => handleChapterClick(index)}
-                    className={`p-3 rounded-lg border cursor-pointer transition-all duration-200 hover:border-amber-400 hover:bg-slate-700/50 ${
-                      isCurrentChapter 
-                        ? 'border-amber-400 bg-amber-500/10' 
-                        : 'border-slate-600 bg-slate-700/30'
-                    }`}
-                  >
-                    <div className="flex items-center justify-between mb-2">
-                      <span className={`font-semibold text-sm ${
-                        isCurrentChapter ? 'text-amber-300' : 'text-amber-400'
-                      }`}>
-                        Chapter {index + 1}
-                        {isCurrentChapter && (
-                          <span className="ml-2 text-xs bg-amber-400 text-slate-900 px-2 py-1 rounded">
-                            Current
-                          </span>
-                        )}
-                      </span>
-                      <div className="flex items-center gap-1 text-xs text-gray-400">
-                        <Clock className="h-3 w-3" />
-                        <span>1 min</span>
-                      </div>
-                    </div>
-                    <p className="text-gray-300 text-sm line-clamp-3 leading-relaxed">
-                      {segment.segment_text.length > 100
-                        ? `${segment.segment_text.substring(0, 100)}...`
-                        : segment.segment_text}
-                    </p>
-                    <div className="mt-2 text-xs text-gray-500">
-                      {segment.word_count || segment.segment_text.split(/\s+/).length} words
-                      {segment.audio_url && (
-                        <span className="ml-2 text-amber-400">• Has Audio</span>
+          </h3>
+        </div>
+        <ScrollArea ref={scrollAreaRef} className="h-64 md:h-80">
+          <div className="space-y-3 pr-4">
+            {storySegments.map((segment, index) => {
+              const isCurrentChapter = index === currentChapterIndex;
+              return (
+                <div
+                  key={segment.id}
+                  ref={isCurrentChapter ? currentChapterRef : null}
+                  onClick={() => handleChapterClick(index)}
+                  className={`p-4 rounded-xl border-2 cursor-pointer transition-all duration-300 hover:border-amber-400 hover:bg-gradient-to-r hover:from-amber-500/10 hover:to-amber-400/10 hover:scale-[1.02] ${
+                    isCurrentChapter 
+                      ? 'border-amber-400 bg-gradient-to-r from-amber-500/20 to-amber-400/20 shadow-lg shadow-amber-500/20' 
+                      : 'border-slate-600/50 bg-slate-800/50'
+                  }`}
+                >
+                  <div className="flex items-center justify-between mb-3">
+                    <span className={`fantasy-heading font-bold text-sm ${
+                      isCurrentChapter ? 'text-amber-200' : 'text-amber-400'
+                    }`}>
+                      Chapter {index + 1}
+                      {isCurrentChapter && (
+                        <span className="ml-2 text-xs bg-amber-400 text-slate-900 px-2 py-1 rounded-full font-bold">
+                          Current
+                        </span>
                       )}
+                    </span>
+                    <div className="flex items-center gap-1 text-xs text-gray-400">
+                      <Clock className="h-3 w-3" />
+                      <span>1 min</span>
                     </div>
                   </div>
-                );
-              })}
-            </div>
-          </ScrollArea>
-        </CardContent>
-      </Card>
+                  <p className="fantasy-subtitle text-gray-300 text-sm line-clamp-3 leading-relaxed">
+                    {segment.segment_text.length > 100
+                      ? `${segment.segment_text.substring(0, 100)}...`
+                      : segment.segment_text}
+                  </p>
+                  <div className="fantasy-subtitle mt-3 text-xs text-gray-400">
+                    {segment.word_count || segment.segment_text.split(/\s+/).length} words
+                    {segment.audio_url && (
+                      <span className="ml-2 text-amber-400">• Has Audio</span>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </ScrollArea>
+      </div>
     </div>
   );
 };

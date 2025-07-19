@@ -2,8 +2,7 @@ import React from 'react';
 
 import StoryDisplay from '@/components/StoryDisplay';
 import StoryCompletionControls from '@/components/story-viewer/StoryCompletionControls';
-import CostConfirmationDialog from '@/components/story-creation/CostConfirmationDialog';
-import StoryCreationLoadingState from '@/components/story-creation/StoryCreationLoadingState';
+import { StoryLoadingState } from '@/components/StoryLoadingState';
 import StoryCreationNavigation from '@/components/story-creation/StoryCreationNavigation';
 import StoryCreationErrorState from '@/components/story-creation/StoryCreationErrorState';
 import { CheckedState } from '@radix-ui/react-checkbox';
@@ -74,7 +73,6 @@ export const StoryCreationStates: React.FC<StoryCreationStatesProps> = ({
         }}
       >
         <StoryCreationNavigation
-          apiCallsCount={apiCallsCount}
           gameState={gameState as "not_started" | "playing" | "completed"}
           onGoHome={handleGoHome}
           onRestart={handleRestartStory}
@@ -95,26 +93,10 @@ export const StoryCreationStates: React.FC<StoryCreationStatesProps> = ({
       : "🎭 Creating your story...";
     
     return (
-      <div 
-        className="min-h-screen relative bg-slate-900"
-        style={{
-          backgroundImage: `linear-gradient(rgba(15, 23, 42, 0.8), rgba(15, 23, 42, 0.8)), url('https://cdn.midjourney.com/11bac597-89f4-4f16-99f0-4b114af4473f/0_2.png')`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          backgroundRepeat: 'no-repeat'
-        }}
-      >
-        <StoryCreationNavigation
-          apiCallsCount={apiCallsCount}
-          gameState={gameState as "not_started" | "playing" | "completed"}
-          onGoHome={handleGoHome}
-          onRestart={handleRestartStory}
+              <StoryLoadingState
+          skipImage={false}
+          skipAudio={true}
         />
-        <StoryCreationLoadingState
-          message={message}
-          submessage="Please wait while our AI crafts your story. This may take 30-60 seconds."
-        />
-      </div>
     );
   }
 
@@ -131,7 +113,6 @@ export const StoryCreationStates: React.FC<StoryCreationStatesProps> = ({
         }}
       >
         <StoryCreationNavigation
-          apiCallsCount={apiCallsCount}
           gameState={gameState as "not_started" | "playing" | "completed"}
           onGoHome={handleGoHome}
           onRestart={handleRestartStory}
@@ -155,7 +136,6 @@ export const StoryCreationStates: React.FC<StoryCreationStatesProps> = ({
       }}
     >
       <StoryCreationNavigation
-        apiCallsCount={apiCallsCount}
         gameState={gameState as "not_started" | "playing" | "completed"}
         onGoHome={handleGoHome}
         onRestart={handleRestartStory}
@@ -182,6 +162,8 @@ export const StoryCreationStates: React.FC<StoryCreationStatesProps> = ({
               isLoading={isLoading}
               isFinishingStory={isFinishingStory}
               isEmbedded={false}
+              skipImage={skipImage}
+              onSkipImageChange={handleSkipImageChange}
             />
           </div>
         </div>
@@ -198,15 +180,7 @@ export const StoryCreationStates: React.FC<StoryCreationStatesProps> = ({
         </div>
       )}
 
-      <CostConfirmationDialog
-        open={showCostDialog}
-        onOpenChange={setShowCostDialog}
-        pendingAction={pendingAction}
-        skipImage={skipImage}
-        apiCallsCount={apiCallsCount}
-        onSkipImageChange={handleSkipImageChange}
-        onConfirm={confirmGeneration}
-      />
+
     </div>
   );
 };

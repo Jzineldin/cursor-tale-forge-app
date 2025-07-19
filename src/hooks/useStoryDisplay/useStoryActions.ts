@@ -57,11 +57,16 @@ export const useStoryActions = (
     };
 
     if (pendingAction === 'start') {
-      params.prompt = `${prompt}${characterName ? ` featuring ${characterName}` : ''}`;
+      // Ensure we have a valid prompt
+      const basePrompt = prompt?.trim() || 'Create an exciting story';
+      params.prompt = `${basePrompt}${characterName ? ` featuring ${characterName}` : ''}`;
+      console.log('🔍 Final prompt being used:', params.prompt);
     } else {
-      params.storyId = currentStorySegment?.story_id || undefined;
-      params.parentSegmentId = currentStorySegment?.id || undefined;
-      params.choiceText = pendingParams?.choice || undefined;
+      if (currentStorySegment?.story_id) params.storyId = currentStorySegment.story_id;
+      if (currentStorySegment?.id) params.parentSegmentId = currentStorySegment.id;
+      if (pendingParams?.choice) params.choiceText = pendingParams.choice;
+      // For choice-based generation, use the choice as the prompt
+      params.prompt = pendingParams?.choice || 'Continue the story';
     }
 
     try {
@@ -69,8 +74,8 @@ export const useStoryActions = (
         const { data: story, error: storyError } = await supabase
           .from('stories')
           .insert({
-            title: prompt.substring(0, 100),
-            description: prompt,
+            title: (prompt || 'Untitled Story').substring(0, 100),
+            description: prompt || 'A magical story',
             story_mode: genre
           })
           .select()
@@ -83,13 +88,21 @@ export const useStoryActions = (
         navigate(`/story/${story.id}?genre=${genre}&prompt=${encodeURIComponent(prompt)}${characterName ? `&characterName=${encodeURIComponent(characterName)}` : ''}`, { replace: true });
       }
 
+      console.log('🚀 About to call storyGeneration.generateSegment with params:', params);
+      console.log('🔍 Prompt being sent:', params.prompt);
       const segment = await storyGeneration.generateSegment(params);
+      console.log('✅ Story generation successful, received segment:', segment);
       
       const completeSegment: StorySegment = {
         ...segment,
         created_at: segment.created_at || new Date().toISOString(),
         word_count: segment.word_count || segment.segment_text?.split(/\s+/).length || 0,
-        audio_generation_status: segment.audio_generation_status || 'not_started'
+        audio_generation_status: segment.audio_generation_status || 'not_started',
+        storyId: segment.story_id || segment.storyId || '',
+        text: segment.segment_text || segment.text || '',
+        imageUrl: segment.image_url || segment.imageUrl || '/placeholder.svg',
+        audioUrl: segment.audio_url || segment.audioUrl || '',
+        isEnd: segment.is_end || segment.isEnd || false
       };
       
       setCurrentStorySegment(completeSegment);
@@ -99,13 +112,15 @@ export const useStoryActions = (
       
       // Autosave after each segment
       try {
-        await autosaveStoryProgress({
-          storyId: segment.story_id,
-          segmentId: segment.id,
-          storyTitle: segment.segment_text?.substring(0, 100) + '...',
-          segmentCount: (await getCurrentSegmentCount(params.storyId)) + 1,
-          isEnd: segment.is_end || false
-        });
+        if (params.storyId && segment.story_id && segment.id) {
+          await autosaveStoryProgress({
+            storyId: segment.story_id,
+            segmentId: segment.id,
+            storyTitle: segment.segment_text?.substring(0, 100) + '...',
+            segmentCount: (await getCurrentSegmentCount(params.storyId)) + 1,
+            isEnd: segment.is_end || false
+          });
+        }
       } catch (error) {
         console.error('Autosave failed:', error);
         // Continue with story flow even if autosave fails

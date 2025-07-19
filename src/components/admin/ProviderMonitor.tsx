@@ -144,7 +144,7 @@ const ProviderMonitor: React.FC = () => {
       case 'error':
         return <XCircle className="h-4 w-4 text-red-500" />;
       case 'fallback':
-        return <AlertTriangle className="h-4 w-4 text-yellow-500" />;
+        return <AlertTriangle className="h-4 w-4 text-white" />;
       default:
         return <Activity className="h-4 w-4 text-gray-500" />;
     }
@@ -217,7 +217,7 @@ const ProviderMonitor: React.FC = () => {
               onClick={() => testProvider('OpenAI', 'image')}
               variant="outline"
               size="sm"
-              className="bg-slate-700 border-orange-600 text-orange-400 hover:bg-orange-600 hover:text-white"
+              className="bg-slate-700 border-brand-indigo text-brand-indigo hover:bg-brand-indigo hover:text-white"
             >
               Test OpenAI
             </Button>
